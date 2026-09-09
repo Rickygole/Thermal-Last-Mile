@@ -5,7 +5,7 @@ export const useStore = create(() => ({
   hour: '17',
   budget: 750000,
   selected: null,
-  heat: 0.5,
+  heat: 0.45,
   pitch: 0
 }))
 
