@@ -1,0 +1,20 @@
+# Raw and intermediate pipeline products. Large, reproducible, never committed.
+data/raw/
+data/interim/
+
+# data/out/ IS committed - it is the entire application payload (< 40 MB).
+!data/out/
+
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+node_modules/
+web/dist/
+.vite/
+
+.DS_Store
+*.log
+.env
+.env.local
