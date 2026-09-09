@@ -1,0 +1,261 @@
+import sys
+from pathlib import Path
+from collections import defaultdict
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import common as c
+import s6_optimize as s6
+
+THRESHOLD_C = c.CFG["walk"]["wbgt_threshold_c"]
+EXTREME_C = c.CFG["walk"]["wbgt_extreme_c"]
+BASELINE_HOUR = 15
+TREE_NAME = "tree"
+CAP = c.CFG["optimizer"]["cap"]
+
+FIXTURE_BINDING_NOTE = (
+    "fixture kickoff times for NRG Stadium at the 2026 FIFA World Cup are not bound to a "
+    "verified public source in this analysis, so no specific match is named against any hour "
+    "below. this table is a sweep across the plausible kickoff window, not a claim about a "
+    "scheduled match. before this is shown to a scheduling decision maker, bind each modeled "
+    "hour to the confirmed NRG Stadium fixture list and re-run this stage against the actual "
+    "scheduled kickoffs rather than the full sweep."
+)
+
+METHOD_NOTE = (
+    "fan_hours_above_threshold is total fans multiplied by the fan weighted degree minutes of "
+    "wet bulb globe temperature exceedance above walk.wbgt_threshold_c accumulated along the "
+    "last mile route, summed across all four approaches and divided by 60. this mirrors the "
+    "measure already used elsewhere in this project, and is a degree weighted exposure hour, "
+    "not a simple clock hour count, so it is comparable across hours and to the optimizer's "
+    "averted_degmin figures by the same divide by 60 conversion."
+)
+
+TREE_EQUIVALENCE_NOTE = (
+    "equivalent_tree_spend_usd answers a single question: how many dollars of street tree "
+    "planting, at the same 2026 year five canopy fraction used by the optimizer's near term "
+    "horizon, would be required to remove as much fan_hours_above_threshold at the 15:00 "
+    "baseline as is removed for free by moving kickoff to this hour instead. it is computed "
+    "from a dedicated tree only greedy allocation across every segment evaluated at 15:00 "
+    "conditions, independent of the multi intervention allocation in solutions.json, because "
+    "solutions.json mixes sail, tree and awning spend and is not a tree only curve. if no "
+    "spend up to the optimizer cap achieves the required removal, that is stated directly and "
+    "the figure is not extrapolated past the cap."
+)
+
+
+def load_segments():
+    fc = c.read_json(c.OUT_DIR / "segments.geojson")
+    return fc["features"]
+
+
+def approach_groups(features):
+    groups = defaultdict(list)
+    for f in features:
+        groups[f["properties"]["approach"]].append(f["properties"])
+    return groups
+
+
+def fan_hours_above_threshold(features, hour):
+    key = str(hour)
+    total = sum(p["properties"]["fans"] * p["properties"]["degmin"][key] for p in features)
+    return total / 60.0
+
+
+def degmin_per_trip_by_approach(groups, hour):
+    key = str(hour)
+    return {
+        approach: round(sum(p["degmin"][key] for p in props), 3)
+        for approach, props in groups.items()
+    }
+
+
+def fans_crossing_extreme(groups, hour):
+    key = str(hour)
+    by_approach = {}
+    total = 0
+    for approach, props in groups.items():
+        peak = max(p["wbgt"][key] for p in props)
+        crosses = peak > EXTREME_C
+        fans = props[0]["fans"] if props else 0
+        by_approach[approach] = {
+            "peak_segment_wbgt_c": round(peak, 2),
+            "crosses_extreme": crosses,
+            "fans": fans,
+        }
+        if crosses:
+            total += fans
+    return total, by_approach
+
+
+def build_tree_only_hour15_curve(features):
+    hours_cond = {BASELINE_HOUR: s6.hour_conditions(BASELINE_HOUR)}
+    shading = [
+        name for name, spec in c.COSTS["interventions"].items() if spec.get("blocks_direct_beam")
+    ]
+    intervention_over_by_hour = {
+        BASELINE_HOUR: {
+            name: s6.intervention_over(
+                hours_cond[BASELINE_HOUR], c.COSTS["interventions"][name]["diffuse_transmission"]
+            )
+            for name in shading
+        }
+    }
+    candidates = s6.build_candidates(features, hours_cond, intervention_over_by_hour)
+    tree_candidates = [cand for cand in candidates if cand["intervention"] == TREE_NAME]
+
+    scored = []
+    for cand in tree_candidates:
+        gain, _, _ = s6.marginal_gain(cand, 0.0, "coverage_near_term")
+        if gain <= 0 or cand["cost"] <= 0:
+            continue
+        scored.append((gain / cand["cost"], gain, cand["cost"]))
+    scored.sort(key=lambda t: t[0], reverse=True)
+
+    curve = [(0.0, 0.0)]
+    spend, averted = 0.0, 0.0
+    for _, gain, cost in scored:
+        if spend + cost > CAP:
+            continue
+        spend += cost
+        averted += gain
+        curve.append((spend, averted))
+    return curve
+
+
+def equivalent_tree_spend(curve, target_fan_hours, hour):
+    if hour == BASELINE_HOUR:
+        return {
+            "usd": 0.0,
+            "achieved_fan_hours_removed": 0.0,
+            "note": "this is the 15:00 baseline itself, there is no shift to price",
+        }
+    if target_fan_hours <= 1e-6:
+        return {
+            "usd": 0.0,
+            "achieved_fan_hours_removed": 0.0,
+            "note": (
+                "this hour is not an improvement over the 15:00 baseline, so no capital spend at "
+                "15:00 is needed to match it, shifting to this hour buys no free reduction"
+            ),
+        }
+    for spend, averted in curve:
+        if averted / 60.0 >= target_fan_hours:
+            return {
+                "usd": round(spend, 2),
+                "achieved_fan_hours_removed": round(averted / 60.0, 1),
+            }
+    max_spend, max_averted = curve[-1]
+    return {
+        "usd": None,
+        "max_tree_spend_modeled_usd": round(max_spend, 2),
+        "max_fan_hours_removable_by_trees_at_that_spend": round(max_averted / 60.0, 1),
+        "note": (
+            f"no modeled tree only spend up to the optimizer cap of {CAP} usd removes the full "
+            f"{target_fan_hours:.1f} fan hour reduction that shifting kickoff away from 15:00 "
+            "achieves for free. not extrapolated beyond the modeled cap, treat this hour's "
+            "capital equivalent as unresolved rather than inventing a number past the cap."
+        ),
+    }
+
+
+def main():
+    c.ensure_dirs()
+    features = load_segments()
+    groups = approach_groups(features)
+    hours = c.kickoff_hours()
+
+    fan_hours = {hour: fan_hours_above_threshold(features, hour) for hour in hours}
+    baseline_fan_hours = fan_hours[BASELINE_HOUR]
+
+    tree_curve = build_tree_only_hour15_curve(features)
+
+    tree_spec = c.COSTS["interventions"][TREE_NAME]
+    coverage_note = c.read_json(c.OUT_DIR / "solutions.json").get("meta", {}).get(
+        "coverage_horizon_note", ""
+    )
+
+    hour_table = {}
+    for hour in hours:
+        total_crossing, by_approach_crossing = fans_crossing_extreme(groups, hour)
+        removed_fraction = (
+            round(1.0 - fan_hours[hour] / baseline_fan_hours, 4) if baseline_fan_hours > 0 else 0.0
+        )
+        target_removal = max(0.0, baseline_fan_hours - fan_hours[hour])
+        hour_table[str(hour)] = {
+            "fan_hours_above_threshold": round(fan_hours[hour], 1),
+            "fans_crossing_extreme": {
+                "total": total_crossing,
+                "by_approach": by_approach_crossing,
+            },
+            "degmin_per_trip_by_approach": degmin_per_trip_by_approach(groups, hour),
+            "exposure_removed_vs_1500": removed_fraction,
+            "equivalent_tree_spend_usd": equivalent_tree_spend(tree_curve, target_removal, hour),
+        }
+
+    best_hour = min(hours, key=lambda h: fan_hours[h])
+    worst_hour = max(hours, key=lambda h: fan_hours[h])
+    free_reduction_fraction = hour_table[str(best_hour)]["exposure_removed_vs_1500"]
+    free_reduction_fan_hours = round(baseline_fan_hours - fan_hours[best_hour], 1)
+
+    max_tree_spend, max_tree_averted = tree_curve[-1]
+    tree_only_ceiling = {
+        "max_tree_only_spend_usd": round(max_tree_spend, 2),
+        "max_fan_hours_removable_at_15_00": round(max_tree_averted / 60.0, 1),
+        "note": (
+            "this is the ceiling of the dedicated tree only curve, one tree credited per "
+            "eligible segment at the near term 2026 canopy fraction, evaluated at 15:00 "
+            "conditions. it is the most fan hour relief street trees can buy at 15:00 under "
+            "this model even with unlimited budget, since coverage per segment cannot exceed "
+            "one treated width. compare this to free_reduction_available_fan_hours below."
+        ),
+    }
+
+    summary = {
+        "baseline_hour": BASELINE_HOUR,
+        "best_hour": best_hour,
+        "best_hour_fan_hours_above_threshold": round(fan_hours[best_hour], 1),
+        "worst_hour": worst_hour,
+        "worst_hour_fan_hours_above_threshold": round(fan_hours[worst_hour], 1),
+        "free_reduction_available_fraction": free_reduction_fraction,
+        "free_reduction_available_fan_hours": free_reduction_fan_hours,
+        "statement": (
+            f"moving kickoff from {BASELINE_HOUR}:00 to {best_hour}:00 removes "
+            f"{free_reduction_fraction * 100:.1f} percent of measured fan-hours above the "
+            f"{THRESHOLD_C} C wet bulb globe temperature threshold on the last mile to NRG "
+            f"Stadium, at zero capital cost, since it is a scheduling decision rather than an "
+            f"infrastructure spend."
+        ),
+        "tree_reference_unit_cost_usd": tree_spec.get("unit_cost_usd"),
+        "tree_coverage_horizon_used": "coverage_near_term (year 5 canopy fraction), see coverage_horizon_note",
+        "tree_only_ceiling_at_1500": tree_only_ceiling,
+    }
+
+    out = {
+        "generated_utc": c.now_iso(),
+        "wbgt_threshold_c": THRESHOLD_C,
+        "wbgt_extreme_c": EXTREME_C,
+        "modeled_hours": [str(h) for h in hours],
+        "fixture_binding_note": FIXTURE_BINDING_NOTE,
+        "method_note": METHOD_NOTE,
+        "tree_equivalence_note": TREE_EQUIVALENCE_NOTE,
+        "coverage_horizon_note": coverage_note,
+        "hours": hour_table,
+        "summary": summary,
+    }
+
+    c.write_json(c.OUT_DIR / "kickoff_clock.json", out)
+
+    print("kickoff_clock.json written")
+    for hour in hours:
+        row = hour_table[str(hour)]
+        print(
+            f"  {hour:02d}:00  fan_hours_above_threshold={row['fan_hours_above_threshold']:>10}  "
+            f"removed_vs_1500={row['exposure_removed_vs_1500']:.3f}  "
+            f"tree_equiv={row['equivalent_tree_spend_usd'].get('usd')}"
+        )
+    print(f"best hour: {best_hour}, worst hour: {worst_hour}")
+    print(summary["statement"])
+
+
+if __name__ == "__main__":
+    main()

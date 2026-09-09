@@ -10,7 +10,7 @@ import common as c
 PIPELINE_DIR = Path(__file__).resolve().parent
 HOURS = c.kickoff_hours()
 
-STAGES = ["s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "meta"]
+STAGES = ["s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s10", "meta"]
 
 SCRIPTS = {
     "s1": "s1_network.py",
@@ -21,6 +21,7 @@ SCRIPTS = {
     "s6": "s6_optimize.py",
     "s7": "s7_cities.py",
     "s8": "s8_surface_png.py",
+    "s10": "s10_kickoff.py",
     "meta": "meta.py",
 }
 
@@ -28,6 +29,7 @@ OUTPUT_FILES = {
     "final": [
         c.OUT_DIR / "segments.geojson",
         c.OUT_DIR / "solutions.json",
+        c.OUT_DIR / "kickoff_clock.json",
         c.OUT_DIR / "meta.json",
     ]
     + [c.OUT_DIR / f"shade_{h:02d}.png" for h in HOURS]
@@ -49,6 +51,8 @@ def stage_done(stage):
         return (c.OUT_DIR / "segments.geojson").exists()
     if stage == "s6":
         return (c.OUT_DIR / "solutions.json").exists()
+    if stage == "s10":
+        return (c.OUT_DIR / "kickoff_clock.json").exists()
     if stage == "meta":
         return (c.OUT_DIR / "meta.json").exists()
     return False

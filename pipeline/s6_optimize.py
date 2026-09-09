@@ -120,7 +120,10 @@ def build_candidates(segments, hours_cond, intervention_over_by_hour):
                 {
                     "segment_id": seg_id,
                     "intervention": name,
-                    "coverage": coverage,
+                    "coverage_near_term": coverage_near_term,
+                    "coverage_mature": coverage_mature,
+                    "canopy_fraction_year5": canopy_fraction_year5,
+                    "maturity_years": maturity_years,
                     "cost": float(cost),
                     "len_m": len_m,
                     "fans": fans,
@@ -139,9 +142,9 @@ def segment_baseline_over_sum(cand):
     return total
 
 
-def marginal_gain(cand, used_delta):
+def marginal_gain(cand, used_delta, coverage_key):
     headroom = max(0.0, 1.0 - used_delta)
-    delta = min(cand["coverage"], headroom)
+    delta = min(cand[coverage_key], headroom)
     if delta <= 0:
         return 0.0, 0.0, 0.0
     averted_degmin_per_trip = 0.0
@@ -165,7 +168,7 @@ def marginal_gain(cand, used_delta):
     return total_degmin, delta, total_over_hours
 
 
-def run_greedy(candidates):
+def run_greedy(candidates, coverage_key):
     used_delta = defaultdict(float)
     remaining = {i: cand for i, cand in enumerate(candidates)}
     chosen_order = []
@@ -175,7 +178,7 @@ def run_greedy(candidates):
     while remaining:
         best_idx, best_ratio, best_gain, best_delta = None, -1.0, 0.0, 0.0
         for idx, cand in remaining.items():
-            gain, delta, _ = marginal_gain(cand, used_delta[cand["segment_id"]])
+            gain, delta, _ = marginal_gain(cand, used_delta[cand["segment_id"]], coverage_key)
             if gain <= 0 or cand["cost"] <= 0:
                 continue
             ratio = gain / cand["cost"]
@@ -201,7 +204,7 @@ def run_greedy(candidates):
     return chosen_order
 
 
-def build_path(chosen_order, candidates, segments_by_id):
+def build_path(chosen_order, candidates, segments_by_id, coverage_key):
     candidates_by_key = {f"{c['segment_id']}#{c['intervention']}": c for c in candidates}
     segment_ids_by_approach = defaultdict(set)
     approach_fans = {}
@@ -239,7 +242,7 @@ def build_path(chosen_order, candidates, segments_by_id):
         remaining_over = dict(baseline_over_by_segment)
         for pair in running_set:
             cand = candidates_by_key[pair]
-            _, delta, over_averted = marginal_gain(cand, used_delta[cand["segment_id"]])
+            _, delta, over_averted = marginal_gain(cand, used_delta[cand["segment_id"]], coverage_key)
             used_delta[cand["segment_id"]] += delta
             remaining_over[cand["segment_id"]] = max(0.0, remaining_over[cand["segment_id"]] - over_averted)
 
@@ -264,14 +267,20 @@ def build_path(chosen_order, candidates, segments_by_id):
                 worst = max(worst, treated_peak - EXTREME_C)
             if worst <= 1e-6:
                 extreme_free_approaches.add(a)
-        fans_below_threshold = sum(approach_fans[a] for a in extreme_free_approaches)
+        fans_clear_of_extreme = sum(approach_fans[a] for a in extreme_free_approaches)
 
         path[str(budget)] = {
             "set": list(running_set),
             "averted_degmin": round(averted, 1),
             "averted_per_fan": round(averted / fans_covered, 2) if fans_covered else 0.0,
             "cost_per_degmin": round(spent / averted, 4) if averted else 0.0,
-            "fans_below_threshold": int(fans_below_threshold),
+            "fans_clear_of_extreme": int(fans_clear_of_extreme),
+            "fans_below_threshold": int(fans_clear_of_extreme),
+            "fans_below_threshold_note": (
+                f"deprecated alias for fans_clear_of_extreme, kept for compatibility. despite its "
+                f"name this was always measured against walk.wbgt_extreme_c ({EXTREME_C} C), not "
+                f"walk.wbgt_threshold_c ({THRESHOLD_C} C). use fans_clear_of_extreme."
+            ),
             "spent": spent,
         }
     return path
@@ -298,23 +307,64 @@ def main():
     }
 
     candidates = build_candidates(segments, hours_cond, intervention_over_by_hour)
-    chosen_order = run_greedy(candidates)
-    path = build_path(chosen_order, candidates, segments_by_id)
 
-    averted_series = [v["averted_degmin"] for v in path.values()]
-    for a, b in zip(averted_series, averted_series[1:]):
-        assert b >= a - 1e-9, "averted_degmin curve must be monotone non decreasing"
+    paths = {}
+    for horizon, coverage_key in HORIZONS.items():
+        chosen_order = run_greedy(candidates, coverage_key)
+        path = build_path(chosen_order, candidates, segments_by_id, coverage_key)
+        averted_series = [v["averted_degmin"] for v in path.values()]
+        for a, b in zip(averted_series, averted_series[1:]):
+            assert b >= a - 1e-9, f"{horizon} averted_degmin curve must be monotone non decreasing"
+        paths[horizon] = path
 
-    solution = {"meta": {"step": STEP, "cap": CAP, "method": METHOD}, "path": path}
+    intervention_effectiveness = {}
+    for name, spec in c.COSTS["interventions"].items():
+        if not spec.get("blocks_direct_beam"):
+            continue
+        shaded_area = spec.get("shaded_area_m2")
+        if not shaded_area:
+            continue
+        coverage_mature = min(1.0, shaded_area / (SEGMENT_LENGTH_M * PATH_WIDTH_M))
+        canopy_fraction_year5 = spec.get("canopy_fraction_year5")
+        maturity_years = spec.get("maturity_years")
+        coverage_near_term = (
+            min(1.0, coverage_mature * canopy_fraction_year5)
+            if canopy_fraction_year5 is not None
+            else coverage_mature
+        )
+        intervention_effectiveness[name] = {
+            "reference_segment_len_m": SEGMENT_LENGTH_M,
+            "shaded_area_m2": shaded_area,
+            "coverage_fraction_mature": round(coverage_mature, 4),
+            "canopy_fraction_year5": canopy_fraction_year5,
+            "maturity_years": maturity_years,
+            "coverage_fraction_near_term_2026": round(coverage_near_term, 4),
+        }
+
+    solution = {
+        "meta": {"step": STEP, "cap": CAP, "method": METHOD, "coverage_horizon_note": HORIZON_NOTE},
+        "path": paths["near_term_2026"],
+        "path_mature": paths["mature"],
+        "intervention_effectiveness": intervention_effectiveness,
+    }
     c.write_json(c.OUT_DIR / "solutions.json", solution)
 
     n_pairs = len(candidates)
-    n_chosen_final = len(path[str(CAP)]["set"])
+    near_path = paths["near_term_2026"]
+    mature_path = paths["mature"]
+    n_chosen_final = len(near_path[str(CAP)]["set"])
     print(f"candidate pairs: {n_pairs}")
-    print(f"budget levels: {len(path)}")
-    print(f"pairs chosen at full cap {CAP}: {n_chosen_final}")
-    print(f"averted_degmin at full cap: {path[str(CAP)]['averted_degmin']}")
-    print(f"averted_degmin monotone non decreasing: confirmed")
+    print(f"budget levels: {len(near_path)}")
+    print(f"pairs chosen at full cap {CAP} (near term): {n_chosen_final}")
+    print(f"averted_degmin at full cap (near term 2026): {near_path[str(CAP)]['averted_degmin']}")
+    print(f"averted_degmin at full cap (mature): {mature_path[str(CAP)]['averted_degmin']}")
+    print("averted_degmin monotone non decreasing: confirmed for both horizons")
+    if "tree" in intervention_effectiveness:
+        tree = intervention_effectiveness["tree"]
+        print(
+            f"tree coverage fraction: mature {tree['coverage_fraction_mature']}, "
+            f"near term 2026 {tree['coverage_fraction_near_term_2026']}"
+        )
 
 
 if __name__ == "__main__":

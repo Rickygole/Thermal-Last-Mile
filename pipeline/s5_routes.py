@@ -36,6 +36,16 @@ INVENTED_MODE_SHARE_NOTE = (
     "gates by other means not represented by these four origins"
 )
 FAN_VOLUMES_PATH = c.OUT_DIR / "fan_volumes.json"
+VULNERABILITY_LOOKUP_PATH = c.OUT_DIR / "vulnerability_by_segment.json"
+VULNERABILITY_LOOKUP = c.read_json(VULNERABILITY_LOOKUP_PATH) if VULNERABILITY_LOOKUP_PATH.exists() else {}
+VULNERABILITY_SOURCE_NOTE = (
+    "svi and canopy_pct populated from data/out/vulnerability_by_segment.json, produced by "
+    "pipeline/s11_vulnerability.py, see data/out/equity.json for the CDC/ATSDR SVI vintage and "
+    "field, the NLCD canopy source, and the per segment join method"
+    if VULNERABILITY_LOOKUP_PATH.exists()
+    else "pipeline/s11_vulnerability.py has not been run, svi and canopy_pct default to 0.0, this "
+    "is a documented gap, not a measurement"
+)
 
 
 def load_mode_share():
@@ -302,6 +312,7 @@ def build_segments():
             full_lonlat = [c.utm_to_lonlat(x, y) for x, y in seg_geom.coords]
 
             name, seg_id = segment_name(route, start_dist, end_dist, coords, origin_label, idx)
+            vuln = VULNERABILITY_LOOKUP.get(seg_id, {})
 
             feature = {
                 "type": "Feature",
@@ -317,8 +328,8 @@ def build_segments():
                     "wbgt": wbgt_out,
                     "shade_frac": shade_frac_out,
                     "fans": fans_total,
-                    "svi": 0.0,
-                    "canopy_pct": 0.0,
+                    "svi": vuln.get("svi") if vuln.get("svi") is not None else 0.0,
+                    "canopy_pct": vuln.get("canopy_pct") if vuln.get("canopy_pct") is not None else 0.0,
                     "treatable": TREATABLE,
                 },
             }
@@ -375,8 +386,8 @@ def main():
             "invented_approach_mode_share": INVENTED_APPROACH_MODE_SHARE,
             "treatable_interventions": TREATABLE,
             "uncertainty": UNCERTAINTY_META,
-            "svi_note": "social vulnerability index not integrated in this pipeline run, reported as 0.0 pending a real CDC or ATSDR SVI data source",
-            "canopy_pct_note": "tree canopy percent not modeled in this pipeline run, reported as 0.0 pending a real canopy raster, the DSM built in s3 covers buildings only",
+            "svi_note": VULNERABILITY_SOURCE_NOTE,
+            "canopy_pct_note": VULNERABILITY_SOURCE_NOTE,
         },
     )
 

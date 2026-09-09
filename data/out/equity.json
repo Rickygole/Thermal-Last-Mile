@@ -1,0 +1,279 @@
+{
+  "purpose": "answers whether heat exposure and the current cost effectiveness optimizer's spending are distributed regressively with respect to social vulnerability around the four NRG Stadium pedestrian approaches, using the CDC/ATSDR Social Vulnerability Index and NLCD tree canopy joined onto the 172 walk segments produced by pipeline/s5_routes.py",
+  "generated_utc": "2026-09-09T02:33:23Z",
+  "svi_source": {
+    "status": "real",
+    "vintage": "2022",
+    "field_used": "RPL_THEMES",
+    "field_meaning": "overall SVI percentile ranking across all four themes, 0 to 1, higher means more socially vulnerable relative to the rest of the United States",
+    "fetch_meta": {
+      "source": "CDC/ATSDR Social Vulnerability Index 2022 USA, census tract layer",
+      "arcgis_item_id": "f2af3fd35858443293b75d5f73c7d4d3",
+      "arcgis_item_owner": "data_cdc",
+      "service_url": "https://services3.arcgis.com/ZvidGQkLaDJxRSJ2/arcgis/rest/services/CDC_ATSDR_Social_Vulnerability_Index_2022_USA/FeatureServer/2/query",
+      "layer_id": 2,
+      "layer_name": "SVI2022 US tract",
+      "vintage": "2022",
+      "field_used": "RPL_THEMES",
+      "field_meaning": "overall percentile ranking summary across all four SVI themes, socioeconomic status, household characteristics, racial and ethnic minority status, housing type and transportation, 0 is least vulnerable and 1 is most vulnerable relative to all other US census tracts",
+      "query_params": {
+        "geometry": "{\"xmin\": -95.42584380000001, \"ymin\": 29.668300600000006, \"xmax\": -95.3934728, \"ymax\": 29.701266500000006, \"spatialReference\": {\"wkid\": 4326}}",
+        "geometryType": "esriGeometryEnvelope",
+        "spatialRel": "esriSpatialRelIntersects",
+        "inSR": 4326,
+        "outFields": "FIPS,STATE,COUNTY,LOCATION,RPL_THEMES,RPL_THEME1,RPL_THEME2,RPL_THEME3,RPL_THEME4,E_TOTPOP,AREA_SQMI",
+        "f": "geojson",
+        "outSR": 4326
+      },
+      "request_url": "https://services3.arcgis.com/ZvidGQkLaDJxRSJ2/arcgis/rest/services/CDC_ATSDR_Social_Vulnerability_Index_2022_USA/FeatureServer/2/query?geometry=%7B%22xmin%22%3A+-95.42584380000001%2C+%22ymin%22%3A+29.668300600000006%2C+%22xmax%22%3A+-95.3934728%2C+%22ymax%22%3A+29.701266500000006%2C+%22spatialReference%22%3A+%7B%22wkid%22%3A+4326%7D%7D&geometryType=esriGeometryEnvelope&spatialRel=esriSpatialRelIntersects&inSR=4326&outFields=FIPS%2CSTATE%2CCOUNTY%2CLOCATION%2CRPL_THEMES%2CRPL_THEME1%2CRPL_THEME2%2CRPL_THEME3%2CRPL_THEME4%2CE_TOTPOP%2CAREA_SQMI&f=geojson&outSR=4326",
+      "fetched_utc": "2026-09-09T02:31:48Z",
+      "status_code": 200,
+      "n_tract_features_returned": 16,
+      "query_geometry_bbox_wgs84": [
+        -95.42584380000001,
+        29.668300600000006,
+        -95.3934728,
+        29.701266500000006
+      ],
+      "access": "public ArcGIS Online Feature Service, no API key required"
+    },
+    "join_diagnostics": {
+      "n_tracts_returned_by_query": 16,
+      "n_tracts_matched_to_a_segment": 3,
+      "n_tracts_suppressed_in_returned_set": 0,
+      "n_segments_unmatched": 0,
+      "unmatched_segment_ids": [],
+      "n_segments_using_nearest_tract_fallback": 0,
+      "nearest_fallback_segment_ids": [],
+      "n_segments_using_suppressed_value_mean_fallback": 0,
+      "suppressed_fallback_segment_ids": [],
+      "study_area_valid_tract_mean_svi": 0.4803
+    }
+  },
+  "canopy_source": {
+    "status": "real",
+    "fetch_meta": {
+      "source": "MRLC NLCD Tree Canopy Cover 2021, CONUS, v2021-4",
+      "access": "MRLC GeoServer WCS 2.0.1, coverage mrlc_download__nlcd_tcc_conus_2021_v2021-4, same endpoint and coverage id used by pipeline/s7_cities.py fetch_canopy_nlcd, extended here to clip the whole study area once and sample per segment rather than a single buffer mean",
+      "url": "https://www.mrlc.gov/geoserver/ows",
+      "request_url": "https://www.mrlc.gov/geoserver/ows?service=WCS&version=2.0.1&request=GetCoverage&coverageId=mrlc_download__nlcd_tcc_conus_2021_v2021-4&format=image%2Fgeotiff&subsettingCrs=http%3A%2F%2Fwww.opengis.net%2Fdef%2Fcrs%2FEPSG%2F0%2F4326&subset=Lat%2829.665300600000005%2C29.704266500000006%29&subset=Long%28-95.42884380000001%2C-95.3904728%29",
+      "fetched_utc": "2026-09-09T02:31:49Z",
+      "status_code": 200,
+      "query_bbox_wgs84": [
+        -95.42584380000001,
+        29.668300600000006,
+        -95.3934728,
+        29.701266500000006
+      ],
+      "raster_crs": "EPSG:4326",
+      "raster_width": 125,
+      "raster_height": 145,
+      "raster_bounds": [
+        -95.42912763326541,
+        29.66502160276438,
+        -95.39008968013658,
+        29.704458333819595
+      ],
+      "n_valid_pixels_in_clip": 18125,
+      "pixel_resolution_native": "30 m NLCD grid, delivered here reprojected to EPSG:4326 by the WCS service, so pixel size in degrees varies slightly across the small clip"
+    },
+    "join_diagnostics": {
+      "n_samples_per_segment_requested": 5,
+      "n_segments_using_single_point_fallback": 0,
+      "single_point_fallback_segment_ids": [],
+      "resolution_vs_segment_length_note": "NLCD cells are about 30 m across while walk segments are cut at a nominal 20 m, so most segments sample only one or two distinct raster cells and adjacent segments frequently share the same cell value, canopy_pct is not spatially independent between neighboring segments at this segmentation"
+    }
+  },
+  "study_area_bbox_wgs84": [
+    -95.42584380000001,
+    29.668300600000006,
+    -95.3934728,
+    29.701266500000006
+  ],
+  "study_area_bbox_note": "bounding box of all 172 walk segments in data/out/segments.geojson, padded by 0.01 degrees, roughly 900 to 1100 m depending on axis at this latitude, to make sure tract polygons overlapping the corridor edge are captured even if a segment sits near the tile boundary",
+  "n_segments": 172,
+  "segment_level_summary": {
+    "svi": {
+      "n_valid": 172,
+      "n_null": 0,
+      "min": 0.2809,
+      "max": 0.7561,
+      "mean": 0.4075,
+      "median": 0.2809,
+      "n_distinct_values": 3
+    },
+    "canopy_pct": {
+      "n_valid": 172,
+      "n_null": 0,
+      "min": 0.0,
+      "max": 19.0,
+      "mean": 1.7,
+      "median": 0.0,
+      "n_distinct_values": 19
+    }
+  },
+  "exposure_definition": "exposure_degmin_per_trip is the mean of a segment's degmin field across every modeled kickoff hour in pipeline/config.yml, degmin itself is degree-minutes of WBGT above the 28 C threshold integrated along that segment for one pedestrian trip, this averages across hours rather than summing them because the modeled hours are alternative candidate kickoff times, not stages of a single trip",
+  "correlation_exposure_vs_svi_segment_level": {
+    "n": 172,
+    "pearson_r": 0.2073,
+    "pearson_p": 0.0064,
+    "spearman_r": 0.2563,
+    "spearman_p": 0.0007,
+    "x": "exposure_degmin_per_trip",
+    "y": "svi"
+  },
+  "correlation_exposure_vs_svi_segment_level_caveat": "this correlation pseudo-replicates SVI, every segment inside the same census tract carries an identical SVI value, so the true independent sample size is the number of distinct tracts, not 172 segments, see correlation_exposure_vs_svi_tract_level below for the honest low powered version",
+  "correlation_exposure_vs_svi_tract_level": {
+    "n": 3,
+    "pearson_r": 0.4966,
+    "pearson_p": 0.6692,
+    "spearman_r": 0.5,
+    "spearman_p": 0.6667,
+    "x": "mean_exposure_degmin_per_trip",
+    "y": "svi"
+  },
+  "correlation_exposure_vs_canopy_pct": {
+    "n": 172,
+    "pearson_r": -0.144,
+    "pearson_p": 0.0595,
+    "spearman_r": -0.2783,
+    "spearman_p": 0.0002,
+    "x": "exposure_degmin_per_trip",
+    "y": "canopy_pct"
+  },
+  "exposure_by_svi_quartile": {
+    "n_bins_achieved": 2,
+    "requested_bins": 4,
+    "note": "only 2 distinct bins were achievable because svi has few distinct values across the 172 segments, this is a real limitation of tract level data joined onto many short segments",
+    "bins": [
+      {
+        "bin": 1,
+        "n_segments": 137,
+        "svi_min": 0.2809,
+        "svi_max": 0.6481,
+        "mean_exposure_degmin_per_trip": 0.923
+      },
+      {
+        "bin": 2,
+        "n_segments": 35,
+        "svi_min": 0.7561,
+        "svi_max": 0.7561,
+        "mean_exposure_degmin_per_trip": 0.991
+      }
+    ]
+  },
+  "exposure_by_canopy_quartile": {
+    "n_bins_achieved": 1,
+    "requested_bins": 4,
+    "note": null,
+    "bins": [
+      {
+        "bin": 1,
+        "n_segments": 172,
+        "canopy_pct_min": 0.0,
+        "canopy_pct_max": 19.0,
+        "mean_exposure_degmin_per_trip": 0.937
+      }
+    ]
+  },
+  "optimizer_equity": {
+    "method": "the optimizer in pipeline/s6_optimize.py selects segment and intervention pairs by cost effectiveness only, averted degree-minutes per dollar, with no SVI term anywhere in its objective or constraints, this analysis maps the funded set at each reported budget back to segment SVI to see what the blind objective happens to produce, two views are reported, set membership at successive budgets, which saturates almost immediately because the cheapest intervention is cost effective nearly everywhere, and a dollar weighted mean SVI at the full cap, which is the more informative number because it accounts for the fact that some interventions cost 50 to 60 times more than others per segment",
+    "baseline_mean_svi_all_172_segments": 0.4075,
+    "baseline_median_svi_all_172_segments": 0.2809,
+    "saturation_budget_usd": 75000,
+    "saturation_note": "budget level, if any, at which every one of the 172 segments already has at least one funded intervention, past this point membership based equity comparisons are meaningless because everyone is already funded, this happens quickly because a single street tree is only 300 USD",
+    "by_budget_usd": {
+      "25000": {
+        "spent": 24900.0,
+        "n_unique_segments_funded": 83,
+        "n_total_segments": 172,
+        "mean_svi_funded": 0.5432,
+        "median_svi_funded": 0.6481,
+        "mean_canopy_pct_funded": 2.31,
+        "funded_segments_by_approach": {
+          "lot_c": 56,
+          "rideshare_kirby": 25,
+          "metrorail_stadium_park": 2
+        },
+        "averted_degmin": 3540801.4
+      },
+      "50000": {
+        "spent": 49800.0,
+        "n_unique_segments_funded": 166,
+        "n_total_segments": 172,
+        "mean_svi_funded": 0.4121,
+        "median_svi_funded": 0.2809,
+        "mean_canopy_pct_funded": 1.76,
+        "funded_segments_by_approach": {
+          "fan_fest": 53,
+          "lot_c": 56,
+          "rideshare_kirby": 25,
+          "metrorail_stadium_park": 32
+        },
+        "averted_degmin": 4544731.4
+      },
+      "75000": {
+        "spent": 67100.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "mean_svi_funded": 0.4075,
+        "median_svi_funded": 0.2809,
+        "mean_canopy_pct_funded": 1.7,
+        "funded_segments_by_approach": {
+          "fan_fest": 53,
+          "lot_c": 56,
+          "rideshare_kirby": 25,
+          "metrorail_stadium_park": 38
+        },
+        "averted_degmin": 4752142.9
+      },
+      "2000000": {
+        "spent": 1989100.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "mean_svi_funded": 0.4075,
+        "median_svi_funded": 0.2809,
+        "mean_canopy_pct_funded": 1.7,
+        "funded_segments_by_approach": {
+          "fan_fest": 53,
+          "lot_c": 56,
+          "rideshare_kirby": 25,
+          "metrorail_stadium_park": 38
+        },
+        "averted_degmin": 16439018.1
+      }
+    },
+    "dollar_weighted_mean_svi_at_full_cap": 0.4538,
+    "dollar_weighted_minus_baseline_mean_svi": 0.0463,
+    "by_intervention_at_full_cap": {
+      "tree": {
+        "n_pairs_funded": 172,
+        "total_cost_usd": 51600.0,
+        "mean_svi_of_funded_segments": 0.4075
+      },
+      "sail": {
+        "n_pairs_funded": 125,
+        "total_cost_usd": 1937500.0,
+        "mean_svi_of_funded_segments": 0.4551
+      }
+    },
+    "verdict": "mildly progressive with respect to social vulnerability, the dollar weighted mean SVI of the funded set is higher than the simple mean SVI across all segments, meaning a disproportionate share of the money lands on higher vulnerability ground, purely as a byproduct of where those segments happen to be cost effective, not because the optimizer has any SVI aware logic"
+  },
+  "unmodeled_repeat_worker_population": {
+    "population_not_modeled": "stadium staff, concession and merchandise vendors, parking lot attendants and event security who walk an approach corridor repeatedly across a season rather than once as a ticketed fan does, this population is invisible to every number elsewhere in this pipeline, which is built around a single fan trip",
+    "why_it_matters_for_equity": "service and gig staff at large Gulf Coast stadium events are disproportionately drawn from lower income, higher SVI neighborhoods relative to ticket buyers, this is a plausible equity concern based on general labor market patterns for stadium service work, it is not measured in this pipeline, no worker home address or wage data was fetched or is available here",
+    "assumption_stated": "illustrative only, assumes a worker walks the full lot_c approach corridor (56 segments) once inbound and once outbound for every one of the 7 Houston NRG World Cup matches listed in pipeline/s7_cities.py, that match count itself is typed from general knowledge in this repository and is flagged there as unverified against FIFA's official schedule, giving 14 total one-way walks across the tournament, and further assumes every walk occurs under the same modeled kickoff-hour heat conditions used for the fan model, which ignores that a worker's actual shift start and end times, breaks, and indoor time differ from a fan's single walk to their seat",
+    "one_way_trip_degmin_this_approach_measured": 53.9,
+    "illustrative_cumulative_degmin_across_shifts": 753.9,
+    "ratio_to_a_single_fan_trip": 14.0,
+    "mean_svi_along_this_approach": 0.5779,
+    "caveat": "the degmin figures used here are real model output for the lot_c approach segments, the multiplication by a shift count is an illustrative what-if scaling, not a measurement of any actual worker's exposure, and no field data on stadium worker schedules, routes, or home tract exists in this repository"
+  },
+  "known_gaps": [
+    "SVI is tract level, joined by segment midpoint, so within-tract heterogeneity below the tract is invisible and every segment inside one tract gets one shared number",
+    "the study area is small, one stadium's four approach corridors, so the number of distinct census tracts involved is small and any correlation here should not be read as a general finding about heat and vulnerability in Houston",
+    "canopy_pct is sampled from a 30 m NLCD grid onto 20 m nominal segments, so neighboring segments frequently repeat the same pixel value",
+    "the optimizer equity section reflects pipeline/s6_optimize.py exactly as it exists in this repository at the time this script ran, it was not modified to add an equity term, that would be a separate change to the optimizer itself, not to this analysis",
+    "the repeat worker section is explicitly illustrative, not a measurement, no worker survey, payroll, or address data exists in this repository"
+  ]
+}

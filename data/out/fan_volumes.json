@@ -46,7 +46,7 @@
   "plausible": false,
   "plausibility_notes": [
     "the largest and smallest derived approach shares differ by more than 10x, a spread this pipeline treats as implausible rather than smoothing over",
-    "lot_c sits inside a stadium surface parking lot, which by definition contains almost no core-poi-geometry commercial establishments of its own, whatever the true gameday foot traffic through it. a nearby POI or category visit rate density proxy structurally undercounts a parking lot approach and can structurally overcount an approach that happens to border more ordinary retail unrelated to stadium arrivals. the derived share for lot_c fell to less than half of the original invented estimate, consistent with this known structural bias rather than genuine evidence that lot_c carries fewer fans on gameday, so this run is not trusted and the pipeline falls back to the invented constants"
+    "lot_c sits inside a stadium surface parking lot, which by definition contains almost no core-poi-geometry commercial establishments of its own, whatever the true gameday foot traffic through it. a nearby POI or category visit rate density proxy structurally undercounts a parking lot approach and can structurally overcount an approach that happens to border more ordinary retail unrelated to stadium arrivals. the derived share approach fan_fest disagrees with the prior by a factor of 6.29. this gate is symmetric and fires on disagreement in EITHER direction on ANY approach, not only where the evidence is unwelcome. the known structural limitation, declared before the derivation was run, is that POI density cannot measure approaches in ['lot_c'], so the derivation is not trusted here and the pipeline falls back to the invented constants"
   ],
-  "fetched_utc": "2026-09-09T02:11:09Z"
+  "fetched_utc": "2026-09-09T02:33:58Z"
 }

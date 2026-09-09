@@ -12,6 +12,6 @@
   "lst_area_mean_c": 51.08598709106445,
   "spearman_r": 0.147,
   "pearson_r": 0.193,
-  "verdict": "weak rank agreement between the organizers' sample UHI index and this pipeline's Landsat derived heat anomaly at the sampled points. given the small sample size inside such a small study area, the additive noise the organizers disclose, and the coarse 1 to 11 ordinal scale of their index, this is read as a limited and inconclusive corroboration attempt, not a contradiction of the Landsat field",
-  "fetched_utc": "2026-09-09T02:09:34Z"
+  "verdict": "weak rank agreement between the organizers' sample UHI index and this pipeline's Landsat derived heat anomaly at the sampled points. given the small sample size inside such a small study area, the additive noise the organizers disclose, and the coarse 1 to 11 ordinal scale of their index, this test has very little statistical power in either direction. it neither corroborates nor contradicts the Landsat field, and it should not be presented as support for it",
+  "fetched_utc": "2026-09-09T02:32:21Z"
 }
