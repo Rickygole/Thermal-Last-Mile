@@ -11,6 +11,7 @@ from shapely.ops import substring
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import common as c
 import lst_houston as lst
+import s4_surface as s4
 
 PATH_WIDTH_M = 2.0
 PATH_WIDTH_NOTE = (
@@ -40,6 +41,66 @@ WALK_SPEED_MPS = c.CFG["walk"]["speed_mps"]
 SEGMENT_LENGTH_M = c.CFG["walk"]["segment_length_m"]
 SAMPLE_SPACING_M = c.CFG["walk"]["sample_spacing_m"]
 
+MC_SAMPLES = 128
+MC_SEED = 20260704
+MC_LOW_PCT = 5.0
+MC_HIGH_PCT = 95.0
+MC_TDEW_SD_C = 1.5
+MC_WIND_SIGMA_LOG = 0.35
+MC_GHI_LOW = 0.70
+MC_GHI_HIGH = 1.00
+MC_WIND_FLOOR_MPS = 0.5
+
+UNCERTAINTY_META = {
+    "label": (
+        f"degmin_lo and degmin_hi are the {MC_LOW_PCT:.0f}th and {MC_HIGH_PCT:.0f}th percentiles of a "
+        f"{MC_SAMPLES} draw Monte Carlo over meteorological inputs, not a confidence interval on the "
+        "observations and not a full model uncertainty. the interval is not forced to contain the "
+        "central estimate, so a segment whose central value sits outside its own band is a real "
+        "signal that the response to these inputs is not monotone about the central case"
+    ),
+    "method": "monte carlo, common random numbers across hours and segments",
+    "samples": MC_SAMPLES,
+    "seed": MC_SEED,
+    "percentiles": [MC_LOW_PCT, MC_HIGH_PCT],
+    "perturbed_inputs": {
+        "air_temperature_c": (
+            "additive, normal, mean 0, standard deviation taken from tair_tolerance_c in the s2 "
+            "meta for each hour, which is 1.0 C covering ASOS sensor accuracy of about 0.6 C plus "
+            "representativeness error from interpolating three stations 10 to 40 km away. applied "
+            "as a single field wide shift, not as independent noise per cell"
+        ),
+        "dew_point_c": (
+            f"additive, normal, mean 0, standard deviation {MC_TDEW_SD_C} C, field wide shift, "
+            "clipped so dew point never exceeds air temperature. covers ASOS dew point accuracy of "
+            "about 1.1 C plus Gulf Coast advection variability across the interpolation footprint"
+        ),
+        "wind_speed_scale": (
+            f"multiplicative, lognormal, median 1.0, standard deviation of the log {MC_WIND_SIGMA_LOG}, "
+            f"floored at {MC_WIND_FLOOR_MPS} m/s. the 5th to 95th percentile multiplier is about 0.56 "
+            "to 1.78. this is the dominant term and it is wide on purpose, because airport wind "
+            "extrapolated to 2 m says little about ventilation in a specific street canyon"
+        ),
+        "irradiance_scale": (
+            f"multiplicative, uniform on {MC_GHI_LOW} to {MC_GHI_HIGH} of the pvlib clear sky global "
+            "horizontal irradiance. one sided because the clear sky value is a physical upper bound "
+            "and any real sky can only reduce it, the lower end represents scattered cumulus"
+        ),
+    },
+    "not_propagated": (
+        "globe diameter is held at the ISO 150 mm value and is not sampled, although switching to "
+        "the 50.8 mm Liljegren default moves the headline number by more than the whole band. the "
+        "UHI coupling coefficient, the shade mask geometry from the building DSM, the sky diffuse "
+        "fraction, the ground albedo, walking speed, mode share and the 28 C threshold are all held "
+        "fixed. the reported band is therefore a lower bound on total uncertainty"
+    ),
+    "sensitivity_note": (
+        "degree minutes above a threshold is a hinge function, so its condition number at this "
+        "operating point is large, roughly 35, and a small WBGT error becomes a large degree minute "
+        "error. a wide band here is the honest result, not a modelling failure"
+    ),
+}
+
 TREATABLE = sorted(
     name for name, spec in c.COSTS["interventions"].items() if spec.get("blocks_direct_beam")
 )
@@ -64,58 +125,69 @@ def rowcol(bounds, xs, ys):
 
 
 def load_hour_layers(bounds, hours):
+    lst_field, lst_area_mean, _ = lst.get_uhi_field(bounds)
     layers = {}
     for hour in hours:
         wbgt_meta = c.read_json(c.INTERIM_DIR / f"wbgt_{hour:02d}_meta.json")
+        tair_grid, tdew_grid, wind_grid, pres_grid = c.station_grids(bounds, wbgt_meta["stations"])
         layers[hour] = {
             "expo": read_band(c.INTERIM_DIR / f"expo_{hour:02d}.tif"),
             "shade": read_band(c.INTERIM_DIR / f"shade_{hour:02d}.tif").astype(bool),
             "meta": wbgt_meta,
+            "tair": lst.apply_uhi(tair_grid, lst_field, lst_area_mean),
+            "tdew": tdew_grid,
+            "wind": wind_grid,
+            "pres": pres_grid,
         }
-    for hour in hours:
-        tol = layers[hour]["meta"]["tair_tolerance_c"]
-        layers[hour]["expo_lo"] = expo_variant(bounds, hour, layers[hour]["meta"], -tol, layers[hour]["shade"])
-        layers[hour]["expo_hi"] = expo_variant(bounds, hour, layers[hour]["meta"], tol, layers[hour]["shade"])
     return layers
 
 
-def expo_variant(bounds, hour, wbgt_meta, tair_delta, shade_mask):
-    tag = "lo" if tair_delta < 0 else "hi"
-    path = c.INTERIM_DIR / f"expo_{tag}_{hour:02d}.tif"
-    if path.exists():
-        return read_band(path)
-
-    stations = wbgt_meta["stations"]
-    shifted = {s: {**v, "tair_c": v["tair_c"] + tair_delta} for s, v in stations.items()}
-    tair_grid, tdew_grid, wind_grid, pres_grid = c.station_grids(bounds, shifted)
-    lst_field, lst_area_mean, _ = lst.get_uhi_field(bounds)
-    tair_grid = lst.apply_uhi(tair_grid, lst_field, lst_area_mean)
-    utc_dt = pd.Timestamp(wbgt_meta["utc_datetime_used"])
-    ghi_sun = wbgt_meta["ghi_full_sun_wm2"]
-
-    wbgt_sun = c.compute_wbgt_grid(bounds, tair_grid, tdew_grid, wind_grid, pres_grid, ghi_sun, utc_dt)
-    if ghi_sun <= 0:
-        wbgt_shaded = wbgt_sun.copy()
-    else:
-        diffuse_fraction = c.COSTS["constants"]["diffuse_fraction_shaded"]["value"]
-        wbgt_shaded = c.compute_wbgt_grid(
-            bounds, tair_grid, tdew_grid, wind_grid, pres_grid, ghi_sun * diffuse_fraction, utc_dt
-        )
-    expo = np.where(shade_mask, wbgt_shaded, wbgt_sun).astype(np.float32)
-
-    transform = c.raster_transform(bounds)
-    profile = {
-        "driver": "GTiff",
-        "height": bounds["height"],
-        "width": bounds["width"],
-        "count": 1,
-        "dtype": "float32",
-        "crs": bounds["crs"],
-        "transform": transform,
+def mc_draws():
+    rng = np.random.default_rng(MC_SEED)
+    return {
+        "tair_z": rng.normal(0.0, 1.0, MC_SAMPLES),
+        "tdew_z": rng.normal(0.0, 1.0, MC_SAMPLES),
+        "wind_scale": np.exp(rng.normal(0.0, MC_WIND_SIGMA_LOG, MC_SAMPLES)),
+        "ghi_scale": rng.uniform(MC_GHI_LOW, MC_GHI_HIGH, MC_SAMPLES),
     }
-    with rasterio.open(path, "w", **profile) as dst:
-        dst.write(expo, 1)
-    return expo
+
+
+def mc_over_threshold(bounds, layers, hours, rows, cols, starts):
+    lon_grid, lat_grid = c.grid_centers_lonlat(bounds)
+    lat_pts = lat_grid[rows, cols].astype(np.float64)
+    lon_pts = lon_grid[rows, cols].astype(np.float64)
+    counts = np.diff(np.append(starts, rows.size)).astype(np.float64)
+    draws = mc_draws()
+
+    out = {}
+    for hour in hours:
+        layer = layers[hour]
+        meta = layer["meta"]
+        tair0 = layer["tair"][rows, cols].astype(np.float64)
+        tdew0 = layer["tdew"][rows, cols].astype(np.float64)
+        wind0 = layer["wind"][rows, cols].astype(np.float64)
+        pres0 = layer["pres"][rows, cols].astype(np.float64)
+        shaded = layer["shade"][rows, cols]
+        utc_dt = pd.Timestamp(meta["utc_datetime_used"])
+        ghi0 = meta["ghi_full_sun_wm2"]
+        tair_sd = meta["tair_tolerance_c"]
+
+        samples = np.empty((MC_SAMPLES, starts.size), dtype=np.float64)
+        for k in range(MC_SAMPLES):
+            tair = tair0 + tair_sd * draws["tair_z"][k]
+            tdew = np.minimum(tdew0 + MC_TDEW_SD_C * draws["tdew_z"][k], tair)
+            wind = np.maximum(wind0 * draws["wind_scale"][k], MC_WIND_FLOOR_MPS)
+            wbgt_sun, wbgt_shade = s4.wbgt_sun_and_shade(
+                utc_dt, lat_pts, lon_pts, ghi0 * draws["ghi_scale"][k], pres0, tair, tdew, wind
+            )
+            expo = np.where(shaded, wbgt_shade, wbgt_sun)
+            over = np.clip(expo - WBGT_THRESHOLD_C, 0.0, None)
+            samples[k] = np.add.reduceat(over, starts) / counts
+        out[hour] = (
+            np.percentile(samples, MC_LOW_PCT, axis=0),
+            np.percentile(samples, MC_HIGH_PCT, axis=0),
+        )
+    return out
 
 
 def segment_name(route, start_dist, end_dist, coords, approach_label, index):
@@ -144,6 +216,8 @@ def build_segments():
     layers = load_hour_layers(bounds, hours)
 
     features = []
+    rows_list, cols_list, starts, scales = [], [], [], []
+    n_points = 0
     for approach, route in routes.items():
         coords = route["coords_utm"]
         line = LineString(coords)
@@ -171,21 +245,22 @@ def build_segments():
             ys = np.array([p.y for p in sample_pts])
             rows, cols = rowcol(bounds, xs, ys)
 
+            scale = (seg_len_m / WALK_SPEED_MPS) / 60.0
+            rows_list.append(rows)
+            cols_list.append(cols)
+            starts.append(n_points)
+            scales.append(scale)
+            n_points += rows.size
+
             degmin, degmin_lo, degmin_hi, wbgt_out, shade_frac_out = {}, {}, {}, {}, {}
             for hour in hours:
                 cells = layers[hour]["expo"][rows, cols]
-                cells_lo = layers[hour]["expo_lo"][rows, cols]
-                cells_hi = layers[hour]["expo_hi"][rows, cols]
                 shaded = layers[hour]["shade"][rows, cols]
 
                 over = np.clip(cells - WBGT_THRESHOLD_C, 0, None).mean()
-                over_lo = np.clip(cells_lo - WBGT_THRESHOLD_C, 0, None).mean()
-                over_hi = np.clip(cells_hi - WBGT_THRESHOLD_C, 0, None).mean()
-
-                scale = (seg_len_m / WALK_SPEED_MPS) / 60.0
                 degmin[str(hour)] = round(float(over * scale), 3)
-                degmin_lo[str(hour)] = round(float(min(over, over_lo) * scale), 3)
-                degmin_hi[str(hour)] = round(float(max(over, over_hi) * scale), 3)
+                degmin_lo[str(hour)] = 0.0
+                degmin_hi[str(hour)] = 0.0
                 wbgt_out[str(hour)] = round(float(cells.mean()), 2)
                 shade_frac_out[str(hour)] = round(float(shaded.mean()), 3)
 
@@ -213,6 +288,21 @@ def build_segments():
                 },
             }
             features.append(feature)
+
+    mc = mc_over_threshold(
+        bounds,
+        layers,
+        hours,
+        np.concatenate(rows_list),
+        np.concatenate(cols_list),
+        np.array(starts),
+    )
+    for i, feature in enumerate(features):
+        props = feature["properties"]
+        for hour in hours:
+            lo, hi = mc[hour]
+            props["degmin_lo"][str(hour)] = round(float(lo[i] * scales[i]), 3)
+            props["degmin_hi"][str(hour)] = round(float(hi[i] * scales[i]), 3)
 
     return {"type": "FeatureCollection", "features": features}
 
@@ -247,6 +337,7 @@ def main():
             "approach_mode_share": APPROACH_MODE_SHARE,
             "mode_share_note": MODE_SHARE_NOTE,
             "treatable_interventions": TREATABLE,
+            "uncertainty": UNCERTAINTY_META,
             "svi_note": "social vulnerability index not integrated in this pipeline run, reported as 0.0 pending a real CDC or ATSDR SVI data source",
             "canopy_pct_note": "tree canopy percent not modeled in this pipeline run, reported as 0.0 pending a real canopy raster, the DSM built in s3 covers buildings only",
         },
