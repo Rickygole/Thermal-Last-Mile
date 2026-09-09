@@ -1021,6 +1021,7 @@
     "canopy is measured as area coverage in a buffer, not coverage specifically along pedestrian routes to each stadium",
     "surface temperature is not air temperature and is not WBGT, hot pavement and rooftops read much hotter than a person would experience at head height in shade",
     "match counts are typed from general knowledge in this script and were not fetched from a live FIFA source in this run",
-    "venue coordinates are commonly published approximate points, not surveyed stadium entrance locations"
+    "venue coordinates are commonly published approximate points, not surveyed stadium entrance locations",
+    "Landsat overpass time is roughly 10:30 to 11:00 local solar time, well before the actual kickoff hours the full Houston pipeline studies (15, 17, 19, 21). Late morning surface temperature does not capture afternoon and evening peak heating, so lst_p90_c likely understates the true afternoon and evening surface temperature at every city, including Houston, in a similar direction, but the size of that understatement can vary by city depending on local afternoon heating rate and is not corrected for here"
   ]
 }
