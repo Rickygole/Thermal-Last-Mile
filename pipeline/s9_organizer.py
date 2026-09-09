@@ -1,3 +1,4 @@
+import os
 import re
 import sys
 import json
@@ -13,7 +14,18 @@ import common as c
 import lst_houston as lst
 import s5_routes as s5
 
-SHARED_NAME = "zfwy31xq4tbu6uaiglcsjeahvqo0vsav"
+SHARED_NAME = os.environ.get("ORGANIZER_SHARE", "")
+
+
+def require_share():
+    if not SHARED_NAME:
+        raise SystemExit(
+            "ORGANIZER_SHARE is not set. This stage reads the hackathon organisers' "
+            "shared datasets, which participants agree to keep confidential, so the "
+            "share identifier is not committed to this repository. Set it from the "
+            "organisers' resources page before running this stage."
+        )
+    return SHARED_NAME
 FOLDER_IDS = {
     "urban-heat-index": "392080472577",
     "daily-weather": "392096744432",
@@ -164,7 +176,6 @@ def ensure_dataset(dataset):
     manifest = {
         "dataset": dataset,
         "folder_id": folder_id,
-        "shared_name": SHARED_NAME,
         "shard_count": len(files),
         "files": files,
         "n_shards_fetched_this_run": n_fetched,
