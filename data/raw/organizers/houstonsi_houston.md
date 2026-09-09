@@ -1,10 +1,10 @@
 # Houston Spatial Data Sources
 
 Host geography: NRG Stadium in Houston, Texas. Houston has strong municipal, county, appraisal district, and regional planning repositories. 
-Thank you to host institution GIS staff from the host institution GIS data centre with supplying these links.
+Links supplied by the host institution GIS data centre.
 
 ## Host institution GIS and data centre
-The Host institution GIS and data centre hosts large datasets for researchers in the host institution community, including regional high-resolution aerial photography, LiDAR point clouds and DEMs, and spatial databases of addresses, customers, and businesses. This data can be accessed from our GIS Lab in the institution GIS lab.
+The host institution GIS and data centre hosts large datasets for researchers in the host institution community, including regional high-resolution aerial photography, LiDAR point clouds and DEMs, and spatial databases of addresses, customers, and businesses. This data can be accessed from the institution's GIS lab.
 
 ## Municipal Repositories
 
