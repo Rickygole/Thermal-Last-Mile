@@ -118,8 +118,8 @@ export default function Clock ({ data }) {
         <>
           <div className="clock-head">
             <h2>
-              Walking to the {longDate(head.date)} kickoff cost one fan on the {perFanApproach.toLowerCase()}{' '}
-              {n2(head.perFan.value)} degree-minutes above WBGT {n1(retro.threshold)} C, measured end to end.
+              Walking to the {longDate(head.date)} kickoff cost one fan on the {perFanApproach} {n2(head.perFan.value)}{' '}
+              degree-minutes above WBGT {n1(retro.threshold)} C, measured end to end.
             </h2>
             <p>
               That is a measured quantity: this match's own observed weather at three airport stations, this date's own sun
@@ -201,10 +201,10 @@ export default function Clock ({ data }) {
           <div className="sweep-head">
             <h3>Separately: the hour sweep, for a venue whose kickoff is still open</h3>
             <p>
-              Everything above is Houston 2026, already played. This is the other question. Every hour of the plausible kickoff
-              window was modelled end to end, {n0((model.rows || []).length)} of them, each on its own hottest available match date
-              rather than on a single match. It compares hours in general. It is not a measurement of any match, and the rest of
-              this application follows whichever hour is selected here.
+              {retro ? 'Everything above is Houston 2026, already played. This is the other question. ' : ''}Every hour of the
+              plausible kickoff window was modelled end to end, {n0((model.rows || []).length)} of them, each on its own hottest
+              available match date rather than on a single match. It compares hours in general. It is not a measurement of any
+              match, and the rest of this application follows whichever hour is selected here.
             </p>
             {clock.fixture_binding_note ? <p className="label sweep-note">{clock.fixture_binding_note}</p> : null}
           </div>
@@ -227,20 +227,20 @@ export default function Clock ({ data }) {
                   r => r && r.equivalence && r.equivalence.usd === null
                 )?.equivalence?.note || null}
               />
-              <div className="mn-grid sweep-notes">
-                <div>
-                  <div className="k">Fan degree-hours in the sweep</div>
-                  <p>{clock.method_note}</p>
-                </div>
-                <div>
-                  <div className="k">The tree equivalence</div>
-                  <p>{clock.tree_equivalence_note}</p>
-                </div>
-                <div>
-                  <div className="k">Which canopy the trees are credited with</div>
-                  <p>{clock.coverage_horizon_note}</p>
-                </div>
-              </div>
+            </div>
+          </div>
+          <div className="mn-grid sweep-notes">
+            <div>
+              <div className="k">Fan degree-hours in the sweep</div>
+              <p>{clock.method_note}</p>
+            </div>
+            <div>
+              <div className="k">The tree equivalence</div>
+              <p>{clock.tree_equivalence_note}</p>
+            </div>
+            <div>
+              <div className="k">Which canopy the trees are credited with</div>
+              <p>{clock.coverage_horizon_note}</p>
             </div>
           </div>
         </section>

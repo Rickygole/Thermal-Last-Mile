@@ -8,6 +8,7 @@ import MethodsPanel from '../components/MethodsPanel.jsx'
 import SegmentDetail from '../components/SegmentDetail.jsx'
 import MapControls from '../components/MapControls.jsx'
 import EquityPanel from '../components/EquityPanel.jsx'
+import OrganiserData from '../components/OrganiserData.jsx'
 import HoverCard from '../components/HoverCard.jsx'
 import Legend from '../components/Legend.jsx'
 import { curvePoints } from '../components/TradeoffCurve.jsx'
@@ -117,7 +118,7 @@ export default function MapScreen ({ data }) {
     <div className="map-screen">
       <div className="col">
         <HourScrubber totals={data.totals} stats={data.stats} walk={data.walk} threshold={data.threshold} clock={data.clock} />
-        <RankedList segments={data.segments} hour={hour} max={data.max.all} treated={treated} />
+        <RankedList segments={data.segments} hour={hour} max={data.max.all} treated={treated} solution={solution} />
         <button type="button" className="continue" onClick={exportCsv}>
           Download ranked segments CSV
         </button>
@@ -163,6 +164,7 @@ export default function MapScreen ({ data }) {
         />
         <MethodsPanel meta={data.meta} solutionMethod={data.solutions?.meta?.method} heat={data.heat} />
         <EquityPanel equity={data.equity} />
+        <OrganiserData uhi={data.uhi} fanVolumes={data.fanVolumes} />
         <button type="button" className="ghost" onClick={() => setScreen('ledger')}>
           Compare host cities
         </button>

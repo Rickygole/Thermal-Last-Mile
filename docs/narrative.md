@@ -240,7 +240,7 @@ one.
 
 Of the seven Houston matches, six kicked off at 12:00 local time and one, on 26 June 2026,
 kicked off at 19:00 (`pipeline/config.yml`, `fixtures.matches`). Measured from each
-match's own observed weather, the seven matches accumulated **283,106 fan-degree-hours**
+match's own observed weather, the seven matches accumulated **297,665 fan-degree-hours**
 above the 28 C WBGT threshold on the last mile to NRG Stadium across the tournament
 (`data/out/retrospective.json`, `tournament_total.tournament_total_fan_degree_hours_above_threshold`),
 ranging match to match from 20,066 fan-degree-hours (20 June) to 87,061 (4 July), with the
@@ -253,8 +253,8 @@ even at a fixed kickoff hour, which a generalized sweep by construction cannot s
 matches, it recomputes that same date's exposure at 19:00 instead, the hour the one
 already-evening match actually used, holding that date's own observed weather fixed and
 changing only the clock hour and the resulting sun geometry and shade. Across the six noon
-matches, this counterfactual removes 261,784 of the 283,106 tournament-wide fan-degree-hours,
-**92.5 percent**, at zero capital cost, purely from moving kickoff to an hour NRG had
+matches, this counterfactual removes 261,784 of the 297,665 tournament-wide fan-degree-hours,
+**91.7 percent**, at zero capital cost, purely from moving kickoff to an hour NRG had
 already used once during this same tournament
 (`data/out/retrospective.json`, `counterfactual_evening_kickoff.totals`). This is not a
 forecast or a recommendation to reschedule matches that have already been played; it is a

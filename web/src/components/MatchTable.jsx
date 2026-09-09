@@ -56,17 +56,20 @@ export default function MatchTable ({ model, selected, onSelect }) {
               </span>
               <span className="mt-num">{n1(m.tair)}</span>
               <span className="mt-num">{n1(m.tdew)}</span>
-              <span className="mt-num">
+              <span className="mt-num mt-wind">
                 {n1(m.wind)}
                 {m.calm ? <span className="mt-flag">calm at all {n0(m.stationCount)}</span> : null}
               </span>
-              <span className="mt-bar" aria-hidden="true">
-                <span style={{ width: `${Math.max(m.fanHours > 0 ? 1.5 : 0, t * 100)}%`, background: exposureCss(t) }} />
-              </span>
-              <span className="mt-num mt-value">
-                {n0(m.fanHours)}
-                {m.fanHours === 0 ? <span className="mt-flag">peak {n2(m.peak)} C, under the line</span> : null}
-              </span>
+              {m.fanHours > 0 ? (
+                <span className="mt-bar" aria-hidden="true">
+                  <span style={{ width: `${Math.max(1.5, t * 100)}%`, background: exposureCss(t) }} />
+                </span>
+              ) : (
+                <span className="mt-under">
+                  peak {n2(m.peak)} C, {n2(model.threshold - m.peak)} C under the counting threshold
+                </span>
+              )}
+              <span className="mt-num mt-value">{n0(m.fanHours)}</span>
             </button>
           )
         })}

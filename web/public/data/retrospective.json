@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-09-09T03:07:55Z",
+  "generated_utc": "2026-09-09T18:00:12Z",
   "wbgt_threshold_c": 28.0,
   "wbgt_extreme_c": 32.0,
   "fixtures_source": "FIFA published schedule for Houston Stadium, cross checked against two independent public listings",
@@ -19,24 +19,24 @@
         "KHOU": {
           "tair_c": 30.0,
           "tdew_c": 25.56,
-          "wind_ms": 5.132440454828494,
-          "wind_ms_10m": 7.0993272,
+          "wind_ms": 4.4599726713238566,
+          "wind_ms_10m": 6.169152,
           "pres_hpa": 1016.0,
           "valid": "2026-06-14 12:53:00"
         },
         "KIAH": {
           "tair_c": 26.11,
           "tdew_c": 24.44,
-          "wind_ms": 1.7108134849428314,
-          "wind_ms_10m": 2.3664424,
+          "wind_ms": 1.486657557107952,
+          "wind_ms_10m": 2.056384,
           "pres_hpa": 1015.5,
           "valid": "2026-06-14 12:53:00"
         },
         "KSGR": {
           "tair_c": 30.0,
           "tdew_c": 25.56,
-          "wind_ms": 5.132440454828494,
-          "wind_ms_10m": 7.0993272,
+          "wind_ms": 4.4599726713238566,
+          "wind_ms_10m": 6.169152,
           "pres_hpa": 1015.9,
           "valid": "2026-06-14 12:53:00"
         }
@@ -44,8 +44,8 @@
       "observed_conditions_mean": {
         "tair_c": 28.7,
         "tdew_c": 25.19,
-        "wind_ms": 3.99,
-        "wind_ms_10m": 5.52,
+        "wind_ms": 3.47,
+        "wind_ms_10m": 4.8,
         "pres_hpa": 1015.8
       },
       "ghi_full_sun_wm2": 903.5,
@@ -61,33 +61,33 @@
         "fan_fest": 7222
       },
       "degmin_per_trip_by_approach": {
-        "metrorail_stadium_park": 35.092,
-        "lot_c": 52.319,
-        "rideshare_kirby": 21.21,
-        "fan_fest": 48.181
+        "metrorail_stadium_park": 37.44,
+        "lot_c": 55.813,
+        "rideshare_kirby": 22.804,
+        "fan_fest": 51.488
       },
-      "fan_degree_hours_above_threshold": 42191.27,
+      "fan_degree_hours_above_threshold": 45052.34,
       "fans_crossing_extreme": {
-        "total": 32499,
+        "total": 46943,
         "by_approach": {
           "metrorail_stadium_park": {
-            "peak_segment_wbgt_c": 31.97,
-            "crosses_extreme": false,
+            "peak_segment_wbgt_c": 32.22,
+            "crosses_extreme": true,
             "fans": 7222
           },
           "lot_c": {
-            "peak_segment_wbgt_c": 32.0,
+            "peak_segment_wbgt_c": 32.25,
             "crosses_extreme": true,
             "fans": 32499
           },
           "rideshare_kirby": {
-            "peak_segment_wbgt_c": 31.36,
+            "peak_segment_wbgt_c": 31.6,
             "crosses_extreme": false,
             "fans": 10833
           },
           "fan_fest": {
-            "peak_segment_wbgt_c": 31.85,
-            "crosses_extreme": false,
+            "peak_segment_wbgt_c": 32.09,
+            "crosses_extreme": true,
             "fans": 7222
           }
         }
@@ -103,24 +103,24 @@
         "KHOU": {
           "tair_c": 30.0,
           "tdew_c": 23.33,
-          "wind_ms": 5.987847197299911,
-          "wind_ms_10m": 8.282548400000001,
+          "wind_ms": 5.2033014498778325,
+          "wind_ms_10m": 7.197344,
           "pres_hpa": 1005.0,
           "valid": "2026-06-17 12:53:00"
         },
         "KIAH": {
           "tair_c": 30.0,
           "tdew_c": 25.0,
-          "wind_ms": 5.987847197299911,
-          "wind_ms_10m": 8.282548400000001,
+          "wind_ms": 5.2033014498778325,
+          "wind_ms_10m": 7.197344,
           "pres_hpa": 1005.1,
           "valid": "2026-06-17 12:53:00"
         },
         "KSGR": {
           "tair_c": 28.89,
           "tdew_c": 23.89,
-          "wind_ms": 3.4216269698856627,
-          "wind_ms_10m": 4.7328848,
+          "wind_ms": 2.973315114215904,
+          "wind_ms_10m": 4.112768,
           "pres_hpa": 1004.5,
           "valid": "2026-06-17 12:53:00"
         }
@@ -128,8 +128,8 @@
       "observed_conditions_mean": {
         "tair_c": 29.63,
         "tdew_c": 24.07,
-        "wind_ms": 5.13,
-        "wind_ms_10m": 7.1,
+        "wind_ms": 4.46,
+        "wind_ms_10m": 6.17,
         "pres_hpa": 1004.87
       },
       "ghi_full_sun_wm2": 900.0,
@@ -145,32 +145,32 @@
         "fan_fest": 7222
       },
       "degmin_per_trip_by_approach": {
-        "metrorail_stadium_park": 25.109,
-        "lot_c": 37.522,
-        "rideshare_kirby": 14.56,
-        "fan_fest": 34.31
+        "metrorail_stadium_park": 27.378,
+        "lot_c": 40.91,
+        "rideshare_kirby": 16.102,
+        "fan_fest": 37.504
       },
-      "fan_degree_hours_above_threshold": 30104.6,
+      "fan_degree_hours_above_threshold": 32875.74,
       "fans_crossing_extreme": {
         "total": 0,
         "by_approach": {
           "metrorail_stadium_park": {
-            "peak_segment_wbgt_c": 30.93,
+            "peak_segment_wbgt_c": 31.16,
             "crosses_extreme": false,
             "fans": 7222
           },
           "lot_c": {
-            "peak_segment_wbgt_c": 30.98,
+            "peak_segment_wbgt_c": 31.21,
             "crosses_extreme": false,
             "fans": 32499
           },
           "rideshare_kirby": {
-            "peak_segment_wbgt_c": 30.33,
+            "peak_segment_wbgt_c": 30.57,
             "crosses_extreme": false,
             "fans": 10833
           },
           "fan_fest": {
-            "peak_segment_wbgt_c": 30.82,
+            "peak_segment_wbgt_c": 31.06,
             "crosses_extreme": false,
             "fans": 7222
           }
@@ -187,24 +187,24 @@
         "KHOU": {
           "tair_c": 26.67,
           "tdew_c": 23.33,
-          "wind_ms": 4.2770337123570785,
-          "wind_ms_10m": 5.916106,
+          "wind_ms": 3.71664389276988,
+          "wind_ms_10m": 5.14096,
           "pres_hpa": 1014.7,
           "valid": "2026-06-20 12:53:00"
         },
         "KIAH": {
           "tair_c": 23.89,
           "tdew_c": 22.78,
-          "wind_ms": 3.8493303411213704,
-          "wind_ms_10m": 5.3244954,
+          "wind_ms": 3.3449795034928917,
+          "wind_ms_10m": 4.626863999999999,
           "pres_hpa": 1015.0,
           "valid": "2026-06-20 12:53:00"
         },
         "KSGR": {
           "tair_c": 28.33,
           "tdew_c": 25.0,
-          "wind_ms": 2.9939235986499555,
-          "wind_ms_10m": 4.141274200000001,
+          "wind_ms": 2.6016507249389162,
+          "wind_ms_10m": 3.598672,
           "pres_hpa": 1013.3,
           "valid": "2026-06-20 12:53:00"
         }
@@ -212,8 +212,8 @@
       "observed_conditions_mean": {
         "tair_c": 26.3,
         "tdew_c": 23.7,
-        "wind_ms": 3.71,
-        "wind_ms_10m": 5.13,
+        "wind_ms": 3.22,
+        "wind_ms_10m": 4.46,
         "pres_hpa": 1014.33
       },
       "ghi_full_sun_wm2": 896.3,
@@ -229,32 +229,32 @@
         "fan_fest": 7222
       },
       "degmin_per_trip_by_approach": {
-        "metrorail_stadium_park": 16.652,
-        "lot_c": 25.394,
-        "rideshare_kirby": 8.929,
-        "fan_fest": 22.394
+        "metrorail_stadium_park": 19.169,
+        "lot_c": 29.144,
+        "rideshare_kirby": 10.64,
+        "fan_fest": 25.934
       },
-      "fan_degree_hours_above_threshold": 20066.38,
+      "fan_degree_hours_above_threshold": 23135.99,
       "fans_crossing_extreme": {
         "total": 0,
         "by_approach": {
           "metrorail_stadium_park": {
-            "peak_segment_wbgt_c": 30.04,
+            "peak_segment_wbgt_c": 30.3,
             "crosses_extreme": false,
             "fans": 7222
           },
           "lot_c": {
-            "peak_segment_wbgt_c": 30.14,
+            "peak_segment_wbgt_c": 30.4,
             "crosses_extreme": false,
             "fans": 32499
           },
           "rideshare_kirby": {
-            "peak_segment_wbgt_c": 29.47,
+            "peak_segment_wbgt_c": 29.73,
             "crosses_extreme": false,
             "fans": 10833
           },
           "fan_fest": {
-            "peak_segment_wbgt_c": 29.93,
+            "peak_segment_wbgt_c": 30.2,
             "crosses_extreme": false,
             "fans": 7222
           }
@@ -271,24 +271,24 @@
         "KHOU": {
           "tair_c": 32.22,
           "tdew_c": 22.78,
-          "wind_ms": 3.4216269698856627,
-          "wind_ms_10m": 4.7328848,
+          "wind_ms": 2.973315114215904,
+          "wind_ms_10m": 4.112768,
           "pres_hpa": 1020.7,
           "valid": "2026-06-23 12:53:00"
         },
         "KIAH": {
           "tair_c": 32.78,
           "tdew_c": 22.22,
-          "wind_ms": 4.704737083592787,
-          "wind_ms_10m": 6.5077166,
+          "wind_ms": 4.088308282046868,
+          "wind_ms_10m": 5.655056,
           "pres_hpa": 1020.1,
           "valid": "2026-06-23 12:53:00"
         },
         "KSGR": {
           "tair_c": 32.22,
           "tdew_c": 23.89,
-          "wind_ms": 2.9939235986499555,
-          "wind_ms_10m": 4.141274200000001,
+          "wind_ms": 2.6016507249389162,
+          "wind_ms_10m": 3.598672,
           "pres_hpa": 1020.6,
           "valid": "2026-06-23 12:53:00"
         }
@@ -296,8 +296,8 @@
       "observed_conditions_mean": {
         "tair_c": 32.41,
         "tdew_c": 22.96,
-        "wind_ms": 3.71,
-        "wind_ms_10m": 5.13,
+        "wind_ms": 3.22,
+        "wind_ms_10m": 4.46,
         "pres_hpa": 1020.47
       },
       "ghi_full_sun_wm2": 892.4,
@@ -313,32 +313,32 @@
         "fan_fest": 7222
       },
       "degmin_per_trip_by_approach": {
-        "metrorail_stadium_park": 40.297,
-        "lot_c": 60.238,
-        "rideshare_kirby": 24.811,
-        "fan_fest": 55.577
+        "metrorail_stadium_park": 42.859,
+        "lot_c": 64.054,
+        "rideshare_kirby": 26.55,
+        "fan_fest": 59.183
       },
-      "fan_degree_hours_above_threshold": 48647.66,
+      "fan_degree_hours_above_threshold": 51770.98,
       "fans_crossing_extreme": {
-        "total": 46943,
+        "total": 57776,
         "by_approach": {
           "metrorail_stadium_park": {
-            "peak_segment_wbgt_c": 32.51,
+            "peak_segment_wbgt_c": 32.78,
             "crosses_extreme": true,
             "fans": 7222
           },
           "lot_c": {
-            "peak_segment_wbgt_c": 32.57,
+            "peak_segment_wbgt_c": 32.83,
             "crosses_extreme": true,
             "fans": 32499
           },
           "rideshare_kirby": {
-            "peak_segment_wbgt_c": 31.92,
-            "crosses_extreme": false,
+            "peak_segment_wbgt_c": 32.18,
+            "crosses_extreme": true,
             "fans": 10833
           },
           "fan_fest": {
-            "peak_segment_wbgt_c": 32.4,
+            "peak_segment_wbgt_c": 32.66,
             "crosses_extreme": true,
             "fans": 7222
           }
@@ -355,24 +355,24 @@
         "KHOU": {
           "tair_c": 30.0,
           "tdew_c": 21.67,
-          "wind_ms": 5.132440454828494,
-          "wind_ms_10m": 7.0993272,
+          "wind_ms": 4.4599726713238566,
+          "wind_ms_10m": 6.169152,
           "pres_hpa": 1015.9,
           "valid": "2026-06-26 19:53:00"
         },
         "KIAH": {
           "tair_c": 31.11,
           "tdew_c": 20.56,
-          "wind_ms": 3.8493303411213704,
-          "wind_ms_10m": 5.3244954,
+          "wind_ms": 3.3449795034928917,
+          "wind_ms_10m": 4.626863999999999,
           "pres_hpa": 1015.2,
           "valid": "2026-06-26 19:53:00"
         },
         "KSGR": {
           "tair_c": 29.44,
           "tdew_c": 23.33,
-          "wind_ms": 4.2770337123570785,
-          "wind_ms_10m": 5.916106,
+          "wind_ms": 3.71664389276988,
+          "wind_ms_10m": 5.14096,
           "pres_hpa": 1015.6,
           "valid": "2026-06-26 19:53:00"
         }
@@ -380,8 +380,8 @@
       "observed_conditions_mean": {
         "tair_c": 30.18,
         "tdew_c": 21.85,
-        "wind_ms": 4.42,
-        "wind_ms_10m": 6.11,
+        "wind_ms": 3.84,
+        "wind_ms_10m": 5.31,
         "pres_hpa": 1015.57
       },
       "ghi_full_sun_wm2": 170.6,
@@ -407,22 +407,22 @@
         "total": 0,
         "by_approach": {
           "metrorail_stadium_park": {
-            "peak_segment_wbgt_c": 27.41,
+            "peak_segment_wbgt_c": 27.49,
             "crosses_extreme": false,
             "fans": 7222
           },
           "lot_c": {
-            "peak_segment_wbgt_c": 27.43,
+            "peak_segment_wbgt_c": 27.5,
             "crosses_extreme": false,
             "fans": 32499
           },
           "rideshare_kirby": {
-            "peak_segment_wbgt_c": 26.79,
+            "peak_segment_wbgt_c": 26.86,
             "crosses_extreme": false,
             "fans": 10833
           },
           "fan_fest": {
-            "peak_segment_wbgt_c": 27.29,
+            "peak_segment_wbgt_c": 27.37,
             "crosses_extreme": false,
             "fans": 7222
           }
@@ -439,24 +439,24 @@
         "KHOU": {
           "tair_c": 33.89,
           "tdew_c": 24.44,
-          "wind_ms": 5.132440454828494,
-          "wind_ms_10m": 7.0993272,
+          "wind_ms": 4.4599726713238566,
+          "wind_ms_10m": 6.169152,
           "pres_hpa": 1017.2,
           "valid": "2026-06-29 12:53:00"
         },
         "KIAH": {
           "tair_c": 33.89,
           "tdew_c": 22.78,
-          "wind_ms": 3.4216269698856627,
-          "wind_ms_10m": 4.7328848,
+          "wind_ms": 2.973315114215904,
+          "wind_ms_10m": 4.112768,
           "pres_hpa": 1016.8,
           "valid": "2026-06-29 12:53:00"
         },
         "KSGR": {
           "tair_c": 33.89,
           "tdew_c": 23.89,
-          "wind_ms": 6.415550568535618,
-          "wind_ms_10m": 8.874159,
+          "wind_ms": 5.57496583915482,
+          "wind_ms_10m": 7.71144,
           "pres_hpa": 1016.9,
           "valid": "2026-06-29 12:53:00"
         }
@@ -464,8 +464,8 @@
       "observed_conditions_mean": {
         "tair_c": 33.89,
         "tdew_c": 23.7,
-        "wind_ms": 4.99,
-        "wind_ms_10m": 6.9,
+        "wind_ms": 4.34,
+        "wind_ms_10m": 6.0,
         "pres_hpa": 1016.97
       },
       "ghi_full_sun_wm2": 884.6,
@@ -481,32 +481,32 @@
         "fan_fest": 7222
       },
       "degmin_per_trip_by_approach": {
-        "metrorail_stadium_park": 45.723,
-        "lot_c": 67.963,
-        "rideshare_kirby": 28.357,
-        "fan_fest": 63.132
+        "metrorail_stadium_park": 47.968,
+        "lot_c": 71.302,
+        "rideshare_kirby": 29.878,
+        "fan_fest": 66.29
       },
-      "fan_degree_hours_above_threshold": 55034.54,
+      "fan_degree_hours_above_threshold": 57768.02,
       "fans_crossing_extreme": {
         "total": 57776,
         "by_approach": {
           "metrorail_stadium_park": {
-            "peak_segment_wbgt_c": 33.08,
+            "peak_segment_wbgt_c": 33.32,
             "crosses_extreme": true,
             "fans": 7222
           },
           "lot_c": {
-            "peak_segment_wbgt_c": 33.09,
+            "peak_segment_wbgt_c": 33.33,
             "crosses_extreme": true,
             "fans": 32499
           },
           "rideshare_kirby": {
-            "peak_segment_wbgt_c": 32.46,
+            "peak_segment_wbgt_c": 32.69,
             "crosses_extreme": true,
             "fans": 10833
           },
           "fan_fest": {
-            "peak_segment_wbgt_c": 32.96,
+            "peak_segment_wbgt_c": 33.19,
             "crosses_extreme": true,
             "fans": 7222
           }
@@ -603,8 +603,8 @@
     "n_matches_measured": 7,
     "n_matches_unavailable": 0,
     "unavailable_dates": [],
-    "tournament_total_fan_degree_hours_above_threshold": 283105.9,
-    "statement": "across the 7 NRG Stadium World Cup matches with usable observed weather, fans accumulated 283,106 fan degree hours above the 28.0 C wet bulb globe temperature threshold on the last mile to the stadium during the 14 June to 4 July 2026 tournament window. this is what actually happened, measured from each match's own observed meteorology and own date sun geometry, not a hypothetical design condition sweep."
+    "tournament_total_fan_degree_hours_above_threshold": 297664.5,
+    "statement": "across the 7 NRG Stadium World Cup matches with usable observed weather, fans accumulated 297,665 fan degree hours above the 28.0 C wet bulb globe temperature threshold on the last mile to the stadium during the 14 June to 4 July 2026 tournament window. this is what actually happened, measured from each match's own observed meteorology and own date sun geometry, not a hypothetical design condition sweep."
   },
   "counterfactual_evening_kickoff": {
     "note": "six of the seven matches kicked off at 12:00 local and one at 19:00 local. this evaluation asks how much of the measured exposure at the six noon matches would not have occurred had each kicked off at 19:00 local instead, holding every other condition, including the date and that date's own observed weather, fixed. it recomputes each noon match's own date at hour 19 using the same observed ASOS fetch, urban heat island coupling and rebaked shade mask method used for the actual measurement above, then compares that alternate hour computation to the actual noon measurement for the same six matches, leaving the one match that was actually played at 19:00 unchanged in both totals. this isolates the effect of kickoff hour alone, holding weather at that date's observed values, so it is an estimate of the schedule effect and not a full simulation of an alternate tournament. it does not model second order effects a real schedule change could have had, such as different attendance, different fan arrival patterns, or a different broadcast slot. because the schedule that produced the observed conditions has already been executed, this is reported as a measurement of what that scheduling choice cost, not as a recommendation to reschedule matches that have already been played. the same method applies directly to a venue where the kickoff decision is still open, where it would be a forward looking design condition choice rather than a retrospective one.",
@@ -613,60 +613,60 @@
       {
         "date": "2026-06-14",
         "kickoff_local_hour": 12,
-        "actual_fan_degree_hours_above_threshold": 42191.27,
-        "counterfactual_evening_fan_degree_hours_above_threshold": 6163.22,
-        "difference": 36028.05,
+        "actual_fan_degree_hours_above_threshold": 45052.34,
+        "counterfactual_evening_fan_degree_hours_above_threshold": 7181.21,
+        "difference": 37871.13,
         "status": "included"
       },
       {
         "date": "2026-06-17",
         "kickoff_local_hour": 12,
-        "actual_fan_degree_hours_above_threshold": 30104.6,
+        "actual_fan_degree_hours_above_threshold": 32875.74,
         "counterfactual_evening_fan_degree_hours_above_threshold": 0.0,
-        "difference": 30104.6,
+        "difference": 32875.74,
         "status": "included"
       },
       {
         "date": "2026-06-20",
         "kickoff_local_hour": 12,
-        "actual_fan_degree_hours_above_threshold": 20066.38,
+        "actual_fan_degree_hours_above_threshold": 23135.99,
         "counterfactual_evening_fan_degree_hours_above_threshold": 0.0,
-        "difference": 20066.38,
+        "difference": 23135.99,
         "status": "included"
       },
       {
         "date": "2026-06-23",
         "kickoff_local_hour": 12,
-        "actual_fan_degree_hours_above_threshold": 48647.66,
-        "counterfactual_evening_fan_degree_hours_above_threshold": 8072.72,
-        "difference": 40574.94,
+        "actual_fan_degree_hours_above_threshold": 51770.98,
+        "counterfactual_evening_fan_degree_hours_above_threshold": 8971.42,
+        "difference": 42799.56,
         "status": "included"
       },
       {
         "date": "2026-06-29",
         "kickoff_local_hour": 12,
-        "actual_fan_degree_hours_above_threshold": 55034.54,
-        "counterfactual_evening_fan_degree_hours_above_threshold": 1919.86,
-        "difference": 53114.68,
+        "actual_fan_degree_hours_above_threshold": 57768.02,
+        "counterfactual_evening_fan_degree_hours_above_threshold": 2497.58,
+        "difference": 55270.44,
         "status": "included"
       },
       {
         "date": "2026-07-04",
         "kickoff_local_hour": 12,
         "actual_fan_degree_hours_above_threshold": 87061.46,
-        "counterfactual_evening_fan_degree_hours_above_threshold": 5166.5,
-        "difference": 81894.96,
+        "counterfactual_evening_fan_degree_hours_above_threshold": 5948.7,
+        "difference": 81112.76,
         "status": "included"
       }
     ],
     "totals": {
       "n_matches_included": 7,
-      "actual_total_fan_degree_hours_above_threshold": 283105.9,
-      "counterfactual_total_fan_degree_hours_above_threshold": 21322.3,
-      "removed_fan_degree_hours": 261783.6,
-      "removed_fraction": 0.9247
+      "actual_total_fan_degree_hours_above_threshold": 297664.5,
+      "counterfactual_total_fan_degree_hours_above_threshold": 24598.9,
+      "removed_fan_degree_hours": 273065.6,
+      "removed_fraction": 0.9174
     },
-    "statement": "of the 283,106 fan degree hours measured across the 7 matches usable in this comparison, 261,784 (92.5 percent) would not have occurred had the noon matches instead kicked off at 19:00 local, holding each date's own observed weather fixed. that is what the noon scheduling actually cost on the last mile, as measured after the fact, not a recommendation to change a schedule that has already been played.",
+    "statement": "of the 297,665 fan degree hours measured across the 7 matches usable in this comparison, 273,066 (91.7 percent) would not have occurred had the noon matches instead kicked off at 19:00 local, holding each date's own observed weather fixed. that is what the noon scheduling actually cost on the last mile, as measured after the fact, not a recommendation to change a schedule that has already been played.",
     "forward_looking_note": "the tournament at NRG Stadium is over and this section evaluates a decision already made. the same fetch, couple, rebake and walk method used above applies unchanged to any venue where the kickoff hour has not yet been decided, where it would inform a design condition choice rather than measure one already taken."
   }
 }

@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-09-09T03:07:40Z",
+  "generated_utc": "2026-09-09T18:02:04Z",
   "wbgt_threshold_c": 28.0,
   "wbgt_extreme_c": 32.0,
   "modeled_hours": [
@@ -20,80 +20,80 @@
   "coverage_horizon_note": "coverage_near_term scales an intervention's shaded_area_m2 by its canopy_fraction_year5 when that field is present in costs.yml, so a tree planted for the 2026 event is credited with the canopy it actually has at year five, not the canopy it will have at maturity_years. interventions without a canopy_fraction_year5 field, such as the sail and the awning, reach full shaded_area_m2 immediately so coverage_near_term equals coverage_mature for them. path is the near_term_2026 horizon and is the honest number for the 2026 tournament. path_mature is the same greedy allocation logic run against full mature canopy and represents the long term legacy value of the same spend, not what the tournament itself will see.",
   "hours": {
     "12": {
-      "fan_hours_above_threshold": 55032.5,
+      "fan_hours_above_threshold": 57767.8,
       "fans_crossing_extreme": {
         "total": 57776,
         "by_approach": {
           "metrorail_stadium_park": {
-            "peak_segment_wbgt_c": 33.08,
+            "peak_segment_wbgt_c": 33.32,
             "crosses_extreme": true,
             "fans": 7222
           },
           "lot_c": {
-            "peak_segment_wbgt_c": 33.09,
+            "peak_segment_wbgt_c": 33.33,
             "crosses_extreme": true,
             "fans": 32499
           },
           "rideshare_kirby": {
-            "peak_segment_wbgt_c": 32.46,
+            "peak_segment_wbgt_c": 32.69,
             "crosses_extreme": true,
             "fans": 10833
           },
           "fan_fest": {
-            "peak_segment_wbgt_c": 32.96,
+            "peak_segment_wbgt_c": 33.19,
             "crosses_extreme": true,
             "fans": 7222
           }
         }
       },
       "degmin_per_trip_by_approach": {
-        "metrorail_stadium_park": 45.723,
-        "lot_c": 67.96,
-        "rideshare_kirby": 28.356,
-        "fan_fest": 63.13
+        "metrorail_stadium_park": 47.969,
+        "lot_c": 71.302,
+        "rideshare_kirby": 29.877,
+        "fan_fest": 66.288
       },
-      "exposure_removed_vs_1500": 0.237,
+      "exposure_removed_vs_1500": 0.2346,
       "equivalent_tree_spend_usd": {
         "usd": null,
         "max_tree_spend_modeled_usd": 49800.0,
-        "max_fan_hours_removable_by_trees_at_that_spend": 12337.3,
-        "note": "no modeled tree only spend up to the optimizer cap of 2000000 usd removes the full 17090.6 fan hour reduction that shifting kickoff away from 15:00 achieves for free. not extrapolated beyond the modeled cap, treat this hour's capital equivalent as unresolved rather than inventing a number past the cap."
+        "max_fan_hours_removable_by_trees_at_that_spend": 12887.3,
+        "note": "no modeled tree only spend up to the optimizer cap of 2000000 usd removes the full 17707.7 fan hour reduction that shifting kickoff away from 15:00 achieves for free. not extrapolated beyond the modeled cap, treat this hour's capital equivalent as unresolved rather than inventing a number past the cap."
       }
     },
     "13": {
-      "fan_hours_above_threshold": 87701.9,
+      "fan_hours_above_threshold": 91636.5,
       "fans_crossing_extreme": {
         "total": 57776,
         "by_approach": {
           "metrorail_stadium_park": {
-            "peak_segment_wbgt_c": 35.83,
+            "peak_segment_wbgt_c": 36.16,
             "crosses_extreme": true,
             "fans": 7222
           },
           "lot_c": {
-            "peak_segment_wbgt_c": 35.91,
+            "peak_segment_wbgt_c": 36.25,
             "crosses_extreme": true,
             "fans": 32499
           },
           "rideshare_kirby": {
-            "peak_segment_wbgt_c": 35.27,
+            "peak_segment_wbgt_c": 35.61,
             "crosses_extreme": true,
             "fans": 10833
           },
           "fan_fest": {
-            "peak_segment_wbgt_c": 35.72,
+            "peak_segment_wbgt_c": 36.06,
             "crosses_extreme": true,
             "fans": 7222
           }
         }
       },
       "degmin_per_trip_by_approach": {
-        "metrorail_stadium_park": 72.168,
-        "lot_c": 108.043,
-        "rideshare_kirby": 46.544,
-        "fan_fest": 100.445
+        "metrorail_stadium_park": 75.381,
+        "lot_c": 112.856,
+        "rideshare_kirby": 48.736,
+        "fan_fest": 104.974
       },
-      "exposure_removed_vs_1500": -0.216,
+      "exposure_removed_vs_1500": -0.2141,
       "equivalent_tree_spend_usd": {
         "usd": 0.0,
         "achieved_fan_hours_removed": 0.0,
@@ -101,39 +101,39 @@
       }
     },
     "14": {
-      "fan_hours_above_threshold": 88378.1,
+      "fan_hours_above_threshold": 92347.5,
       "fans_crossing_extreme": {
         "total": 57776,
         "by_approach": {
           "metrorail_stadium_park": {
-            "peak_segment_wbgt_c": 35.89,
+            "peak_segment_wbgt_c": 36.23,
             "crosses_extreme": true,
             "fans": 7222
           },
           "lot_c": {
-            "peak_segment_wbgt_c": 35.97,
+            "peak_segment_wbgt_c": 36.31,
             "crosses_extreme": true,
             "fans": 32499
           },
           "rideshare_kirby": {
-            "peak_segment_wbgt_c": 35.34,
+            "peak_segment_wbgt_c": 35.69,
             "crosses_extreme": true,
             "fans": 10833
           },
           "fan_fest": {
-            "peak_segment_wbgt_c": 35.79,
+            "peak_segment_wbgt_c": 36.13,
             "crosses_extreme": true,
             "fans": 7222
           }
         }
       },
       "degmin_per_trip_by_approach": {
-        "metrorail_stadium_park": 72.6,
-        "lot_c": 108.838,
-        "rideshare_kirby": 46.98,
-        "fan_fest": 101.4
+        "metrorail_stadium_park": 75.829,
+        "lot_c": 113.695,
+        "rideshare_kirby": 49.195,
+        "fan_fest": 105.969
       },
-      "exposure_removed_vs_1500": -0.2254,
+      "exposure_removed_vs_1500": -0.2235,
       "equivalent_tree_spend_usd": {
         "usd": 0.0,
         "achieved_fan_hours_removed": 0.0,
@@ -141,37 +141,37 @@
       }
     },
     "15": {
-      "fan_hours_above_threshold": 72123.1,
+      "fan_hours_above_threshold": 75475.5,
       "fans_crossing_extreme": {
         "total": 57776,
         "by_approach": {
           "metrorail_stadium_park": {
-            "peak_segment_wbgt_c": 34.59,
+            "peak_segment_wbgt_c": 34.88,
             "crosses_extreme": true,
             "fans": 7222
           },
           "lot_c": {
-            "peak_segment_wbgt_c": 34.62,
+            "peak_segment_wbgt_c": 34.91,
             "crosses_extreme": true,
             "fans": 32499
           },
           "rideshare_kirby": {
-            "peak_segment_wbgt_c": 33.99,
+            "peak_segment_wbgt_c": 34.28,
             "crosses_extreme": true,
             "fans": 10833
           },
           "fan_fest": {
-            "peak_segment_wbgt_c": 34.47,
+            "peak_segment_wbgt_c": 34.76,
             "crosses_extreme": true,
             "fans": 7222
           }
         }
       },
       "degmin_per_trip_by_approach": {
-        "metrorail_stadium_park": 54.787,
-        "lot_c": 89.661,
-        "rideshare_kirby": 38.245,
-        "fan_fest": 83.566
+        "metrorail_stadium_park": 57.287,
+        "lot_c": 93.799,
+        "rideshare_kirby": 40.13,
+        "fan_fest": 87.469
       },
       "exposure_removed_vs_1500": 0.0,
       "equivalent_tree_spend_usd": {
@@ -181,167 +181,167 @@
       }
     },
     "16": {
-      "fan_hours_above_threshold": 58647.9,
+      "fan_hours_above_threshold": 61312.0,
       "fans_crossing_extreme": {
         "total": 57776,
         "by_approach": {
           "metrorail_stadium_park": {
-            "peak_segment_wbgt_c": 33.46,
+            "peak_segment_wbgt_c": 33.69,
             "crosses_extreme": true,
             "fans": 7222
           },
           "lot_c": {
-            "peak_segment_wbgt_c": 33.47,
+            "peak_segment_wbgt_c": 33.7,
             "crosses_extreme": true,
             "fans": 32499
           },
           "rideshare_kirby": {
-            "peak_segment_wbgt_c": 32.83,
+            "peak_segment_wbgt_c": 33.07,
             "crosses_extreme": true,
             "fans": 10833
           },
           "fan_fest": {
-            "peak_segment_wbgt_c": 33.33,
+            "peak_segment_wbgt_c": 33.57,
             "crosses_extreme": true,
             "fans": 7222
           }
         }
       },
       "degmin_per_trip_by_approach": {
-        "metrorail_stadium_park": 44.683,
-        "lot_c": 72.933,
-        "rideshare_kirby": 30.789,
-        "fan_fest": 68.179
+        "metrorail_stadium_park": 46.644,
+        "lot_c": 76.218,
+        "rideshare_kirby": 32.297,
+        "fan_fest": 71.306
       },
-      "exposure_removed_vs_1500": 0.1868,
+      "exposure_removed_vs_1500": 0.1877,
       "equivalent_tree_spend_usd": {
         "usd": null,
         "max_tree_spend_modeled_usd": 49800.0,
-        "max_fan_hours_removable_by_trees_at_that_spend": 12337.3,
-        "note": "no modeled tree only spend up to the optimizer cap of 2000000 usd removes the full 13475.2 fan hour reduction that shifting kickoff away from 15:00 achieves for free. not extrapolated beyond the modeled cap, treat this hour's capital equivalent as unresolved rather than inventing a number past the cap."
+        "max_fan_hours_removable_by_trees_at_that_spend": 12887.3,
+        "note": "no modeled tree only spend up to the optimizer cap of 2000000 usd removes the full 14163.5 fan hour reduction that shifting kickoff away from 15:00 achieves for free. not extrapolated beyond the modeled cap, treat this hour's capital equivalent as unresolved rather than inventing a number past the cap."
       }
     },
     "17": {
-      "fan_hours_above_threshold": 40574.6,
+      "fan_hours_above_threshold": 42628.9,
       "fans_crossing_extreme": {
-        "total": 0,
+        "total": 39721,
         "by_approach": {
           "metrorail_stadium_park": {
-            "peak_segment_wbgt_c": 31.9,
-            "crosses_extreme": false,
+            "peak_segment_wbgt_c": 32.08,
+            "crosses_extreme": true,
             "fans": 7222
           },
           "lot_c": {
-            "peak_segment_wbgt_c": 31.94,
-            "crosses_extreme": false,
+            "peak_segment_wbgt_c": 32.11,
+            "crosses_extreme": true,
             "fans": 32499
           },
           "rideshare_kirby": {
-            "peak_segment_wbgt_c": 31.29,
+            "peak_segment_wbgt_c": 31.47,
             "crosses_extreme": false,
             "fans": 10833
           },
           "fan_fest": {
-            "peak_segment_wbgt_c": 31.78,
+            "peak_segment_wbgt_c": 31.96,
             "crosses_extreme": false,
             "fans": 7222
           }
         }
       },
       "degmin_per_trip_by_approach": {
-        "metrorail_stadium_park": 30.318,
-        "lot_c": 50.737,
-        "rideshare_kirby": 20.784,
-        "fan_fest": 47.281
+        "metrorail_stadium_park": 31.806,
+        "lot_c": 53.271,
+        "rideshare_kirby": 21.953,
+        "fan_fest": 49.704
       },
-      "exposure_removed_vs_1500": 0.4374,
+      "exposure_removed_vs_1500": 0.4352,
       "equivalent_tree_spend_usd": {
         "usd": null,
         "max_tree_spend_modeled_usd": 49800.0,
-        "max_fan_hours_removable_by_trees_at_that_spend": 12337.3,
-        "note": "no modeled tree only spend up to the optimizer cap of 2000000 usd removes the full 31548.5 fan hour reduction that shifting kickoff away from 15:00 achieves for free. not extrapolated beyond the modeled cap, treat this hour's capital equivalent as unresolved rather than inventing a number past the cap."
+        "max_fan_hours_removable_by_trees_at_that_spend": 12887.3,
+        "note": "no modeled tree only spend up to the optimizer cap of 2000000 usd removes the full 32846.6 fan hour reduction that shifting kickoff away from 15:00 achieves for free. not extrapolated beyond the modeled cap, treat this hour's capital equivalent as unresolved rather than inventing a number past the cap."
       }
     },
     "18": {
-      "fan_hours_above_threshold": 26685.7,
+      "fan_hours_above_threshold": 28305.4,
       "fans_crossing_extreme": {
         "total": 0,
         "by_approach": {
           "metrorail_stadium_park": {
-            "peak_segment_wbgt_c": 30.73,
+            "peak_segment_wbgt_c": 30.87,
             "crosses_extreme": false,
             "fans": 7222
           },
           "lot_c": {
-            "peak_segment_wbgt_c": 30.74,
+            "peak_segment_wbgt_c": 30.88,
             "crosses_extreme": false,
             "fans": 32499
           },
           "rideshare_kirby": {
-            "peak_segment_wbgt_c": 30.13,
+            "peak_segment_wbgt_c": 30.27,
             "crosses_extreme": false,
             "fans": 10833
           },
           "fan_fest": {
-            "peak_segment_wbgt_c": 30.61,
+            "peak_segment_wbgt_c": 30.76,
             "crosses_extreme": false,
             "fans": 7222
           }
         }
       },
       "degmin_per_trip_by_approach": {
-        "metrorail_stadium_park": 19.893,
-        "lot_c": 33.424,
-        "rideshare_kirby": 13.229,
-        "fan_fest": 31.559
+        "metrorail_stadium_park": 21.081,
+        "lot_c": 35.407,
+        "rideshare_kirby": 14.165,
+        "fan_fest": 33.5
       },
-      "exposure_removed_vs_1500": 0.63,
+      "exposure_removed_vs_1500": 0.625,
       "equivalent_tree_spend_usd": {
         "usd": null,
         "max_tree_spend_modeled_usd": 49800.0,
-        "max_fan_hours_removable_by_trees_at_that_spend": 12337.3,
-        "note": "no modeled tree only spend up to the optimizer cap of 2000000 usd removes the full 45437.4 fan hour reduction that shifting kickoff away from 15:00 achieves for free. not extrapolated beyond the modeled cap, treat this hour's capital equivalent as unresolved rather than inventing a number past the cap."
+        "max_fan_hours_removable_by_trees_at_that_spend": 12887.3,
+        "note": "no modeled tree only spend up to the optimizer cap of 2000000 usd removes the full 47170.1 fan hour reduction that shifting kickoff away from 15:00 achieves for free. not extrapolated beyond the modeled cap, treat this hour's capital equivalent as unresolved rather than inventing a number past the cap."
       }
     },
     "19": {
-      "fan_hours_above_threshold": 5165.8,
+      "fan_hours_above_threshold": 5947.7,
       "fans_crossing_extreme": {
         "total": 0,
         "by_approach": {
           "metrorail_stadium_park": {
-            "peak_segment_wbgt_c": 28.85,
+            "peak_segment_wbgt_c": 28.92,
             "crosses_extreme": false,
             "fans": 7222
           },
           "lot_c": {
-            "peak_segment_wbgt_c": 28.84,
+            "peak_segment_wbgt_c": 28.91,
             "crosses_extreme": false,
             "fans": 32499
           },
           "rideshare_kirby": {
-            "peak_segment_wbgt_c": 28.22,
+            "peak_segment_wbgt_c": 28.29,
             "crosses_extreme": false,
             "fans": 10833
           },
           "fan_fest": {
-            "peak_segment_wbgt_c": 28.73,
+            "peak_segment_wbgt_c": 28.8,
             "crosses_extreme": false,
             "fans": 7222
           }
         }
       },
       "degmin_per_trip_by_approach": {
-        "metrorail_stadium_park": 4.665,
-        "lot_c": 6.854,
-        "rideshare_kirby": 0.902,
-        "fan_fest": 6.056
+        "metrorail_stadium_park": 5.256,
+        "lot_c": 7.791,
+        "rideshare_kirby": 1.357,
+        "fan_fest": 7.062
       },
-      "exposure_removed_vs_1500": 0.9284,
+      "exposure_removed_vs_1500": 0.9212,
       "equivalent_tree_spend_usd": {
         "usd": null,
         "max_tree_spend_modeled_usd": 49800.0,
-        "max_fan_hours_removable_by_trees_at_that_spend": 12337.3,
-        "note": "no modeled tree only spend up to the optimizer cap of 2000000 usd removes the full 66957.3 fan hour reduction that shifting kickoff away from 15:00 achieves for free. not extrapolated beyond the modeled cap, treat this hour's capital equivalent as unresolved rather than inventing a number past the cap."
+        "max_fan_hours_removable_by_trees_at_that_spend": 12887.3,
+        "note": "no modeled tree only spend up to the optimizer cap of 2000000 usd removes the full 69527.8 fan hour reduction that shifting kickoff away from 15:00 achieves for free. not extrapolated beyond the modeled cap, treat this hour's capital equivalent as unresolved rather than inventing a number past the cap."
       }
     },
     "20": {
@@ -350,7 +350,7 @@
         "total": 0,
         "by_approach": {
           "metrorail_stadium_park": {
-            "peak_segment_wbgt_c": 26.8,
+            "peak_segment_wbgt_c": 26.79,
             "crosses_extreme": false,
             "fans": 7222
           },
@@ -381,8 +381,8 @@
       "equivalent_tree_spend_usd": {
         "usd": null,
         "max_tree_spend_modeled_usd": 49800.0,
-        "max_fan_hours_removable_by_trees_at_that_spend": 12337.3,
-        "note": "no modeled tree only spend up to the optimizer cap of 2000000 usd removes the full 72123.1 fan hour reduction that shifting kickoff away from 15:00 achieves for free. not extrapolated beyond the modeled cap, treat this hour's capital equivalent as unresolved rather than inventing a number past the cap."
+        "max_fan_hours_removable_by_trees_at_that_spend": 12887.3,
+        "note": "no modeled tree only spend up to the optimizer cap of 2000000 usd removes the full 75475.5 fan hour reduction that shifting kickoff away from 15:00 achieves for free. not extrapolated beyond the modeled cap, treat this hour's capital equivalent as unresolved rather than inventing a number past the cap."
       }
     },
     "21": {
@@ -401,7 +401,7 @@
             "fans": 32499
           },
           "rideshare_kirby": {
-            "peak_segment_wbgt_c": 25.7,
+            "peak_segment_wbgt_c": 25.69,
             "crosses_extreme": false,
             "fans": 10833
           },
@@ -422,8 +422,8 @@
       "equivalent_tree_spend_usd": {
         "usd": null,
         "max_tree_spend_modeled_usd": 49800.0,
-        "max_fan_hours_removable_by_trees_at_that_spend": 12337.3,
-        "note": "no modeled tree only spend up to the optimizer cap of 2000000 usd removes the full 72123.1 fan hour reduction that shifting kickoff away from 15:00 achieves for free. not extrapolated beyond the modeled cap, treat this hour's capital equivalent as unresolved rather than inventing a number past the cap."
+        "max_fan_hours_removable_by_trees_at_that_spend": 12887.3,
+        "note": "no modeled tree only spend up to the optimizer cap of 2000000 usd removes the full 75475.5 fan hour reduction that shifting kickoff away from 15:00 achieves for free. not extrapolated beyond the modeled cap, treat this hour's capital equivalent as unresolved rather than inventing a number past the cap."
       }
     }
   },
@@ -432,19 +432,21 @@
     "best_hour": 20,
     "best_hour_fan_hours_above_threshold": 0.0,
     "worst_hour": 14,
-    "worst_hour_fan_hours_above_threshold": 88378.1,
+    "worst_hour_fan_hours_above_threshold": 92347.5,
     "free_reduction_available_fraction": 1.0,
-    "free_reduction_available_fan_hours": 72123.1,
-    "statement": "moving kickoff from 15:00 to 20:00 removes 100.0 percent of measured fan-hours above the 28.0 C wet bulb globe temperature threshold on the last mile to NRG Stadium, at zero capital cost, since it is a scheduling decision rather than an infrastructure spend.",
+    "free_reduction_available_fan_hours": 75475.5,
+    "statement": "moving kickoff from 15:00 to 20:00 removes 100.0 percent of the modelled exposure ABOVE the 28.0 C wet bulb globe temperature threshold on the last mile to NRG Stadium, at zero capital cost, since it is a scheduling decision rather than an infrastructure spend. this is not the same as removing all heat. the metric counts only the excess above the threshold, so an hour whose peak falls just under the line reports zero while still carrying a real thermal load, and the reduction is sensitive to where the threshold is drawn.",
+    "threshold_sensitivity_note": "the reported reduction depends on the threshold. drawn at a lower reference temperature the same schedule change removes a smaller share, because more of the day's load is counted. the 28 C action limit used here sits on a steep part of that curve, so this figure should be read as threshold conditional rather than as an absolute removal of heat exposure.",
     "tree_reference_unit_cost_usd": 300,
     "tree_coverage_horizon_used": "coverage_near_term (year 5 canopy fraction), see coverage_horizon_note",
     "tree_only_ceiling_at_1500": {
       "max_tree_only_spend_usd": 49800.0,
-      "max_fan_hours_removable_at_15_00": 12337.3,
+      "max_fan_hours_removable_at_15_00": 12887.3,
       "note": "this is the ceiling of the dedicated tree only curve, one tree credited per eligible segment at the near term 2026 canopy fraction, evaluated at 15:00 conditions. it is the most fan hour relief street trees can buy at 15:00 under this model even with unlimited budget, since coverage per segment cannot exceed one treated width. compare this to free_reduction_available_fan_hours below."
     }
   },
-  "as_scheduled": {
+  "hour_sweep_at_fixture_hours_illustrative": {
+    "warning": "this block is NOT a tournament total. it stamps every match with the hour sweep value for its kickoff hour, and the sweep uses one representative date per hour, so a noon match in mid June carries a late June or July day's weather. the measured tournament total, computed against each match's own observed weather, is in data/out/retrospective.json and is the only figure that should appear in any headline position.",
     "source": "FIFA published schedule for Houston Stadium, cross checked against two independent public listings",
     "verified_utc": "2026-09-09",
     "schedule_status_note": "these matches have already been played, this block is a retrospective evaluation of the kickoff hours they were actually assigned, using this stage's generalized hour sweep (each hour's hottest available match date), not each match's own observed weather. see data/out/retrospective.json for the true per match measurement, produced by pipeline/s12_retrospective.py.",
@@ -455,58 +457,58 @@
         "kickoff_local_hour": 12,
         "stage": "group",
         "label": "Group E",
-        "fan_hours_above_threshold": 55032.5
+        "fan_hours_above_threshold": 57767.8
       },
       {
         "date": "2026-06-17",
         "kickoff_local_hour": 12,
         "stage": "group",
         "label": "Group K",
-        "fan_hours_above_threshold": 55032.5
+        "fan_hours_above_threshold": 57767.8
       },
       {
         "date": "2026-06-20",
         "kickoff_local_hour": 12,
         "stage": "group",
         "label": "Group F",
-        "fan_hours_above_threshold": 55032.5
+        "fan_hours_above_threshold": 57767.8
       },
       {
         "date": "2026-06-23",
         "kickoff_local_hour": 12,
         "stage": "group",
         "label": "Group K",
-        "fan_hours_above_threshold": 55032.5
+        "fan_hours_above_threshold": 57767.8
       },
       {
         "date": "2026-06-26",
         "kickoff_local_hour": 19,
         "stage": "group",
         "label": "Group H",
-        "fan_hours_above_threshold": 5165.8
+        "fan_hours_above_threshold": 5947.7
       },
       {
         "date": "2026-06-29",
         "kickoff_local_hour": 12,
         "stage": "round_of_32",
         "label": "Round of 32",
-        "fan_hours_above_threshold": 55032.5
+        "fan_hours_above_threshold": 57767.8
       },
       {
         "date": "2026-07-04",
         "kickoff_local_hour": 12,
         "stage": "round_of_16",
         "label": "Round of 16",
-        "fan_hours_above_threshold": 55032.5
+        "fan_hours_above_threshold": 57767.8
       }
     ],
-    "tournament_total_fan_hours_above_threshold": 335360.8,
+    "tournament_total_fan_hours_above_threshold": 352554.5,
     "n_matches": 7,
     "n_matches_at_worst_scheduled_hour": 6,
     "counterfactual_all_at_hour": 20,
     "counterfactual_total_fan_hours_above_threshold": 0.0,
-    "removed_by_rescheduling_fan_hours": 335360.8,
+    "removed_by_rescheduling_fan_hours": 352554.5,
     "removed_by_rescheduling_fraction": 1.0,
-    "statement": "as scheduled, the 7 Houston matches are estimated under this stage's generalized hour sweep to have accumulated 335,361 fan degree hours above the threshold on the last mile. had every match instead kicked off at 20:00, the same sweep estimates 0 would have been accumulated, a 100.0 percent difference attributable to kickoff hour alone. the matches have already been played, so this is a retrospective evaluation of what that scheduling choice cost, not a recommendation to reschedule matches that are already over, and it uses the generalized sweep rather than each match's own observed weather, see data/out/retrospective.json for the measured figure."
+    "statement": "moving kickoff from 15:00 to 20:00 removes all modelled exposure ABOVE the 28.0 C threshold on the last mile to NRG Stadium, at zero capital cost, since it is a scheduling decision rather than an infrastructure spend. this is not the same as removing all heat. the metric counts only the excess above the threshold, so an hour whose peak wet bulb globe temperature falls just under the line reports zero while still carrying a real thermal load. the reduction is sensitive to where the threshold is drawn, and the threshold sensitivity is reported in the validation document."
   }
 }

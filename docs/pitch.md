@@ -14,7 +14,7 @@ Say: "NRG Stadium has a retractable roof and full air conditioning. The stadium 
 
 **0:12 to 0:32, screen: the kickoff clock (Clock)**
 On screen: the ten-hour kickoff sweep table, the headline sentence comparing the 15:00 baseline to the best hour, the fixture list showing the actual match dates.
-Say: "These seven matches already happened, June 14th through July 4th. Six kicked off at noon, one at 7 PM. Running the same physics against that real schedule gives 335,361 fan degree-hours above WBGT 28 accumulated on the walk in, across the tournament. Sweeping all ten plausible kickoff hours shows an 8 PM kickoff would have produced zero, at zero capital cost."
+Say: "These seven matches already happened, June 14th through July 4th. Six kicked off at noon, one at 7 PM. Running the same physics against that real schedule gives 297,665 fan degree-hours above WBGT 28 accumulated on the walk in, across the tournament. Sweeping all ten plausible kickoff hours shows an 8 PM kickoff would have produced zero, at zero capital cost."
 
 **0:32 to 0:48, screen: The Map**
 On screen: the ranked segment list, the deck.gl exposure map, the budget bar for the greedy optimizer.
@@ -47,7 +47,7 @@ Nobody measures the walk from the platform to the gate. We did, for the World Cu
 
 **What it does**
 
-This project measures pedestrian heat exposure on the last mile to NRG Stadium, from the METRORail platform, NRG Lot C, the Kirby Drive rideshare zone, and the Fan Fest site, to the stadium gates, for the seven 2026 World Cup matches Houston hosted. Exposure is degree-minutes of wet bulb globe temperature above 28C, integrated along the walked path, using the Liljegren WBGT model against real hourly weather observations from three Houston-area ASOS stations, coupled to a Landsat land surface temperature field for spatial variation and to OpenStreetMap building footprints for shade. It ranks all 172 walking segments by exposure, prices five interventions (trees, sails, awnings, misting, cool pavement) against a cost-per-degree-minute optimizer, and runs a ten-hour kickoff sweep to show what the same physics would have produced at every plausible kickoff time. Against the actual schedule (six matches at noon, one at 19:00), the seven matches accumulated 335,361 fan degree-hours above threshold on the walk in; the sweep shows an 8 PM kickoff would have produced zero. A lighter eleven-city proxy ledger and a Los Angeles 2028 method-transfer screen extend the question past Houston without pretending to have measured anything they haven't.
+This project measures pedestrian heat exposure on the last mile to NRG Stadium, from the METRORail platform, NRG Lot C, the Kirby Drive rideshare zone, and the Fan Fest site, to the stadium gates, for the seven 2026 World Cup matches Houston hosted. Exposure is degree-minutes of wet bulb globe temperature above 28C, integrated along the walked path, using the Liljegren WBGT model against real hourly weather observations from three Houston-area ASOS stations, coupled to a Landsat land surface temperature field for spatial variation and to OpenStreetMap building footprints for shade. It ranks all 172 walking segments by exposure, prices five interventions (trees, sails, awnings, misting, cool pavement) against a cost-per-degree-minute optimizer, and runs a ten-hour kickoff sweep to show what the same physics would have produced at every plausible kickoff time. Against the actual schedule (six matches at noon, one at 19:00), the seven matches accumulated 297,665 fan degree-hours above threshold on the walk in; the sweep shows an 8 PM kickoff would have produced zero. A lighter eleven-city proxy ledger and a Los Angeles 2028 method-transfer screen extend the question past Houston without pretending to have measured anything they haven't.
 
 **How it was built**
 
@@ -90,7 +90,7 @@ No, and the Ledger screen exists specifically to head that reading off. That tab
 ## Numbers used above, and where each comes from
 
 - 28C WBGT threshold, 172 segments, 1 m raster, 20 m nominal segment length: `data/out/meta.json`
-- 335,361 fan degree-hours across seven matches as scheduled, six at 12:00 and one at 19:00 on 2026-06-26, and the 100 percent removal achievable by an 8 PM kickoff at zero cost: `data/out/kickoff_clock.json` (`as_scheduled`, `summary`, `hours`)
+- 297,665 fan degree-hours across seven matches as scheduled, six at 12:00 and one at 19:00 on 2026-06-26, and the 100 percent removal achievable by an 8 PM kickoff at zero cost: `data/out/kickoff_clock.json` (`as_scheduled`, `summary`, `hours`)
 - Tree-only ceiling of 12,337 fan-hours removable against a 72,123 fan-hour 15:00 baseline: `data/out/kickoff_clock.json` (`summary.tree_only_ceiling_at_1500`)
 - Intervention unit costs (tree $300, sail $15,500, awning $18,700, misting $6,500, cool pavement $10.65/m2): `data/out/meta.json` (`costs`)
 - $25,000 tree spend removing 3.54 million degree-minutes near-term versus 7.82 million at maturity: `data/out/solutions.json` (`path` and `path_mature`, budget step 25000)
