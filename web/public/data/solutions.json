@@ -10,7 +10,7 @@
       "averted_degmin": 0.0,
       "averted_per_fan": 0.0,
       "cost_per_degmin": 0.0,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 7222,
       "spent": 0.0
     },
     "25000": {
@@ -39,7 +39,7 @@
       "averted_degmin": 519695.9,
       "averted_per_fan": 15.99,
       "cost_per_degmin": 0.0462,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 7222,
       "spent": 24000.0
     },
     "50000": {
@@ -89,7 +89,7 @@
       "averted_degmin": 1065224.2,
       "averted_per_fan": 32.78,
       "cost_per_degmin": 0.0462,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 7222,
       "spent": 49200.0
     },
     "75000": {
@@ -160,7 +160,7 @@
       "averted_degmin": 1498883.4,
       "averted_per_fan": 34.59,
       "cost_per_degmin": 0.0496,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 39721,
       "spent": 74400.0
     },
     "100000": {
@@ -252,7 +252,7 @@
       "averted_degmin": 1674854.8,
       "averted_per_fan": 33.13,
       "cost_per_degmin": 0.0595,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 50554,
       "spent": 99600.0
     },
     "125000": {
@@ -365,7 +365,7 @@
       "averted_degmin": 1796143.2,
       "averted_per_fan": 35.53,
       "cost_per_degmin": 0.0695,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 50554,
       "spent": 124800.0
     },
     "150000": {
@@ -499,7 +499,7 @@
       "averted_degmin": 1917375.8,
       "averted_per_fan": 37.93,
       "cost_per_degmin": 0.0782,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 50554,
       "spent": 150000.0
     },
     "175000": {
@@ -643,7 +643,7 @@
       "averted_degmin": 1985975.2,
       "averted_per_fan": 39.28,
       "cost_per_degmin": 0.0858,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 170300.0
     },
     "200000": {
@@ -790,7 +790,7 @@
       "averted_degmin": 2034549.7,
       "averted_per_fan": 40.25,
       "cost_per_degmin": 0.0977,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 198800.0
     },
     "225000": {
@@ -939,7 +939,7 @@
       "averted_degmin": 2066366.9,
       "averted_per_fan": 40.87,
       "cost_per_degmin": 0.1054,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 217800.0
     },
     "250000": {
@@ -1091,7 +1091,7 @@
       "averted_degmin": 2114092.7,
       "averted_per_fan": 41.82,
       "cost_per_degmin": 0.1165,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 246300.0
     },
     "275000": {
@@ -1246,7 +1246,7 @@
       "averted_degmin": 2161818.6,
       "averted_per_fan": 42.76,
       "cost_per_degmin": 0.1271,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 274800.0
     },
     "300000": {
@@ -1403,7 +1403,7 @@
       "averted_degmin": 2193635.8,
       "averted_per_fan": 43.39,
       "cost_per_degmin": 0.1339,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 293800.0
     },
     "325000": {
@@ -1563,7 +1563,7 @@
       "averted_degmin": 2241361.7,
       "averted_per_fan": 44.34,
       "cost_per_degmin": 0.1438,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 322300.0
     },
     "350000": {
@@ -1725,7 +1725,7 @@
       "averted_degmin": 2273178.9,
       "averted_per_fan": 44.97,
       "cost_per_degmin": 0.1501,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 341300.0
     },
     "375000": {
@@ -1890,7 +1890,7 @@
       "averted_degmin": 2320904.7,
       "averted_per_fan": 45.91,
       "cost_per_degmin": 0.1593,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 369800.0
     },
     "400000": {
@@ -2058,7 +2058,7 @@
       "averted_degmin": 2368630.6,
       "averted_per_fan": 46.85,
       "cost_per_degmin": 0.1682,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 398300.0
     },
     "425000": {
@@ -2228,7 +2228,7 @@
       "averted_degmin": 2400447.8,
       "averted_per_fan": 47.48,
       "cost_per_degmin": 0.1738,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 417300.0
     },
     "450000": {
@@ -2401,7 +2401,7 @@
       "averted_degmin": 2448173.7,
       "averted_per_fan": 48.43,
       "cost_per_degmin": 0.1821,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 445800.0
     },
     "475000": {
@@ -2577,7 +2577,7 @@
       "averted_degmin": 2495876.9,
       "averted_per_fan": 49.37,
       "cost_per_degmin": 0.19,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 474300.0
     },
     "500000": {
@@ -2755,7 +2755,7 @@
       "averted_degmin": 2527679.0,
       "averted_per_fan": 50.0,
       "cost_per_degmin": 0.1952,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 493300.0
     },
     "525000": {
@@ -2936,7 +2936,7 @@
       "averted_degmin": 2575382.3,
       "averted_per_fan": 50.94,
       "cost_per_degmin": 0.2026,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 521800.0
     },
     "550000": {
@@ -3119,7 +3119,7 @@
       "averted_degmin": 2607184.4,
       "averted_per_fan": 51.57,
       "cost_per_degmin": 0.2074,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 540800.0
     },
     "575000": {
@@ -3305,7 +3305,7 @@
       "averted_degmin": 2654887.7,
       "averted_per_fan": 52.52,
       "cost_per_degmin": 0.2144,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 569300.0
     },
     "600000": {
@@ -3494,7 +3494,7 @@
       "averted_degmin": 2702580.7,
       "averted_per_fan": 53.46,
       "cost_per_degmin": 0.2212,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 597800.0
     },
     "625000": {
@@ -3685,7 +3685,7 @@
       "averted_degmin": 2734368.3,
       "averted_per_fan": 54.09,
       "cost_per_degmin": 0.2256,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 616800.0
     },
     "650000": {
@@ -3879,7 +3879,7 @@
       "averted_degmin": 2782049.6,
       "averted_per_fan": 55.03,
       "cost_per_degmin": 0.232,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 645300.0
     },
     "675000": {
@@ -4076,7 +4076,7 @@
       "averted_degmin": 2829481.4,
       "averted_per_fan": 55.97,
       "cost_per_degmin": 0.2381,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 673800.0
     },
     "700000": {
@@ -4275,7 +4275,7 @@
       "averted_degmin": 2852925.6,
       "averted_per_fan": 56.43,
       "cost_per_degmin": 0.2428,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 692800.0
     },
     "725000": {
@@ -4477,7 +4477,7 @@
       "averted_degmin": 2868826.6,
       "averted_per_fan": 56.75,
       "cost_per_degmin": 0.2514,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 721300.0
     },
     "750000": {
@@ -4682,7 +4682,7 @@
       "averted_degmin": 2884722.6,
       "averted_per_fan": 57.06,
       "cost_per_degmin": 0.2599,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 749800.0
     },
     "775000": {
@@ -4889,7 +4889,7 @@
       "averted_degmin": 2895319.9,
       "averted_per_fan": 57.27,
       "cost_per_degmin": 0.2655,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 768800.0
     },
     "800000": {
@@ -5099,7 +5099,7 @@
       "averted_degmin": 2911215.9,
       "averted_per_fan": 57.59,
       "cost_per_degmin": 0.2739,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 797300.0
     },
     "825000": {
@@ -5311,7 +5311,7 @@
       "averted_degmin": 2921812.4,
       "averted_per_fan": 57.8,
       "cost_per_degmin": 0.2794,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 816300.0
     },
     "850000": {
@@ -5526,7 +5526,7 @@
       "averted_degmin": 2937705.9,
       "averted_per_fan": 58.11,
       "cost_per_degmin": 0.2876,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 844800.0
     },
     "875000": {
@@ -5744,7 +5744,7 @@
       "averted_degmin": 2953592.2,
       "averted_per_fan": 58.42,
       "cost_per_degmin": 0.2957,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 873300.0
     },
     "900000": {
@@ -5964,7 +5964,7 @@
       "averted_degmin": 2964183.0,
       "averted_per_fan": 58.63,
       "cost_per_degmin": 0.301,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 892300.0
     },
     "925000": {
@@ -6187,7 +6187,7 @@
       "averted_degmin": 2980069.2,
       "averted_per_fan": 58.95,
       "cost_per_degmin": 0.309,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 920800.0
     },
     "950000": {
@@ -6413,7 +6413,7 @@
       "averted_degmin": 2990678.1,
       "averted_per_fan": 59.16,
       "cost_per_degmin": 0.3174,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 949300.0
     },
     "975000": {
@@ -6641,7 +6641,7 @@
       "averted_degmin": 2997750.6,
       "averted_per_fan": 59.3,
       "cost_per_degmin": 0.323,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 968300.0
     },
     "1000000": {
@@ -6872,7 +6872,7 @@
       "averted_degmin": 3008354.5,
       "averted_per_fan": 59.51,
       "cost_per_degmin": 0.3313,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 996800.0
     },
     "1025000": {
@@ -7105,7 +7105,7 @@
       "averted_degmin": 3015423.7,
       "averted_per_fan": 59.65,
       "cost_per_degmin": 0.3369,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1015800.0
     },
     "1050000": {
@@ -7341,7 +7341,7 @@
       "averted_degmin": 3026027.0,
       "averted_per_fan": 59.86,
       "cost_per_degmin": 0.3451,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1044300.0
     },
     "1075000": {
@@ -7580,7 +7580,7 @@
       "averted_degmin": 3036629.3,
       "averted_per_fan": 60.07,
       "cost_per_degmin": 0.3533,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1072800.0
     },
     "1100000": {
@@ -7821,7 +7821,7 @@
       "averted_degmin": 3043697.6,
       "averted_per_fan": 60.21,
       "cost_per_degmin": 0.3587,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1091800.0
     },
     "1125000": {
@@ -8065,7 +8065,7 @@
       "averted_degmin": 3054299.9,
       "averted_per_fan": 60.42,
       "cost_per_degmin": 0.3668,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1120300.0
     },
     "1150000": {
@@ -8312,7 +8312,7 @@
       "averted_degmin": 3064902.3,
       "averted_per_fan": 60.63,
       "cost_per_degmin": 0.3748,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1148800.0
     },
     "1175000": {
@@ -8561,7 +8561,7 @@
       "averted_degmin": 3071970.5,
       "averted_per_fan": 60.77,
       "cost_per_degmin": 0.3801,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1167800.0
     },
     "1200000": {
@@ -8813,7 +8813,7 @@
       "averted_degmin": 3082572.8,
       "averted_per_fan": 60.98,
       "cost_per_degmin": 0.3881,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1196300.0
     },
     "1225000": {
@@ -9068,7 +9068,7 @@
       "averted_degmin": 3093175.2,
       "averted_per_fan": 61.19,
       "cost_per_degmin": 0.396,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1224800.0
     },
     "1250000": {
@@ -9325,7 +9325,7 @@
       "averted_degmin": 3100243.4,
       "averted_per_fan": 61.33,
       "cost_per_degmin": 0.4012,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1243800.0
     },
     "1275000": {
@@ -9585,7 +9585,7 @@
       "averted_degmin": 3110842.4,
       "averted_per_fan": 61.54,
       "cost_per_degmin": 0.409,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1272300.0
     },
     "1300000": {
@@ -9847,7 +9847,7 @@
       "averted_degmin": 3117907.3,
       "averted_per_fan": 61.67,
       "cost_per_degmin": 0.4142,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1291300.0
     },
     "1325000": {
@@ -10112,7 +10112,7 @@
       "averted_degmin": 3128504.6,
       "averted_per_fan": 61.88,
       "cost_per_degmin": 0.4219,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1319800.0
     },
     "1350000": {
@@ -10380,7 +10380,7 @@
       "averted_degmin": 3139101.9,
       "averted_per_fan": 62.09,
       "cost_per_degmin": 0.4295,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1348300.0
     },
     "1375000": {
@@ -10650,7 +10650,7 @@
       "averted_degmin": 3146166.8,
       "averted_per_fan": 62.23,
       "cost_per_degmin": 0.4346,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1367300.0
     },
     "1400000": {
@@ -10923,7 +10923,7 @@
       "averted_degmin": 3156764.1,
       "averted_per_fan": 62.44,
       "cost_per_degmin": 0.4422,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1395800.0
     },
     "1425000": {
@@ -11198,7 +11198,7 @@
       "averted_degmin": 3163829.0,
       "averted_per_fan": 62.58,
       "cost_per_degmin": 0.4472,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1414800.0
     },
     "1450000": {
@@ -11474,7 +11474,7 @@
       "averted_degmin": 3165296.5,
       "averted_per_fan": 62.61,
       "cost_per_degmin": 0.4514,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1428800.0
     },
     "1475000": {
@@ -11750,7 +11750,7 @@
       "averted_degmin": 3165296.5,
       "averted_per_fan": 62.61,
       "cost_per_degmin": 0.4514,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1428800.0
     },
     "1500000": {
@@ -12026,7 +12026,7 @@
       "averted_degmin": 3165296.5,
       "averted_per_fan": 62.61,
       "cost_per_degmin": 0.4514,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1428800.0
     },
     "1525000": {
@@ -12302,7 +12302,7 @@
       "averted_degmin": 3165296.5,
       "averted_per_fan": 62.61,
       "cost_per_degmin": 0.4514,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1428800.0
     },
     "1550000": {
@@ -12578,7 +12578,7 @@
       "averted_degmin": 3165296.5,
       "averted_per_fan": 62.61,
       "cost_per_degmin": 0.4514,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1428800.0
     },
     "1575000": {
@@ -12854,7 +12854,7 @@
       "averted_degmin": 3165296.5,
       "averted_per_fan": 62.61,
       "cost_per_degmin": 0.4514,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1428800.0
     },
     "1600000": {
@@ -13130,7 +13130,7 @@
       "averted_degmin": 3165296.5,
       "averted_per_fan": 62.61,
       "cost_per_degmin": 0.4514,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1428800.0
     },
     "1625000": {
@@ -13406,7 +13406,7 @@
       "averted_degmin": 3165296.5,
       "averted_per_fan": 62.61,
       "cost_per_degmin": 0.4514,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1428800.0
     },
     "1650000": {
@@ -13682,7 +13682,7 @@
       "averted_degmin": 3165296.5,
       "averted_per_fan": 62.61,
       "cost_per_degmin": 0.4514,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1428800.0
     },
     "1675000": {
@@ -13958,7 +13958,7 @@
       "averted_degmin": 3165296.5,
       "averted_per_fan": 62.61,
       "cost_per_degmin": 0.4514,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1428800.0
     },
     "1700000": {
@@ -14234,7 +14234,7 @@
       "averted_degmin": 3165296.5,
       "averted_per_fan": 62.61,
       "cost_per_degmin": 0.4514,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1428800.0
     },
     "1725000": {
@@ -14510,7 +14510,7 @@
       "averted_degmin": 3165296.5,
       "averted_per_fan": 62.61,
       "cost_per_degmin": 0.4514,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1428800.0
     },
     "1750000": {
@@ -14786,7 +14786,7 @@
       "averted_degmin": 3165296.5,
       "averted_per_fan": 62.61,
       "cost_per_degmin": 0.4514,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1428800.0
     },
     "1775000": {
@@ -15062,7 +15062,7 @@
       "averted_degmin": 3165296.5,
       "averted_per_fan": 62.61,
       "cost_per_degmin": 0.4514,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1428800.0
     },
     "1800000": {
@@ -15338,7 +15338,7 @@
       "averted_degmin": 3165296.5,
       "averted_per_fan": 62.61,
       "cost_per_degmin": 0.4514,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1428800.0
     },
     "1825000": {
@@ -15614,7 +15614,7 @@
       "averted_degmin": 3165296.5,
       "averted_per_fan": 62.61,
       "cost_per_degmin": 0.4514,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1428800.0
     },
     "1850000": {
@@ -15890,7 +15890,7 @@
       "averted_degmin": 3165296.5,
       "averted_per_fan": 62.61,
       "cost_per_degmin": 0.4514,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1428800.0
     },
     "1875000": {
@@ -16166,7 +16166,7 @@
       "averted_degmin": 3165296.5,
       "averted_per_fan": 62.61,
       "cost_per_degmin": 0.4514,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1428800.0
     },
     "1900000": {
@@ -16442,7 +16442,7 @@
       "averted_degmin": 3165296.5,
       "averted_per_fan": 62.61,
       "cost_per_degmin": 0.4514,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1428800.0
     },
     "1925000": {
@@ -16718,7 +16718,7 @@
       "averted_degmin": 3165296.5,
       "averted_per_fan": 62.61,
       "cost_per_degmin": 0.4514,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1428800.0
     },
     "1950000": {
@@ -16994,7 +16994,7 @@
       "averted_degmin": 3165296.5,
       "averted_per_fan": 62.61,
       "cost_per_degmin": 0.4514,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1428800.0
     },
     "1975000": {
@@ -17270,7 +17270,7 @@
       "averted_degmin": 3165296.5,
       "averted_per_fan": 62.61,
       "cost_per_degmin": 0.4514,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1428800.0
     },
     "2000000": {
@@ -17546,7 +17546,7 @@
       "averted_degmin": 3165296.5,
       "averted_per_fan": 62.61,
       "cost_per_degmin": 0.4514,
-      "fans_below_threshold": 0,
+      "fans_below_threshold": 57776,
       "spent": 1428800.0
     }
   }

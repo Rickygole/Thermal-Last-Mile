@@ -15,6 +15,8 @@ CAP = c.CFG["optimizer"]["cap"]
 METHOD = c.CFG["optimizer"]["method"]
 DIFFUSE_FRACTION_SHADED = c.COSTS["constants"]["diffuse_fraction_shaded"]["value"]
 PATH_WIDTH_M = 2.0
+EXTREME_C = c.CFG["walk"]["wbgt_extreme_c"]
+WBGT_SHADED_FLOOR = EXTREME_C - 4.0
 
 
 def hour_conditions(hour):
@@ -222,12 +224,23 @@ def build_path(chosen_order, candidates, segments_by_id):
         }
         fans_covered = sum(approach_fans[a] for a in touched_approaches)
 
-        fully_mitigated_approaches = {
-            a
-            for a, seg_ids in segment_ids_by_approach.items()
-            if all(remaining_over.get(s, 0.0) <= 1e-6 for s in seg_ids)
-        }
-        fans_below_threshold = sum(approach_fans[a] for a in fully_mitigated_approaches)
+        extreme_free_approaches = set()
+        for a, seg_ids in segment_ids_by_approach.items():
+            worst = 0.0
+            for s in seg_ids:
+                props = segments_by_id[s]
+                peak_wbgt = max(props["wbgt"].values())
+                if peak_wbgt <= EXTREME_C:
+                    continue
+                baseline = baseline_over_by_segment.get(s, 0.0)
+                if baseline <= 1e-9:
+                    continue
+                relief = 1.0 - (remaining_over.get(s, 0.0) / baseline)
+                treated_peak = peak_wbgt - relief * (peak_wbgt - WBGT_SHADED_FLOOR)
+                worst = max(worst, treated_peak - EXTREME_C)
+            if worst <= 1e-6:
+                extreme_free_approaches.add(a)
+        fans_below_threshold = sum(approach_fans[a] for a in extreme_free_approaches)
 
         path[str(budget)] = {
             "set": list(running_set),
