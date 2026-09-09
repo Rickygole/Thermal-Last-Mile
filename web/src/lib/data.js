@@ -273,6 +273,7 @@ export function useData () {
       getJson('equity.json', false),
       getJson('uhi_validation.json', false),
       getJson('fan_volumes.json', false),
+      getJson('retrospective.json', false),
       surfacePresent()
     ]).then(results => {
       if (!live) return
@@ -309,6 +310,7 @@ export function useData () {
           equity: byName['equity.json'].value || null,
           uhi: byName['uhi_validation.json'].value || null,
           fanVolumes: byName['fan_volumes.json'].value || null,
+          retrospective: byName['retrospective.json'].value || null,
           meta: meta || null,
           threshold,
           heat: heatMeta(byName['expo_meta.json'].value, meta?.raster_bounds || segBounds, threshold, rasterPresent),

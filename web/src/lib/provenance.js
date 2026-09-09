@@ -76,17 +76,28 @@ function transferState (data) {
 }
 
 function clockState (data) {
+  const retro = data.retrospective
+  const measured = Array.isArray(retro?.matches) ? retro.matches.filter(m => m.weather_status === 'observed').length : 0
+  if (measured) {
+    return {
+      tone: 'observed',
+      label: 'MEASURED ON PLAYED FIXTURES',
+      detail: `${plural(measured, 'match', 'matches')} measured on their own observed weather and own date sun geometry. Fixtures: ${
+        retro.fixtures_source || 'source unstated'
+      }${retro.fixtures_verified_utc ? `, verified ${retro.fixtures_verified_utc}` : ''}. The hour sweep lower down the screen is a separate forward looking tool.`
+    }
+  }
   if (!data.clock) {
     return {
       tone: 'unverified',
-      label: 'KICKOFF CLOCK MISSING',
-      detail: 'kickoff_clock.json did not load, so no hour sweep can be shown.'
+      label: 'NO MEASURED MATCHES, NO SWEEP',
+      detail: 'Neither retrospective.json nor kickoff_clock.json loaded, so this screen has nothing to show.'
     }
   }
   return {
     tone: 'illustrative',
-    label: 'HOURS SWEPT, NOT BOUND TO FIXTURES',
-    detail: data.clock.fixture_binding_note
+    label: 'HOURS SWEPT, MATCHES NOT LOADED',
+    detail: `retrospective.json did not load, so only the generalized hour sweep is available. ${data.clock.fixture_binding_note}`
   }
 }
 

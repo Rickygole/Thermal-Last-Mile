@@ -14,6 +14,7 @@ import Ledger from './screens/Ledger.jsx'
 import Transfer from './screens/Transfer.jsx'
 import { provenanceFor } from './lib/provenance.js'
 import { n0, tempC } from './lib/format.js'
+import { buildRetro, longDate } from './lib/retro.js'
 
 export default function App () {
   const { status, data, errors } = useData()
@@ -68,12 +69,25 @@ export default function App () {
     }
     if (screen === 'clock') {
       const clock = data.clock
-      const baseline = clock ? String(clock.summary?.baseline_hour ?? '15') : '15'
+      const retro = buildRetro(data.retrospective)
+      if (retro) {
+        return (
+          <div className="topline" aria-label="Current view">
+            <span>{n0(retro.measured.length)} matches measured</span>
+            <span className="sep" aria-hidden="true" />
+            <span>
+              {longDate(retro.range.from)} to {longDate(retro.range.to)}
+            </span>
+            <span className="sep" aria-hidden="true" />
+            <span>WBGT {tempC(retro.threshold)} threshold</span>
+          </div>
+        )
+      }
       return (
         <div className="topline" aria-label="Current view">
           <span>{n0(clock ? (clock.modeled_hours || []).length : 0)} kickoff hours modelled</span>
           <span className="sep" aria-hidden="true" />
-          <span>{baseline}:00 baseline</span>
+          <span>no measured matches loaded</span>
           <span className="sep" aria-hidden="true" />
           <span>{hour}:00 selected</span>
         </div>

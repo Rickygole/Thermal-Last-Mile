@@ -1,9 +1,11 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import EmptyState from '../components/EmptyState.jsx'
 import ClockTable from '../components/ClockTable.jsx'
+import MatchTable from '../components/MatchTable.jsx'
+import EveningControl from '../components/EveningControl.jsx'
 import FreeVersusCapital from '../components/FreeVersusCapital.jsx'
-import OrganiserData from '../components/OrganiserData.jsx'
 import { APPROACH_LABEL } from '../lib/venues.js'
+import { buildRetro, longDate, shortDate } from '../lib/retro.js'
 import { setScreen, useStore } from '../store.js'
 import { n0, n1, n2, pct1 } from '../lib/format.js'
 
@@ -42,127 +44,211 @@ function buildRows (clock) {
   }
 }
 
+function MatchDetail ({ match, model }) {
+  if (!match) return null
+  return (
+    <section className="panel pane" aria-label={`Detail for the match on ${longDate(match.date)}`}>
+      <div className="pane-head">
+        <h3>
+          {shortDate(match.date)}, {n0(match.hour)}:00, {match.label}
+        </h3>
+        <span className="label">degree-minutes per fan trip</span>
+      </div>
+      <div className="detail">
+        {Object.entries(match.byApproach).map(([k, v]) => (
+          <div className="row" key={k}>
+            <span>
+              {APPROACH_LABEL[k] || k}, {n0(match.fansByApproach[k])} fans
+            </span>
+            <span>{n2(v)}</span>
+          </div>
+        ))}
+        <div className="row">
+          <span>Hottest segment on any approach</span>
+          <span>{n2(match.peak)} C WBGT</span>
+        </div>
+        <div className="row">
+          <span>Fans on an approach whose peak crosses {n1(model.extreme)} C</span>
+          <span>{n0(match.fansCrossing)}</span>
+        </div>
+        <div className="row">
+          <span>Sun elevation at kickoff</span>
+          <span>{n1(match.sunElevation)} deg</span>
+        </div>
+        <div className="row">
+          <span>Route in shade at kickoff</span>
+          <span>{pct1((match.shadedRoute ?? 0) * 100)}</span>
+        </div>
+      </div>
+      <p className="label">
+        Every figure in this panel comes from that match's own observed weather at {n0(match.stationCount)} airport stations, its
+        own date's sun geometry, and a shade mask rebaked for that date and hour rather than reused from another match.
+      </p>
+    </section>
+  )
+}
+
 export default function Clock ({ data }) {
   const clock = data.clock
   const hour = useStore(s => s.hour)
   const model = useMemo(() => (clock ? buildRows(clock) : null), [clock])
+  const retro = useMemo(() => buildRetro(data.retrospective), [data.retrospective])
+  const [match, setMatch] = useState(null)
 
-  if (!clock || !model || !model.rows.length) {
+  if ((!clock || !model || !model.rows.length) && !retro) {
     return (
       <EmptyState
-        title="No kickoff clock"
-        body="kickoff_clock.json did not load, so the hour sweep cannot be shown. Nothing on this screen is computed in the browser."
+        title="No kickoff data"
+        body="Neither retrospective.json nor kickoff_clock.json loaded, so there is nothing measured to show. Nothing on this screen is computed in the browser."
         hint="npm run data"
       />
     )
   }
 
-  const { rows, baseline, best, worst, smallest, max } = model
-  const selected = rows.find(r => r.hour === hour) || null
-  const ceiling = clock.summary?.tree_only_ceiling_at_1500 || null
-  const nullSource = [smallest, selected, best].find(r => r && r.equivalence && r.equivalence.usd === null)
-  const nullNote = nullSource?.equivalence?.note || null
+  const rmse = data.meta?.validation?.rmse_c ?? null
+  const selectedMatch = retro ? retro.matches.find(m => m.date === match) || retro.worst : null
+  const head = retro?.headline || null
+  const perFanApproach = head ? APPROACH_LABEL[head.perFan.key] || head.perFan.key : ''
+  const total = retro?.total || null
+  const removedShare = retro?.counterfactual?.totals?.removed_fraction ?? null
 
   return (
     <div className="clock">
-      <div className="clock-head">
-        <h2>
-          A {baseline.hour}:00 kickoff makes fans carry {n0(baseline.value)} fan degree-hours above WBGT {n1(clock.wbgt_threshold_c)} C
-          on the last mile. Moving kickoff to {best?.hour}:00 removes {pct1((best?.share ?? 0) * 100)} of it and costs nothing.
-        </h2>
-        <p>
-          Every hour of the plausible kickoff window was modelled end to end, {n0((clock.modeled_hours || []).length)} of them.{' '}
-          {worst?.hour}:00 is the worst of them at {n0(worst?.value)}{' '}
-          fan degree-hours, {pct1(Math.abs(worst?.share ?? 0) * 100)} worse than the {baseline.hour}:00 baseline. The rest of this
-          application follows whichever hour is selected here.
-        </p>
-        <div className="notice clock-fixture">
-          <strong>These hours are not bound to real matches.</strong> {clock.fixture_binding_note}
-        </div>
-      </div>
+      {retro ? (
+        <>
+          <div className="clock-head">
+            <h2>
+              Walking to the {longDate(head.date)} kickoff cost one fan on the {perFanApproach.toLowerCase()}{' '}
+              {n2(head.perFan.value)} degree-minutes above WBGT {n1(retro.threshold)} C, measured end to end.
+            </h2>
+            <p>
+              That is a measured quantity: this match's own observed weather at three airport stations, this date's own sun
+              geometry, a shade mask rebaked for this date and hour, walked along the same last mile route used everywhere else in
+              this application. {n0(retro.measured.length)} matches were played at this stadium between{' '}
+              {longDate(retro.range.from)} and {longDate(retro.range.to)}, {n0(retro.noon.length)} of them at noon and{' '}
+              {n0(retro.measured.length - retro.noon.length)} in the evening. All {n0(retro.measured.length)} returned usable
+              observed weather.
+            </p>
+            {total ? (
+              <div className="notice clock-conditional">
+                <strong>Conditional on the arrival split.</strong> Multiplying those per fan measurements by the assumed split of
+                fans across the four approaches gives {n0(total.tournament_total_fan_degree_hours_above_threshold)} fan
+                degree-hours for the tournament, of which {pct1((removedShare ?? 0) * 100)} traces to the noon kickoffs. The per
+                fan degree-minutes are measured. The arrival split is an assumption this project states rather than a count, so the
+                tournament total inherits it and the per fan figure does not.
+              </div>
+            ) : null}
+          </div>
 
-      <div className="clock-top">
-        <ClockTable
-          rows={rows}
-          baseline={baseline}
-          max={max}
-          threshold={clock.wbgt_threshold_c}
-          extreme={clock.wbgt_extreme_c}
-        />
-        <div className="clock-side">
-          <FreeVersusCapital
-            baseline={baseline}
-            best={best}
-            smallest={smallest}
-            selected={selected}
-            ceiling={ceiling}
-            note={nullNote}
-          />
-          {selected ? (
-            <section className="panel pane" aria-label={`Detail for the ${selected.hour}:00 kickoff`}>
-              <div className="pane-head">
-                <h3>{selected.hour}:00, the hour every screen is showing</h3>
-                <span className="label">degree-minutes per fan trip</span>
-              </div>
-              <div className="detail">
-                {Object.entries(selected.byApproach).map(([k, v]) => (
-                  <div className="row" key={k}>
-                    <span>{APPROACH_LABEL[k] || k}</span>
-                    <span>{n2(v)}</span>
-                  </div>
-                ))}
-                <div className="row">
-                  <span>Fans on an approach whose peak crosses {n1(clock.wbgt_extreme_c)} C</span>
-                  <span>{n0(selected.fansCrossing)}</span>
-                </div>
-                <div className="row">
-                  <span>Capital equivalent of this shift</span>
-                  <span>
-                    {selected.equivalence && selected.equivalence.usd === null
-                      ? 'no modelled spend matches it'
-                      : selected.removed > 0
-                        ? `$${n0(selected.equivalence?.usd ?? 0)}`
-                        : 'nothing to price'}
-                  </span>
-                </div>
-              </div>
+          <div className="clock-top">
+            <MatchTable model={retro} selected={selectedMatch?.date ?? null} onSelect={setMatch} />
+            <div className="clock-side">
+              <MatchDetail match={selectedMatch} model={retro} />
               <div className="controls-row">
                 <button type="button" className="ghost" onClick={() => setScreen('walk')}>
-                  See this hour on the walk
+                  See the walk itself
                 </button>
                 <button type="button" className="ghost" onClick={() => setScreen('map')}>
-                  See this hour on the map
+                  See what the city can fix
                 </button>
               </div>
-            </section>
-          ) : null}
-        </div>
-      </div>
+            </div>
+          </div>
 
-      <section className="panel method-note" aria-label="How the kickoff clock is computed">
-        <h3>What the numbers on this screen are, and are not.</h3>
-        <div className="mn-grid">
-          <div>
-            <div className="k">Fan degree-hours</div>
-            <p>{clock.method_note}</p>
-          </div>
-          <div>
-            <div className="k">The tree equivalence</div>
-            <p>{clock.tree_equivalence_note}</p>
-          </div>
-          <div>
-            <div className="k">Which canopy the trees are credited with</div>
-            <p>{clock.coverage_horizon_note}</p>
-          </div>
-        </div>
-        {ceiling?.note ? <p className="label">{ceiling.note}</p> : null}
-      </section>
+          <EveningControl model={retro} rmse={rmse} />
 
-      <OrganiserData uhi={data.uhi} fanVolumes={data.fanVolumes} />
+          <section className="panel method-note" aria-label="How the seven matches were measured">
+            <h3>What the measurement is, and what it approximates.</h3>
+            <div className="mn-grid">
+              <div>
+                <div className="k">Fixtures</div>
+                <p>
+                  {retro.fixturesSource}
+                  {retro.fixturesVerified ? `, verified ${retro.fixturesVerified}` : ''}.
+                </p>
+              </div>
+              <div>
+                <div className="k">Method</div>
+                <p>{retro.notes.method}</p>
+              </div>
+              <div>
+                <div className="k">Shade rebaked per match</div>
+                <p>{retro.notes.shade}</p>
+              </div>
+              <div>
+                <div className="k">The surface temperature field</div>
+                <p>{retro.notes.lst}</p>
+              </div>
+              <div>
+                <div className="k">If weather was missing</div>
+                <p>{retro.notes.unavailable}</p>
+              </div>
+            </div>
+          </section>
+        </>
+      ) : (
+        <div className="clock-head">
+          <h2>The measured tournament is not loaded.</h2>
+          <p>
+            retrospective.json did not load, so the seven played matches cannot be shown and this screen falls back to the hour
+            sweep below, which is a design condition tool rather than a measurement of what fans absorbed.
+          </p>
+        </div>
+      )}
+
+      {model && model.rows.length ? (
+        <section className="panel sweep" aria-label="Forward looking kickoff hour sweep">
+          <div className="sweep-head">
+            <h3>Separately: the hour sweep, for a venue whose kickoff is still open</h3>
+            <p>
+              Everything above is Houston 2026, already played. This is the other question. Every hour of the plausible kickoff
+              window was modelled end to end, {n0((model.rows || []).length)} of them, each on its own hottest available match date
+              rather than on a single match. It compares hours in general. It is not a measurement of any match, and the rest of
+              this application follows whichever hour is selected here.
+            </p>
+            {clock.fixture_binding_note ? <p className="label sweep-note">{clock.fixture_binding_note}</p> : null}
+          </div>
+          <div className="clock-top">
+            <ClockTable
+              rows={model.rows}
+              baseline={model.baseline}
+              max={model.max}
+              threshold={clock.wbgt_threshold_c}
+              extreme={clock.wbgt_extreme_c}
+            />
+            <div className="clock-side">
+              <FreeVersusCapital
+                baseline={model.baseline}
+                best={model.best}
+                smallest={model.smallest}
+                selected={model.rows.find(r => r.hour === hour) || null}
+                ceiling={clock.summary?.tree_only_ceiling_at_1500 || null}
+                note={[model.smallest, model.rows.find(r => r.hour === hour), model.best].find(
+                  r => r && r.equivalence && r.equivalence.usd === null
+                )?.equivalence?.note || null}
+              />
+              <div className="mn-grid sweep-notes">
+                <div>
+                  <div className="k">Fan degree-hours in the sweep</div>
+                  <p>{clock.method_note}</p>
+                </div>
+                <div>
+                  <div className="k">The tree equivalence</div>
+                  <p>{clock.tree_equivalence_note}</p>
+                </div>
+                <div>
+                  <div className="k">Which canopy the trees are credited with</div>
+                  <p>{clock.coverage_horizon_note}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      ) : null}
 
       <div className="clock-foot">
         <button type="button" className="continue" onClick={() => setScreen('map')}>
-          Take the selected hour to the map and rank every segment
+          Take this to the map, where the {n0(data.segments.length)} segments are the city's to fix
           <span aria-hidden="true">&rarr;</span>
         </button>
       </div>
