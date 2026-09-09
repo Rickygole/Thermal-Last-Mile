@@ -263,14 +263,24 @@ def build_uhi_validation(paths):
             "this pipeline's Landsat derived heat anomaly at the sampled "
             "points. given the small sample size inside such a small study "
             "area, the additive noise the organizers disclose, and the coarse "
-            "1 to 11 ordinal scale of their index, this is read as a limited "
-            "and inconclusive corroboration attempt, not a contradiction of "
-            "the Landsat field"
+            "1 to 11 ordinal scale of their index, this test has very little "
+            "statistical power in either direction. it neither corroborates "
+            "nor contradicts the Landsat field, and it should not be presented "
+            "as support for it"
+        )
+    elif spearman <= -0.2:
+        verdict = (
+            f"a negative rank association (spearman {spearman}) between the "
+            "organizers' sample UHI index and this pipeline's Landsat derived "
+            "heat anomaly. the two fields DISAGREE on the ordering of hot and "
+            "cool locations at the sampled points. this is reported as a "
+            "contradiction rather than reconciled, and it should be treated as "
+            "a reason to distrust one of the two fields until the disagreement "
+            "is explained"
         )
     else:
-        sign = "positive" if spearman > 0 else "negative"
         verdict = (
-            f"a {sign} rank association (spearman {spearman}) between the "
+            f"a positive rank association (spearman {spearman}) between the "
             "organizers' sample UHI index and this pipeline's Landsat derived "
             "heat anomaly at the sampled points, read as modest independent "
             "corroboration of the same real spatial hot and cool pattern, not "
@@ -404,7 +414,13 @@ def build_fan_volumes(poi_paths, visits_paths):
             "than 10x, a spread this pipeline treats as implausible rather "
             "than smoothing over"
         )
-    if derived_share.get("lot_c", 0.0) < old_shares.get("lot_c", 0.0) * 0.5:
+    structural_bias_approaches = ["lot_c"]
+    disagreement = {
+        k: derived_share.get(k, 0.0) / max(old_shares.get(k, 1e-9), 1e-9)
+        for k in old_shares
+    }
+    worst = max(disagreement.items(), key=lambda kv: max(kv[1], 1.0 / max(kv[1], 1e-9)))
+    if max(worst[1], 1.0 / max(worst[1], 1e-9)) > 2.0:
         plausible = False
         plausibility_notes.append(
             "lot_c sits inside a stadium surface parking lot, which by "
@@ -414,10 +430,14 @@ def build_fan_volumes(poi_paths, visits_paths):
             "proxy structurally undercounts a parking lot approach and can "
             "structurally overcount an approach that happens to border more "
             "ordinary retail unrelated to stadium arrivals. the derived share "
-            "for lot_c fell to less than half of the original invented "
-            "estimate, consistent with this known structural bias rather than "
-            "genuine evidence that lot_c carries fewer fans on gameday, so "
-            "this run is not trusted and the pipeline falls back to the "
+            f"approach {worst[0]} disagrees with the prior by a factor of "
+            f"{round(max(worst[1], 1.0 / max(worst[1], 1e-9)), 2)}. this gate is "
+            "symmetric and fires on disagreement in EITHER direction on ANY "
+            "approach, not only where the evidence is unwelcome. the known "
+            "structural limitation, declared before the derivation was run, is "
+            f"that POI density cannot measure approaches in "
+            f"{structural_bias_approaches}, so the derivation is not trusted "
+            "here and the pipeline falls back to the "
             "invented constants"
         )
 
