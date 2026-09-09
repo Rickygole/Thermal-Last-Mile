@@ -68,7 +68,7 @@ The physics runs offline and the browser only draws.
    s3 shadow       vectorised raymarch, boolean shade mask   -->  shade_{hh}.png
    s4 surface      exposure raster per kickoff hour
    s5 routes       route, split, integrate along path        -->  segments.geojson
-   s6 optimize     greedy submodular, 81 budget levels       -->  solutions.json
+   s6 optimize     cost effectiveness greedy, 81 levels      -->  solutions.json
    s7 cities       eleven city comparison                    -->  cities.json
    meta            provenance generated, never typed         -->  meta.json
                                                                         |
@@ -93,11 +93,17 @@ conditions, the same block at the same hour is WBGT 32.8 in full sun and 30.0 in
 
 ### Allocation
 
-Shade placement under a budget is a constrained facility location problem with a
-submodular coverage objective. Greedy selection on a submodular function carries a
-proven approximation guarantee of 1 - 1/e, roughly 63 percent of optimal, and runs in
-seconds. The full budget path is solved once offline across 81 levels, so dragging the
-slider is an array lookup with no latency and no failure mode.
+Shade placement under a budget is a constrained facility location problem. The solver is a
+**cost effectiveness greedy heuristic**: it repeatedly buys whichever remaining
+(segment, intervention) pair averts the most degree-minutes per dollar, sweeping the full
+budget range offline across 81 levels. Dragging the slider is an array lookup, so the
+interaction is instant and cannot fail.
+
+It is a heuristic and it is described as one. Ratio greedy under a budget constraint
+carries no approximation guarantee, unlike greedy under a cardinality constraint, so no
+bound is claimed here. What the method does offer is transparency: every selection is
+explainable as a price per degree-minute, the full path is auditable, and the ranked
+output is a list a public works department can act on.
 
 ## Data sources
 
