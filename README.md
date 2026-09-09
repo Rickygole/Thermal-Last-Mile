@@ -165,6 +165,7 @@ Pipeline:
 ```
 uv venv --python 3.11 .venv
 uv pip install --python .venv/bin/python -r requirements.txt
+.venv/bin/python pipeline/s1_network.py
 .venv/bin/python pipeline/run_all.py
 ```
 
