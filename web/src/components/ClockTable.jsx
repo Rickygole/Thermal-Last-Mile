@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { setHour, useStore } from '../store.js'
+import { setHour, useStore, useThemeRepaint } from '../store.js'
 import { arrowSelect } from '../lib/keys.js'
 import { exposureCss } from '../lib/color.js'
 import { n0, n1, pct1 } from '../lib/format.js'
@@ -21,6 +21,7 @@ function Change ({ removed, share }) {
 }
 
 export default function ClockTable ({ rows, baseline, max, threshold, extreme }) {
+  useThemeRepaint()
   const hour = useStore(s => s.hour)
   const refs = useRef([])
   const hours = rows.map(r => r.hour)

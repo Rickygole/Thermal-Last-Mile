@@ -1,7 +1,9 @@
 import { HEAT_ANCHORS, exposureCss, heatCss } from '../lib/color.js'
 import { n1, n2 } from '../lib/format.js'
+import { useThemeRepaint } from '../store.js'
 
 export default function Legend ({ max, hour, heat, threshold }) {
+  useThemeRepaint()
   const anchors = heat?.anchors || HEAT_ANCHORS
   const [LOW_C, MID_C, HIGH_C] = anchors
   const stated = Number.isFinite(threshold)

@@ -1,10 +1,7 @@
-export const EXPOSURE = {
-  low: [151, 196, 89],
-  moderate: [239, 159, 39],
-  severe: [226, 75, 74]
-}
+import { tokens } from './theme.js'
 
-export const ACCENT = [45, 162, 187]
+export const ramp = () => tokens().exposure
+export const accentRgb = () => tokens().accent
 
 export const HEAT_ANCHORS = [27, 32, 37]
 
@@ -14,8 +11,9 @@ const mix = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t))
 
 export function exposureColor (t) {
   const c = Math.max(0, Math.min(1, t))
-  if (c < 0.5) return mix(EXPOSURE.low, EXPOSURE.moderate, c / 0.5)
-  return mix(EXPOSURE.moderate, EXPOSURE.severe, (c - 0.5) / 0.5)
+  const stops = ramp()
+  if (c < 0.5) return mix(stops.low, stops.moderate, c / 0.5)
+  return mix(stops.moderate, stops.severe, (c - 0.5) / 0.5)
 }
 
 export function heatT (wbgt, anchors = HEAT_ANCHORS) {
@@ -27,6 +25,8 @@ export function heatT (wbgt, anchors = HEAT_ANCHORS) {
 export const heatColor = (wbgt, anchors) => exposureColor(heatT(wbgt, anchors))
 
 export const lighten = (c, t) => c.map(v => Math.round(v + (255 - v) * t))
+
+export const shift = (c, t) => c.map(v => Math.round(t >= 0 ? v + (255 - v) * t : v * (1 + t)))
 
 export const rgbCss = c => `rgb(${c[0]}, ${c[1]}, ${c[2]})`
 

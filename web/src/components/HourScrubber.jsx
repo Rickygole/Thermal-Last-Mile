@@ -1,10 +1,11 @@
 import { useRef } from 'react'
-import { HOURS, setHour, setScreen, useStore } from '../store.js'
+import { HOURS, setHour, setScreen, useStore, useThemeRepaint } from '../store.js'
 import { arrowSelect } from '../lib/keys.js'
 import { exposureCss } from '../lib/color.js'
 import { n0, n1, n2, pct, tempC } from '../lib/format.js'
 
 export default function HourScrubber ({ totals, stats, walk, threshold, clock }) {
+  useThemeRepaint()
   const hour = useStore(s => s.hour)
   const refs = useRef([])
   const stat = stats ? stats[hour] : null

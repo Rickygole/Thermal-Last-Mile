@@ -1,9 +1,10 @@
 import HourProfile, { buildSeries } from './HourProfile.jsx'
-import { setSelected } from '../store.js'
+import { setSelected, useThemeRepaint } from '../store.js'
 import { exposureBand, exposureCss, BAND_LABEL } from '../lib/color.js'
 import { n0, n1, n2, pct, pct1, tempC } from '../lib/format.js'
 
 export default function SegmentDetail ({ segment, hour, max, treated, corridor, corridorLabel, anchors, threshold, worst }) {
+  useThemeRepaint()
   if (!segment) {
     return (
       <section className="panel pane" aria-label="Segment detail">

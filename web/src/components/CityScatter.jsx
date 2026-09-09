@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { exposureCss } from '../lib/color.js'
 import { n1, n2 } from '../lib/format.js'
+import { useThemeRepaint } from '../store.js'
 
 const W = 560
 const H = 300
@@ -28,6 +29,7 @@ function fit (points) {
 }
 
 export default function CityScatter ({ cities, focus }) {
+  useThemeRepaint()
   const model = useMemo(() => {
     const points = cities
       .filter(c => Number.isFinite(c.canopy_pct) && Number.isFinite(c.degmin_per_trip))
@@ -50,18 +52,18 @@ export default function CityScatter ({ cities, focus }) {
         <span className="label">circle area is matches hosted</span>
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Scatter of tree canopy percent against degree-minutes per trip for ${model.points.length} host cities`}>
-        <line x1={L} x2={W - R} y1={H - B} y2={H - B} stroke="#2E353E" strokeWidth="0.5" />
-        <line x1={L} x2={L} y1={T} y2={H - B} stroke="#2E353E" strokeWidth="0.5" />
+        <line x1={L} x2={W - R} y1={H - B} y2={H - B} stroke="var(--border)" strokeWidth="0.5" />
+        <line x1={L} x2={L} y1={T} y2={H - B} stroke="var(--border)" strokeWidth="0.5" />
         {[0, 0.25, 0.5, 0.75, 1].map(t => (
           <g key={t}>
-            <line x1={L} x2={W - R} y1={py(model.maxY * t)} y2={py(model.maxY * t)} stroke="#22262E" strokeWidth="0.5" />
-            <text x={L - 8} y={py(model.maxY * t) + 3} fontSize="10" fill="#8B929B" textAnchor="end" fontFamily="inherit">
+            <line x1={L} x2={W - R} y1={py(model.maxY * t)} y2={py(model.maxY * t)} stroke="var(--hover)" strokeWidth="0.5" />
+            <text x={L - 8} y={py(model.maxY * t) + 3} fontSize="10" fill="var(--muted)" textAnchor="end" fontFamily="inherit">
               {n1(model.maxY * t)}
             </text>
           </g>
         ))}
         {[0, 0.25, 0.5, 0.75, 1].map(t => (
-          <text key={t} x={px(model.maxX * t)} y={H - B + 15} fontSize="10" fill="#8B929B" textAnchor="middle" fontFamily="inherit">
+          <text key={t} x={px(model.maxX * t)} y={H - B + 15} fontSize="10" fill="var(--muted)" textAnchor="middle" fontFamily="inherit">
             {Math.round(model.maxX * t)}
           </text>
         ))}
@@ -71,7 +73,7 @@ export default function CityScatter ({ cities, focus }) {
             y1={py(Math.max(0, model.line.intercept))}
             x2={px(model.maxX)}
             y2={py(Math.max(0, model.line.intercept + model.line.slope * model.maxX))}
-            stroke="#4A525E"
+            stroke="var(--neutral)"
             strokeWidth="1"
             strokeDasharray="4 4"
           />
@@ -93,14 +95,14 @@ export default function CityScatter ({ cities, focus }) {
                 r={r}
                 fill={exposureCss(p.y / model.maxY)}
                 fillOpacity={isFocus ? 1 : 0.75}
-                stroke={isFocus ? 'var(--accent)' : '#15171B'}
+                stroke={isFocus ? 'var(--accent)' : 'var(--page)'}
                 strokeWidth={isFocus ? 2 : 1}
               />
               <text
                 x={px(p.x) + r + 5}
                 y={py(p.y) + dy}
                 fontSize="10"
-                fill={isFocus ? '#E7E9EC' : '#8B929B'}
+                fill={isFocus ? 'var(--text)' : 'var(--muted)'}
                 fontFamily="inherit"
               >
                 {p.city.name}
@@ -108,10 +110,10 @@ export default function CityScatter ({ cities, focus }) {
             </g>
           )
         })}
-        <text x={L} y={H - 6} fontSize="10" fill="#8B929B" fontFamily="inherit">
+        <text x={L} y={H - 6} fontSize="10" fill="var(--muted)" fontFamily="inherit">
           tree canopy percent
         </text>
-        <text x={W - R} y={H - 6} fontSize="10" fill="#8B929B" textAnchor="end" fontFamily="inherit">
+        <text x={W - R} y={H - 6} fontSize="10" fill="var(--muted)" textAnchor="end" fontFamily="inherit">
           degree-minutes per trip on the vertical
         </text>
       </svg>

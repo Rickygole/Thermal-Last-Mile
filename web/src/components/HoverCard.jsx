@@ -1,7 +1,9 @@
 import { BAND_LABEL, exposureBand, exposureCss } from '../lib/color.js'
 import { n0, n1, n2, pct, pct1 } from '../lib/format.js'
+import { useThemeRepaint } from '../store.js'
 
 export default function HoverCard ({ hover, hour, max, treated }) {
+  useThemeRepaint()
   if (!hover) return null
   const style = { left: Math.round(hover.x) + 14, top: Math.round(hover.y) + 14 }
   if (hover.kind === 'building') {

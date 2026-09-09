@@ -4,7 +4,7 @@ import CityScatter from '../components/CityScatter.jsx'
 import CityMethods from '../components/CityMethods.jsx'
 import { exposureCss } from '../lib/color.js'
 import { n0, n1 } from '../lib/format.js'
-import { setScreen } from '../store.js'
+import { setScreen, useThemeRepaint } from '../store.js'
 
 const FOCUS = 'houston'
 const CLUSTER_PCT = 15
@@ -13,7 +13,7 @@ function Sparkbar ({ value, max, focus }) {
   const w = Math.max(2, Math.round((value / max) * 100))
   return (
     <svg viewBox="0 0 100 8" preserveAspectRatio="none" style={{ height: 8 }} aria-hidden="true">
-      <rect x="0" y="2.5" width="100" height="3" rx="1.5" fill="#262B33" />
+      <rect x="0" y="2.5" width="100" height="3" rx="1.5" fill="var(--track)" />
       <rect x="0" y="2" width={w} height="4" rx="2" fill={exposureCss(value / max)} opacity={focus ? 1 : 0.75} />
     </svg>
   )
@@ -33,6 +33,7 @@ function fieldStatus (method, id, field) {
 }
 
 export default function Ledger ({ data }) {
+  useThemeRepaint()
   const method = data.citiesMethod
   const cities = useMemo(
     () => data.cities.slice().sort((a, b) => (b.degmin_per_trip ?? 0) - (a.degmin_per_trip ?? 0)),

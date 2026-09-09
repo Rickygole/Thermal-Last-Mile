@@ -95,8 +95,8 @@ export default function TradeoffCurve ({ points, index, onPick }) {
           if (e.buttons === 1) pick(e)
         }}
       >
-        <line x1={PAD_L} x2={W - PAD_R} y1={H - PAD_B} y2={H - PAD_B} stroke="#2E353E" strokeWidth="0.5" />
-        <path d={geometry.area} fill="rgba(45, 162, 187, 0.10)" />
+        <line x1={PAD_L} x2={W - PAD_R} y1={H - PAD_B} y2={H - PAD_B} stroke="var(--border)" strokeWidth="0.5" />
+        <path d={geometry.area} fill="var(--accent-wash)" />
         <path d={geometry.line} fill="none" stroke="var(--accent)" strokeWidth="1.5" strokeLinejoin="round" />
         {kneePoint ? (
           <g>
@@ -105,11 +105,11 @@ export default function TradeoffCurve ({ points, index, onPick }) {
               x2={geometry.x(kneePoint.level)}
               y1={PAD_T - 4}
               y2={H - PAD_B}
-              stroke="#8B929B"
+              stroke="var(--muted)"
               strokeWidth="0.5"
               strokeDasharray="2 3"
             />
-            <text x={geometry.x(kneePoint.level) + 4} y={PAD_T + 2} fontSize="9" fill="#8B929B" fontFamily="inherit">
+            <text x={geometry.x(kneePoint.level) + 4} y={PAD_T + 2} fontSize="9" fill="var(--muted)" fontFamily="inherit">
               returns fall off
             </text>
           </g>
@@ -119,14 +119,14 @@ export default function TradeoffCurve ({ points, index, onPick }) {
           x2={geometry.x(current.level)}
           y1={PAD_T - 6}
           y2={H - PAD_B}
-          stroke="#E7E9EC"
+          stroke="var(--text)"
           strokeWidth="1"
         />
-        <circle cx={geometry.x(current.level)} cy={geometry.y(current.averted)} r="4" fill="var(--accent)" stroke="#15171B" strokeWidth="1.5" />
-        <text x={PAD_L} y={H - 6} fontSize="9" fill="#8B929B" fontFamily="inherit">
+        <circle cx={geometry.x(current.level)} cy={geometry.y(current.averted)} r="4" fill="var(--accent)" stroke="var(--page)" strokeWidth="1.5" />
+        <text x={PAD_L} y={H - 6} fontSize="9" fill="var(--muted)" fontFamily="inherit">
           $0
         </text>
-        <text x={W - PAD_R} y={H - 6} fontSize="9" fill="#8B929B" fontFamily="inherit" textAnchor="end">
+        <text x={W - PAD_R} y={H - 6} fontSize="9" fill="var(--muted)" fontFamily="inherit" textAnchor="end">
           {usd(geometry.maxLevel)}
         </text>
       </svg>

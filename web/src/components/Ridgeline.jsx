@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { HOURS, setHour, useStore } from '../store.js'
+import { HOURS, setHour, useStore, useThemeRepaint } from '../store.js'
 import { exposureCss, heatCss } from '../lib/color.js'
 import { APPROACH_LABEL } from '../lib/venues.js'
 import { n0, n1, n2, tempC } from '../lib/format.js'
@@ -26,6 +26,7 @@ function pickApproach (segments) {
 }
 
 export default function Ridgeline ({ segments, threshold }) {
+  useThemeRepaint()
   const THRESHOLD = Number.isFinite(threshold) ? threshold : null
   const hour = useStore(s => s.hour)
   const picked = useMemo(() => pickApproach(segments), [segments])
@@ -83,9 +84,9 @@ export default function Ridgeline ({ segments, threshold }) {
               <clipPath id={`clip-${s.hour}`}>
                 <rect x="0" y={baseline - ROW} width={width} height={thresholdY - (baseline - ROW)} />
               </clipPath>
-              <line x1="0" x2={width} y1={baseline} y2={baseline} stroke="#2E353E" strokeWidth="0.5" />
+              <line x1="0" x2={width} y1={baseline} y2={baseline} stroke="var(--border)" strokeWidth="0.5" />
               {inRange ? (
-                <line x1="0" x2={width} y1={thresholdY} y2={thresholdY} stroke="#4A525E" strokeWidth="0.5" strokeDasharray="3 3" />
+                <line x1="0" x2={width} y1={thresholdY} y2={thresholdY} stroke="var(--neutral)" strokeWidth="0.5" strokeDasharray="3 3" />
               ) : null}
               {inRange ? <path d={above} fill={exposureCss(0.85)} fillOpacity="0.4" clipPath={`url(#clip-${s.hour})`} /> : null}
               <path d={line} fill="none" stroke={heatCss(s.peak)} strokeWidth={active ? 1.6 : 1} strokeLinejoin="round" />
@@ -97,19 +98,19 @@ export default function Ridgeline ({ segments, threshold }) {
           const active = s.hour === hour
           return (
             <g key={`label-${s.hour}`} onClick={() => setHour(s.hour)} style={{ cursor: 'pointer' }}>
-              <text x="0" y={baseline} fill={active ? '#E7E9EC' : '#8B929B'} fontSize="13" fontFamily="inherit">
+              <text x="0" y={baseline} fill={active ? 'var(--text)' : 'var(--muted)'} fontSize="13" fontFamily="inherit">
                 {s.hour}:00
               </text>
-              <text x="46" y={baseline} fill="#8B929B" fontSize="11" fontFamily="inherit">
+              <text x="46" y={baseline} fill="var(--muted)" fontSize="11" fontFamily="inherit">
                 {n1(s.peak)} C peak, {n2(s.degmin)} degmin
               </text>
             </g>
           )
         })}
-        <text x={LABEL_W} y={height - 4} fontSize="10" fill="#8B929B" fontFamily="inherit">
+        <text x={LABEL_W} y={height - 4} fontSize="10" fill="var(--muted)" fontFamily="inherit">
           platform
         </text>
-        <text x={W} y={height - 4} fontSize="10" fill="#8B929B" fontFamily="inherit" textAnchor="end">
+        <text x={W} y={height - 4} fontSize="10" fill="var(--muted)" fontFamily="inherit" textAnchor="end">
           gate, {n0(picked.segs.reduce((a, s) => a + (s.len_m || 0), 0))} m
         </text>
       </svg>

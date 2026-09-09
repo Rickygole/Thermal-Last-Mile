@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { applyTheme, resolveInitialTheme, writeStoredTheme } from './lib/theme.js'
 
 export const SCREENS = ['walk', 'clock', 'map', 'ledger', 'transfer']
 
@@ -8,7 +9,10 @@ const fromHash = () => {
   return SCREENS.includes(id) ? id : 'walk'
 }
 
+const bootTheme = applyTheme(resolveInitialTheme())
+
 export const useStore = create(() => ({
+  theme: bootTheme,
   screen: fromHash(),
   hour: '17',
   budget: 750000,
@@ -30,6 +34,16 @@ export const setSelected = selected => useStore.setState({ selected })
 export const setHeat = heat => useStore.setState({ heat })
 export const setPitch = pitch => useStore.setState({ pitch })
 export const setHorizon = horizon => useStore.setState({ horizon })
+
+export const setTheme = name => {
+  const applied = applyTheme(name)
+  writeStoredTheme(applied)
+  useStore.setState({ theme: applied })
+}
+
+export const useThemeName = () => useStore(s => s.theme)
+
+export const useThemeRepaint = () => useStore(s => s.theme)
 
 export const HOURS = ['12', '13', '14', '15', '16', '17', '18', '19', '20', '21']
 export const BASELINE_HOUR = '15'

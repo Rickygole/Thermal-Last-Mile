@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { BitmapLayer } from '@deck.gl/layers'
-import { EXPOSURE, HEAT_ANCHORS, glsl } from './color.js'
+import { HEAT_ANCHORS, glsl, ramp } from './color.js'
+import { tokens } from './theme.js'
 import { ms } from './motion.js'
 
 export const RASTER_WINDOW = 4
@@ -38,6 +39,8 @@ export class HeatSurfaceLayer extends BitmapLayer {
     const base = super.getShaders()
     const [lo, hi] = this.props.domain || HEAT_DOMAIN
     const [a0, a1, a2] = this.props.anchors || HEAT_ANCHORS
+    const stops = ramp()
+    const field = tokens().field
     const span = (hi - lo).toFixed(4)
     return {
       ...base,
@@ -50,12 +53,14 @@ export class HeatSurfaceLayer extends BitmapLayer {
     : 0.5 + 0.5 * (wbgt - ${a1.toFixed(1)}) / ${(a2 - a1).toFixed(1)};
   t = clamp(t, 0.0, 1.0);
   vec3 ramp = t < 0.5
-    ? mix(${glsl(EXPOSURE.low)}, ${glsl(EXPOSURE.moderate)}, t * 2.0)
-    : mix(${glsl(EXPOSURE.moderate)}, ${glsl(EXPOSURE.severe)}, (t - 0.5) * 2.0);
+    ? mix(${glsl(stops.low)}, ${glsl(stops.moderate)}, t * 2.0)
+    : mix(${glsl(stops.moderate)}, ${glsl(stops.severe)}, (t - 0.5) * 2.0);
+  float body = ${field.alphaFloor.toFixed(4)} + ${field.alphaGain.toFixed(4)} * pow(t, ${field.alphaGamma.toFixed(4)});
+  float fade = ${field.vignette.toFixed(4)};
   vec2 uv = geometry.uv;
-  float edge = smoothstep(0.0, 0.075, uv.x) * smoothstep(0.0, 0.075, 1.0 - uv.x)
-    * smoothstep(0.0, 0.075, uv.y) * smoothstep(0.0, 0.075, 1.0 - uv.y);
-  color = vec4(ramp, color.a * (0.28 + 0.72 * t) * edge);
+  float edge = smoothstep(0.0, fade, uv.x) * smoothstep(0.0, fade, 1.0 - uv.x)
+    * smoothstep(0.0, fade, uv.y) * smoothstep(0.0, fade, 1.0 - uv.y);
+  color = vec4(ramp, color.a * body * edge);
 `
       }
     }
@@ -71,11 +76,12 @@ HeatSurfaceLayer.defaultProps = {
 
 export function heatLayers ({ hour, hours, heat, urlFor, bounds, domain, anchors }) {
   if (!bounds || heat <= 0) return []
+  const theme = tokens().name
   const mounted = hours && hours.length ? hours : [hour]
   return mounted.map(
     h =>
       new HeatSurfaceLayer({
-        id: `heat-${h}`,
+        id: `heat-${theme}-${h}`,
         image: urlFor(h),
         bounds,
         domain: domain || HEAT_DOMAIN,

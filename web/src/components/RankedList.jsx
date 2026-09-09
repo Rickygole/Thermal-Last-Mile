@@ -1,5 +1,5 @@
 import { useMemo, useRef } from 'react'
-import { HOURS, setSelected, useStore } from '../store.js'
+import { HOURS, setSelected, useStore, useThemeRepaint } from '../store.js'
 import { exposureCss } from '../lib/color.js'
 import { n0, n1, n2 } from '../lib/format.js'
 
@@ -11,7 +11,7 @@ function MicroHours ({ segment, max }) {
         const t = max > 0 ? v / max : 0
         return (
           <span key={h} className="mh">
-            <span style={{ height: `${Math.max(8, Math.round(t * 100))}%`, background: v > 0 ? exposureCss(t) : '#39414C' }} />
+            <span style={{ height: `${Math.max(8, Math.round(t * 100))}%`, background: v > 0 ? exposureCss(t) : 'var(--track-strong)' }} />
           </span>
         )
       })}
@@ -20,6 +20,7 @@ function MicroHours ({ segment, max }) {
 }
 
 export default function RankedList ({ segments, hour, max, treated }) {
+  useThemeRepaint()
   const selected = useStore(s => s.selected)
   const listRef = useRef(null)
   const exceeded = useMemo(() => segments.some(s => (s.degmin[hour] ?? 0) > 0), [segments, hour])

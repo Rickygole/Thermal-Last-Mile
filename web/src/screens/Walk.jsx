@@ -5,7 +5,7 @@ import { buildingLayer, exposureLayer, fanFlowLayer, pathCasingLayer, shadeLayer
 import { heatLayers, useRasterWindow } from '../lib/heat.js'
 import { expoUrl } from '../lib/data.js'
 import { useLoopClock } from '../lib/useClock.js'
-import { setScreen, useStore } from '../store.js'
+import { setScreen, useStore, useThemeName } from '../store.js'
 import { VENUE_VIEWS } from '../lib/venues.js'
 import { n0, n1, n2, pct, tempC } from '../lib/format.js'
 
@@ -13,6 +13,7 @@ export default function Walk ({ data }) {
   const hour = useStore(s => s.hour)
   const heat = useStore(s => s.heat)
   const pitch = useStore(s => s.pitch)
+  const theme = useThemeName()
   const time = useLoopClock(8000, true)
   const mountedHours = useRasterWindow(hour)
   const bounds = data.heat.bounds || data.meta?.raster_bounds || data.bounds
@@ -33,7 +34,7 @@ export default function Walk ({ data }) {
       exposureLayer({ segments: data.segments, hour, max: data.max.all, selected: null, idSuffix: '-walk', dim: true }),
       fanFlowLayer({ trips: data.trips, hour, max: data.max.all, currentTime: time })
     ]
-  }, [hour, mountedHours, heat, pitch, bounds, data, time])
+  }, [hour, mountedHours, heat, pitch, bounds, data, time, theme])
 
   return (
     <div className="walk">

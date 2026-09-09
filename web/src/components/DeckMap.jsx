@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 import maplibregl from 'maplibre-gl'
 import { MapboxOverlay } from '@deck.gl/mapbox'
+import { tokens } from '../lib/theme.js'
+import { useThemeName } from '../store.js'
 
-const STYLE = 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json'
-
-const FALLBACK_STYLE = {
+const fallbackStyle = () => ({
   version: 8,
   sources: {},
-  layers: [{ id: 'bg', type: 'background', paint: { 'background-color': '#15171B' } }]
-}
+  layers: [{ id: 'bg', type: 'background', paint: { 'background-color': tokens().fallbackBackground } }]
+})
 
 const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
@@ -29,12 +29,14 @@ export default function DeckMap ({ view, bounds, layers, effects, interactive = 
   const mapRef = useRef(null)
   const overlayRef = useRef(null)
   const [ready, setReady] = useState(false)
+  const theme = useThemeName()
+  const firstTheme = useRef(theme)
 
   useEffect(() => {
     if (!holder.current) return undefined
     const map = new maplibregl.Map({
       container: holder.current,
-      style: STYLE,
+      style: tokens().basemap,
       center: [view.longitude, view.latitude],
       zoom: view.zoom,
       pitch: view.pitch || 0,
@@ -47,7 +49,7 @@ export default function DeckMap ({ view, bounds, layers, effects, interactive = 
     map.on('error', e => {
       if (e && e.error && /style/i.test(String(e.error.message || ''))) {
         try {
-          map.setStyle(FALLBACK_STYLE)
+          map.setStyle(fallbackStyle())
         } catch (ignored) {
           setReady(true)
         }
@@ -72,6 +74,17 @@ export default function DeckMap ({ view, bounds, layers, effects, interactive = 
   useEffect(() => {
     if (overlayRef.current) overlayRef.current.setProps(effects ? { layers, effects } : { layers })
   }, [layers, effects])
+
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map || firstTheme.current === theme) return
+    firstTheme.current = theme
+    try {
+      map.setStyle(tokens().basemap, { diff: false })
+    } catch (ignored) {
+      map.setStyle(fallbackStyle())
+    }
+  }, [theme])
 
   useEffect(() => {
     const map = mapRef.current

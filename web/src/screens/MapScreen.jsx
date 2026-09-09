@@ -15,7 +15,8 @@ import { buildingLayer, exposureLayer, fundedLayer, pathCasingLayer, shadeLayers
 import { heatLayers, useRasterWindow } from '../lib/heat.js'
 import { budgetLevels, expoUrl, hasMaturePath, interventionPoints, solutionAt, worstApproach } from '../lib/data.js'
 import { downloadCsv, segmentsToCsv } from '../lib/csv.js'
-import { HOURS, setScreen, setSelected, useStore } from '../store.js'
+import { HOURS, setScreen, setSelected, useStore, useThemeName } from '../store.js'
+import { tokens } from '../lib/theme.js'
 import { VENUE_VIEWS } from '../lib/venues.js'
 import { lightDirection, sunFor } from '../lib/sun.js'
 import { n0, pct1 } from '../lib/format.js'
@@ -27,6 +28,7 @@ export default function MapScreen ({ data }) {
   const heat = useStore(s => s.heat)
   const pitch = useStore(s => s.pitch)
   const horizon = useStore(s => s.horizon)
+  const theme = useThemeName()
   const [hover, setHover] = useState(null)
   const mountedHours = useRasterWindow(hour)
 
@@ -48,19 +50,19 @@ export default function MapScreen ({ data }) {
   const segment = useMemo(() => data.segments.find(s => s.id === selected) || null, [data.segments, selected])
   const onHover = useCallback(info => setHover(info), [])
   const sun = useMemo(() => sunFor(hour, data.heat), [hour, data.heat])
-  const effects = useMemo(
-    () => [
+  const effects = useMemo(() => {
+    const light = tokens().map
+    return [
       new LightingEffect({
-        ambient: new AmbientLight({ color: [190, 200, 215], intensity: 1.5 }),
+        ambient: new AmbientLight({ color: light.ambient.color, intensity: light.ambient.intensity }),
         sun: new DirectionalLight({
-          color: [255, 240, 214],
-          intensity: sun.elev > 0 ? 1.9 : 0.5,
+          color: light.sun.color,
+          intensity: sun.elev > 0 ? light.sun.intensity : light.sun.night,
           direction: lightDirection(sun)
         })
       })
-    ],
-    [sun]
-  )
+    ]
+  }, [sun, theme])
 
   const corridor = useMemo(() => {
     const lo = {}
@@ -96,7 +98,7 @@ export default function MapScreen ({ data }) {
         onHover
       })
     ]
-  }, [hour, mountedHours, heat, pitch, rasterBounds, data, selected, treated, onHover])
+  }, [hour, mountedHours, heat, pitch, rasterBounds, data, selected, treated, onHover, theme])
 
   useEffect(() => {
     const onKey = e => {
