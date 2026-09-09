@@ -34,7 +34,15 @@ OUTPUT_FILES = {
     ]
     + [c.OUT_DIR / f"shade_{h:02d}.png" for h in HOURS]
     + [c.OUT_DIR / f"expo_{h:02d}.png" for h in HOURS]
-    + [c.OUT_DIR / "expo_meta.json", c.OUT_DIR / "cities.json"],
+    + [
+        c.OUT_DIR / "expo_meta.json",
+        c.OUT_DIR / "cities.json",
+        c.OUT_DIR / "cities_method.json",
+        c.OUT_DIR / "kickoff_clock.json",
+        c.OUT_DIR / "equity.json",
+        c.OUT_DIR / "uhi_validation.json",
+        c.OUT_DIR / "fan_volumes.json",
+    ],
 }
 
 

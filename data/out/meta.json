@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-09-09T02:44:27Z",
+  "generated_utc": "2026-09-09T02:46:46Z",
   "model": {
     "wbgt": "Liljegren, J.C. et al. 2008. Modeling the wet bulb globe temperature using standard meteorological measurements. Journal of Occupational and Environmental Hygiene 5(10) 645-655.",
     "implementation": "pywbgt 3.0.7",
