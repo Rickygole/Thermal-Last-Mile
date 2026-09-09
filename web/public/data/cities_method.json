@@ -489,7 +489,7 @@
         "measurement": "90th percentile of all valid 30 m surface temperature pixels inside the 2 mile buffer, pooled across up to 10 of the clearest June through August scenes drawn from years 2018 through 2024, one search per year, with reported scene cloud cover under 30 percent",
         "qa_caveat": "cloud masking is scene level only, using the published eo:cloud_cover metadata field, there is no per-pixel QA_PIXEL cloud or shadow mask applied inside the buffer, a small number of undetected cloud or shadow pixels inside an otherwise clear scene could bias the pooled percentile",
         "is_proxy": false,
-        "n_scenes_used": 9,
+        "n_scenes_used": 10,
         "scenes": [
           {
             "scene_id": "LC08_L2SP_041036_20180714_02_T1",
@@ -531,6 +531,12 @@
             "scene_id": "LC08_L2SP_041036_20210807_02_T1",
             "date": "2021-08-07",
             "cloud_cover_pct": 7.49,
+            "n_pixels": 36149
+          },
+          {
+            "scene_id": "LC08_L2SP_041036_20210706_02_T1",
+            "date": "2021-07-06",
+            "cloud_cover_pct": 7.31,
             "n_pixels": 36149
           },
           {

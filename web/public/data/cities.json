@@ -48,9 +48,9 @@
     "id": "los_angeles",
     "name": "Los Angeles",
     "venue": "SoFi Stadium, Inglewood",
-    "degmin_per_trip": 74.1,
+    "degmin_per_trip": 73.6,
     "canopy_pct": 9.6,
-    "lst_p90_c": 49.8,
+    "lst_p90_c": 49.7,
     "matches": 8
   },
   {
