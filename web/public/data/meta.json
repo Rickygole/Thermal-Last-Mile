@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-09-09T02:11:37Z",
+  "generated_utc": "2026-09-09T02:37:39Z",
   "model": {
     "wbgt": "Liljegren, J.C. et al. 2008. Modeling the wet bulb globe temperature using standard meteorological measurements. Journal of Occupational and Environmental Hygiene 5(10) 645-655.",
     "implementation": "pywbgt 3.0.7",
@@ -7,7 +7,79 @@
   },
   "sources": [
     {
+      "layer": "meteorology hour 12",
+      "product": "Iowa Environmental Mesonet ASOS one minute and hourly archive",
+      "stations": [
+        "KHOU",
+        "KIAH",
+        "KSGR"
+      ],
+      "date_used": "2026-06-29",
+      "match_dates_considered": [
+        "2026-06-26",
+        "2026-06-29",
+        "2026-07-04"
+      ],
+      "date_selection_note": "of the three match dates in config.yml, the hour uses whichever single date had the hottest mean observed air temperature across the three ASOS stations, rather than averaging conditions across dates, so a real hot day is not smoothed away by cooler sampled days",
+      "provider": "Iowa State University Department of Agronomy",
+      "licence": "public, no key required"
+    },
+    {
+      "layer": "meteorology hour 13",
+      "product": "Iowa Environmental Mesonet ASOS one minute and hourly archive",
+      "stations": [
+        "KHOU",
+        "KIAH",
+        "KSGR"
+      ],
+      "date_used": "2026-07-04",
+      "match_dates_considered": [
+        "2026-06-26",
+        "2026-06-29",
+        "2026-07-04"
+      ],
+      "date_selection_note": "of the three match dates in config.yml, the hour uses whichever single date had the hottest mean observed air temperature across the three ASOS stations, rather than averaging conditions across dates, so a real hot day is not smoothed away by cooler sampled days",
+      "provider": "Iowa State University Department of Agronomy",
+      "licence": "public, no key required"
+    },
+    {
+      "layer": "meteorology hour 14",
+      "product": "Iowa Environmental Mesonet ASOS one minute and hourly archive",
+      "stations": [
+        "KHOU",
+        "KIAH",
+        "KSGR"
+      ],
+      "date_used": "2026-07-04",
+      "match_dates_considered": [
+        "2026-06-26",
+        "2026-06-29",
+        "2026-07-04"
+      ],
+      "date_selection_note": "of the three match dates in config.yml, the hour uses whichever single date had the hottest mean observed air temperature across the three ASOS stations, rather than averaging conditions across dates, so a real hot day is not smoothed away by cooler sampled days",
+      "provider": "Iowa State University Department of Agronomy",
+      "licence": "public, no key required"
+    },
+    {
       "layer": "meteorology hour 15",
+      "product": "Iowa Environmental Mesonet ASOS one minute and hourly archive",
+      "stations": [
+        "KHOU",
+        "KIAH",
+        "KSGR"
+      ],
+      "date_used": "2026-07-04",
+      "match_dates_considered": [
+        "2026-06-26",
+        "2026-06-29",
+        "2026-07-04"
+      ],
+      "date_selection_note": "of the three match dates in config.yml, the hour uses whichever single date had the hottest mean observed air temperature across the three ASOS stations, rather than averaging conditions across dates, so a real hot day is not smoothed away by cooler sampled days",
+      "provider": "Iowa State University Department of Agronomy",
+      "licence": "public, no key required"
+    },
+    {
+      "layer": "meteorology hour 16",
       "product": "Iowa Environmental Mesonet ASOS one minute and hourly archive",
       "stations": [
         "KHOU",
@@ -43,7 +115,43 @@
       "licence": "public, no key required"
     },
     {
+      "layer": "meteorology hour 18",
+      "product": "Iowa Environmental Mesonet ASOS one minute and hourly archive",
+      "stations": [
+        "KHOU",
+        "KIAH",
+        "KSGR"
+      ],
+      "date_used": "2026-07-04",
+      "match_dates_considered": [
+        "2026-06-26",
+        "2026-06-29",
+        "2026-07-04"
+      ],
+      "date_selection_note": "of the three match dates in config.yml, the hour uses whichever single date had the hottest mean observed air temperature across the three ASOS stations, rather than averaging conditions across dates, so a real hot day is not smoothed away by cooler sampled days",
+      "provider": "Iowa State University Department of Agronomy",
+      "licence": "public, no key required"
+    },
+    {
       "layer": "meteorology hour 19",
+      "product": "Iowa Environmental Mesonet ASOS one minute and hourly archive",
+      "stations": [
+        "KHOU",
+        "KIAH",
+        "KSGR"
+      ],
+      "date_used": "2026-07-04",
+      "match_dates_considered": [
+        "2026-06-26",
+        "2026-06-29",
+        "2026-07-04"
+      ],
+      "date_selection_note": "of the three match dates in config.yml, the hour uses whichever single date had the hottest mean observed air temperature across the three ASOS stations, rather than averaging conditions across dates, so a real hot day is not smoothed away by cooler sampled days",
+      "provider": "Iowa State University Department of Agronomy",
+      "licence": "public, no key required"
+    },
+    {
+      "layer": "meteorology hour 20",
       "product": "Iowa Environmental Mesonet ASOS one minute and hourly archive",
       "stations": [
         "KHOU",
@@ -190,7 +298,7 @@
       "n_points_inside_study_bbox": 210,
       "spearman_r": 0.147,
       "pearson_r": 0.193,
-      "verdict": "weak rank agreement between the organizers' sample UHI index and this pipeline's Landsat derived heat anomaly at the sampled points. given the small sample size inside such a small study area, the additive noise the organizers disclose, and the coarse 1 to 11 ordinal scale of their index, this is read as a limited and inconclusive corroboration attempt, not a contradiction of the Landsat field",
+      "verdict": "weak rank agreement between the organizers' sample UHI index and this pipeline's Landsat derived heat anomaly at the sampled points. given the small sample size inside such a small study area, the additive noise the organizers disclose, and the coarse 1 to 11 ordinal scale of their index, this test has very little statistical power in either direction. it neither corroborates nor contradicts the Landsat field, and it should not be presented as support for it",
       "organizer_data_limitation": "these datasets are hackathon organiser sample data, transformed from the real underlying sources with multiplicative noise added to counts and visitation, additive noise added to temperatures and other bounded environmental values, and spatial jittering applied to coordinates. the organizers state that findings from this data should not be used to make valid, reliable, or actionable assessments of any city, district, venue, or geographic area. every number in this file is used only for corroboration, relative weighting, or workflow demonstration, never as a measurement of real Houston conditions",
       "provider": "hackathon organiser organizers via Box",
       "licence": "hackathon sample data, confidential, see data/out/uhi_validation.json"
@@ -206,10 +314,10 @@
     }
   ],
   "validation": {
-    "rmse_c": 0.82,
-    "bias_c": 0.02,
+    "rmse_c": 1.05,
+    "bias_c": 0.03,
     "n_stations": 3,
-    "n_samples": 12,
+    "n_samples": 30,
     "quantity_validated": "air temperature",
     "method": "leave one out cross validation of the inverse distance weighted station interpolation used for the meteorological input grid, predicting each ASOS station from the other two and comparing to its own observation, across all kickoff hours and the match date selected for each hour. This validates the spatial interpolation of real observations, not the Liljegren WBGT model itself, since no wet bulb globe temperature instrument record exists for this site and these dates"
   },
@@ -273,8 +381,8 @@
       "rideshare_kirby": 0.15,
       "fan_fest": 0.1
     },
-    "svi_note": "social vulnerability index not integrated in this pipeline run, reported as 0.0 pending a real CDC or ATSDR SVI data source",
-    "canopy_pct_note": "tree canopy percent not modeled in this pipeline run, reported as 0.0 pending a real canopy raster, the DSM built in s3 covers buildings only"
+    "svi_note": "svi and canopy_pct populated from data/out/vulnerability_by_segment.json, produced by pipeline/s11_vulnerability.py, see data/out/equity.json for the CDC/ATSDR SVI vintage and field, the NLCD canopy source, and the per segment join method",
+    "canopy_pct_note": "svi and canopy_pct populated from data/out/vulnerability_by_segment.json, produced by pipeline/s11_vulnerability.py, see data/out/equity.json for the CDC/ATSDR SVI vintage and field, the NLCD canopy source, and the per segment join method"
   },
   "walk_speed_ms": 1.3,
   "walk_segment_length_m": 20.0,
@@ -289,12 +397,40 @@
   "n_segments": 172,
   "wbgt_threshold_c": 28.0,
   "wbgt_spatial_range_by_hour_c": {
+    "12": {
+      "min_c": 32.093711853027344,
+      "max_c": 33.78251266479492,
+      "range_c": 1.6888008117675781,
+      "tair_min_c": 32.544288635253906,
+      "tair_max_c": 36.29901123046875
+    },
+    "13": {
+      "min_c": 34.92292785644531,
+      "max_c": 36.5129280090332,
+      "range_c": 1.5900001525878906,
+      "tair_min_c": 34.21267318725586,
+      "tair_max_c": 38.01831817626953
+    },
+    "14": {
+      "min_c": 34.981754302978516,
+      "max_c": 36.58201217651367,
+      "range_c": 1.6002578735351562,
+      "tair_min_c": 34.47655487060547,
+      "tair_max_c": 38.325157165527344
+    },
     "15": {
       "min_c": 33.626708984375,
       "max_c": 35.288265228271484,
       "range_c": 1.6615562438964844,
       "tair_min_c": 34.83683395385742,
       "tair_max_c": 38.640480041503906
+    },
+    "16": {
+      "min_c": 32.471736907958984,
+      "max_c": 34.15473556518555,
+      "range_c": 1.6829986572265625,
+      "tair_min_c": 33.59763717651367,
+      "tair_max_c": 37.36543273925781
     },
     "17": {
       "min_c": 30.925090789794922,
@@ -303,12 +439,26 @@
       "tair_min_c": 32.48012924194336,
       "tair_max_c": 36.23685073852539
     },
+    "18": {
+      "min_c": 29.755878448486328,
+      "max_c": 31.44382095336914,
+      "range_c": 1.6879425048828125,
+      "tair_min_c": 31.001462936401367,
+      "tair_max_c": 34.752220153808594
+    },
     "19": {
       "min_c": 27.8385066986084,
       "max_c": 29.57541847229004,
       "range_c": 1.7369117736816406,
       "tair_min_c": 29.709793090820312,
       "tair_max_c": 33.47732162475586
+    },
+    "20": {
+      "min_c": 25.824689865112305,
+      "max_c": 27.595678329467773,
+      "range_c": 1.7709884643554688,
+      "tair_min_c": 28.478981018066406,
+      "tair_max_c": 32.2615852355957
     },
     "21": {
       "min_c": 25.31085777282715,
