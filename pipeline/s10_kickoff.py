@@ -158,6 +158,62 @@ def equivalent_tree_spend(curve, target_fan_hours, hour):
     }
 
 
+
+def scheduled_block(hour_rows):
+    fixtures = c.CFG.get("fixtures")
+    if not fixtures or not fixtures.get("matches"):
+        return None
+    matches = []
+    total = 0.0
+    for m in fixtures["matches"]:
+        h = str(m["kickoff_local_hour"])
+        row = hour_rows.get(h)
+        if row is None:
+            continue
+        fh = row["fan_hours_above_threshold"]
+        total += fh
+        matches.append(
+            {
+                "date": str(m["date"]),
+                "kickoff_local_hour": m["kickoff_local_hour"],
+                "stage": m.get("stage"),
+                "label": m.get("label"),
+                "fan_hours_above_threshold": round(fh, 1),
+            }
+        )
+    if not matches:
+        return None
+    best_hour = min(hour_rows, key=lambda k: hour_rows[k]["fan_hours_above_threshold"])
+    best_val = hour_rows[best_hour]["fan_hours_above_threshold"]
+    alt_total = best_val * len(matches)
+    removed = total - alt_total
+    return {
+        "source": fixtures.get("source"),
+        "verified_utc": fixtures.get("verified_utc"),
+        "volatility_note": fixtures.get("note"),
+        "matches": matches,
+        "tournament_total_fan_hours_above_threshold": round(total, 1),
+        "n_matches": len(matches),
+        "n_matches_at_worst_scheduled_hour": sum(
+            1 for m in matches if str(m["kickoff_local_hour"]) == max(
+                {str(x["kickoff_local_hour"]) for x in matches},
+                key=lambda k: hour_rows[k]["fan_hours_above_threshold"],
+            )
+        ),
+        "counterfactual_all_at_hour": int(best_hour),
+        "counterfactual_total_fan_hours_above_threshold": round(alt_total, 1),
+        "removed_by_rescheduling_fan_hours": round(removed, 1),
+        "removed_by_rescheduling_fraction": round(removed / total, 4) if total else None,
+        "statement": (
+            f"as scheduled, the {len(matches)} Houston matches accumulate "
+            f"{round(total):,} fan degree hours above the threshold on the last mile. "
+            f"scheduling every match at {int(best_hour)}:00 instead would leave "
+            f"{round(alt_total):,}, removing {round(100 * removed / total, 1)} percent at "
+            "no capital cost. this is a scheduling decision, not an infrastructure spend."
+        ),
+    }
+
+
 def main():
     c.ensure_dirs()
     features = load_segments()
@@ -241,6 +297,7 @@ def main():
         "coverage_horizon_note": coverage_note,
         "hours": hour_table,
         "summary": summary,
+        "as_scheduled": scheduled_block(hour_table),
     }
 
     c.write_json(c.OUT_DIR / "kickoff_clock.json", out)

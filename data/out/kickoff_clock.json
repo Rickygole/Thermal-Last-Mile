@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-09-09T02:44:26Z",
+  "generated_utc": "2026-09-09T02:56:53Z",
   "wbgt_threshold_c": 28.0,
   "wbgt_extreme_c": 32.0,
   "modeled_hours": [
@@ -443,5 +443,69 @@
       "max_fan_hours_removable_at_15_00": 12337.3,
       "note": "this is the ceiling of the dedicated tree only curve, one tree credited per eligible segment at the near term 2026 canopy fraction, evaluated at 15:00 conditions. it is the most fan hour relief street trees can buy at 15:00 under this model even with unlimited budget, since coverage per segment cannot exceed one treated width. compare this to free_reduction_available_fan_hours below."
     }
+  },
+  "as_scheduled": {
+    "source": "FIFA published schedule for Houston Stadium, cross checked against two independent public listings",
+    "verified_utc": "2026-09-09",
+    "volatility_note": "kickoff times are subject to change by FIFA and must be reconfirmed before publication",
+    "matches": [
+      {
+        "date": "2026-06-14",
+        "kickoff_local_hour": 12,
+        "stage": "group",
+        "label": "Group E",
+        "fan_hours_above_threshold": 55032.5
+      },
+      {
+        "date": "2026-06-17",
+        "kickoff_local_hour": 12,
+        "stage": "group",
+        "label": "Group K",
+        "fan_hours_above_threshold": 55032.5
+      },
+      {
+        "date": "2026-06-20",
+        "kickoff_local_hour": 12,
+        "stage": "group",
+        "label": "Group F",
+        "fan_hours_above_threshold": 55032.5
+      },
+      {
+        "date": "2026-06-23",
+        "kickoff_local_hour": 12,
+        "stage": "group",
+        "label": "Group K",
+        "fan_hours_above_threshold": 55032.5
+      },
+      {
+        "date": "2026-06-26",
+        "kickoff_local_hour": 19,
+        "stage": "group",
+        "label": "Group H",
+        "fan_hours_above_threshold": 5165.8
+      },
+      {
+        "date": "2026-06-29",
+        "kickoff_local_hour": 12,
+        "stage": "round_of_32",
+        "label": "Round of 32",
+        "fan_hours_above_threshold": 55032.5
+      },
+      {
+        "date": "2026-07-04",
+        "kickoff_local_hour": 12,
+        "stage": "round_of_16",
+        "label": "Round of 16",
+        "fan_hours_above_threshold": 55032.5
+      }
+    ],
+    "tournament_total_fan_hours_above_threshold": 335360.8,
+    "n_matches": 7,
+    "n_matches_at_worst_scheduled_hour": 6,
+    "counterfactual_all_at_hour": 20,
+    "counterfactual_total_fan_hours_above_threshold": 0.0,
+    "removed_by_rescheduling_fan_hours": 335360.8,
+    "removed_by_rescheduling_fraction": 1.0,
+    "statement": "as scheduled, the 7 Houston matches accumulate 335,361 fan degree hours above the threshold on the last mile. scheduling every match at 20:00 instead would leave 0, removing 100.0 percent at no capital cost. this is a scheduling decision, not an infrastructure spend."
   }
 }

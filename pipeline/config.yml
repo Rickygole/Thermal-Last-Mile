@@ -29,9 +29,47 @@ hours:
   - "21"
 
 match_dates:
+  - 2026-06-14
+  - 2026-06-17
+  - 2026-06-20
+  - 2026-06-23
   - 2026-06-26
   - 2026-06-29
   - 2026-07-04
+
+fixtures:
+  source: FIFA published schedule for Houston Stadium, cross checked against two independent public listings
+  verified_utc: "2026-09-09"
+  note: kickoff times are subject to change by FIFA and must be reconfirmed before publication
+  matches:
+    - date: 2026-06-14
+      kickoff_local_hour: 12
+      stage: group
+      label: Group E
+    - date: 2026-06-17
+      kickoff_local_hour: 12
+      stage: group
+      label: Group K
+    - date: 2026-06-20
+      kickoff_local_hour: 12
+      stage: group
+      label: Group F
+    - date: 2026-06-23
+      kickoff_local_hour: 12
+      stage: group
+      label: Group K
+    - date: 2026-06-26
+      kickoff_local_hour: 19
+      stage: group
+      label: Group H
+    - date: 2026-06-29
+      kickoff_local_hour: 12
+      stage: round_of_32
+      label: Round of 32
+    - date: 2026-07-04
+      kickoff_local_hour: 12
+      stage: round_of_16
+      label: Round of 16
 
 origins:
   metrorail_stadium_park:
