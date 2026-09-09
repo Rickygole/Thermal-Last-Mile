@@ -1,0 +1,73 @@
+interventions:
+  sail:
+    label: Shade sail, 6 x 6 m
+    unit_cost_usd: 14000
+    basis: installed, 10 year service life
+    shaded_area_m2: 36
+    blocks_direct_beam: true
+    diffuse_transmission: 0.15
+    legacy_value: high
+    citation: PLACEHOLDER Houston Public Works shade structure unit cost
+  tree:
+    label: Street tree, 3 inch caliper
+    unit_cost_usd: 1200
+    basis: planted plus 3 year establishment
+    shaded_area_m2: 28
+    blocks_direct_beam: true
+    diffuse_transmission: 0.30
+    maturity_years: 15
+    canopy_fraction_year5: 0.45
+    legacy_value: high
+    citation: PLACEHOLDER Houston Parks and Recreation street tree program
+  awning:
+    label: Bus stop awning retrofit
+    unit_cost_usd: 9500
+    basis: per stop
+    shaded_area_m2: 18
+    blocks_direct_beam: true
+    diffuse_transmission: 0.10
+    applies_to: wait_not_walk
+    legacy_value: medium
+    citation: PLACEHOLDER METRO shelter retrofit cost
+  misting:
+    label: Misting station
+    unit_cost_usd: 6500
+    basis: seasonal, plus water cost
+    shaded_area_m2: 0
+    blocks_direct_beam: false
+    humidity_ceiling_rh: 60
+    legacy_value: low
+    citation: PLACEHOLDER municipal cooling station cost
+  albedo:
+    label: High albedo surface coating
+    unit_cost_usd_per_m2: 4.20
+    basis: coating, 7 year life
+    blocks_direct_beam: false
+    surface_temp_drop_c: 6.0
+    reflected_load_gain_c: 1.5
+    legacy_value: medium
+    citation: PLACEHOLDER cool pavement program cost
+  cooling_bus:
+    label: Cooling bus
+    unit_cost_usd_per_day: 2800
+    basis: event only
+    blocks_direct_beam: false
+    legacy_value: none
+    included_to_show_rejection: true
+    citation: PLACEHOLDER event cooling contract rate
+
+constants:
+  wbgt_model:
+    name: Liljegren
+    implementation: pywbgt.liljegrenWBGT
+    citation: "Liljegren, J.C. et al. 2008. Modeling the wet bulb globe temperature using standard meteorological measurements. Journal of Occupational and Environmental Hygiene 5(10) 645-655."
+  walk_speed_mps:
+    value: 1.3
+    citation: "Fitzpatrick, K. et al. 2006. Another look at pedestrian walking speed. Transportation Research Record 1982."
+  threshold_c:
+    value: 32.0
+    citation: "ACSM and OSHA heat stress guidance, continuous exertion limit."
+  diffuse_fraction_shaded:
+    value: 0.15
+    note: fraction of global horizontal irradiance reaching a fully shaded pedestrian
+    citation: "Derived from NSRDB DHI to GHI ratio for the match hours."
