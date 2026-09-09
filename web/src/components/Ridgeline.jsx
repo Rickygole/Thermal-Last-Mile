@@ -1,21 +1,13 @@
 import { useMemo } from 'react'
 import { HOURS, setHour, useStore } from '../store.js'
 import { exposureCss, heatCss } from '../lib/color.js'
+import { APPROACH_LABEL } from '../lib/venues.js'
 import { n0, n1, n2 } from '../lib/format.js'
 
-const W = 900
+const W = 1400
 const LABEL_W = 128
-const ROW = 44
+const ROW = 54
 const PAD_T = 22
-const THRESHOLD = 32
-
-const APPROACH_LABEL = {
-  metrorail_stadium_park: 'METRORail platform approach',
-  lot_c: 'Lot C approach',
-  rideshare_kirby: 'Kirby rideshare approach',
-  fan_fest: 'Fan fest approach',
-  unknown: 'Approach'
-}
 
 function pickApproach (segments) {
   const groups = new Map()
@@ -33,7 +25,8 @@ function pickApproach (segments) {
   return best || { key: 'unknown', segs: [] }
 }
 
-export default function Ridgeline ({ segments, totals, stats }) {
+export default function Ridgeline ({ segments, threshold = 32 }) {
+  const THRESHOLD = threshold
   const hour = useStore(s => s.hour)
   const picked = useMemo(() => pickApproach(segments), [segments])
   const width = W - LABEL_W
@@ -52,7 +45,8 @@ export default function Ridgeline ({ segments, totals, stats }) {
       hour: h,
       xs,
       values: segs.map(s => s.wbgt?.[h] ?? 0),
-      peak: segs.reduce((m, s) => Math.max(m, s.wbgt?.[h] ?? 0), 0)
+      peak: segs.reduce((m, s) => Math.max(m, s.wbgt?.[h] ?? 0), 0),
+      degmin: segs.reduce((a, s) => a + (s.degmin[h] ?? 0), 0)
     }))
     const all = rows.flatMap(r => r.values).filter(Number.isFinite)
     const lo = all.length ? Math.floor(Math.min(...all) * 2) / 2 - 0.5 : 26
@@ -65,7 +59,7 @@ export default function Ridgeline ({ segments, totals, stats }) {
   const height = PAD_T + HOURS.length * ROW + 18
   const inRange = THRESHOLD > LO_C && THRESHOLD < HI_C
 
-  const yFor = (v, baseline) => baseline - ((Math.max(LO_C, Math.min(HI_C, v)) - LO_C) / (HI_C - LO_C)) * (ROW - 12)
+  const yFor = (v, baseline) => baseline - ((Math.max(LO_C, Math.min(HI_C, v)) - LO_C) / (HI_C - LO_C)) * (ROW - 22)
 
   return (
     <div className="ridgeline panel pane">
@@ -109,8 +103,8 @@ export default function Ridgeline ({ segments, totals, stats }) {
               <text x="46" y={baseline} fill="#8B929B" fontSize="11" fontFamily="inherit">
                 {n1(s.peak)} C peak
               </text>
-              <text x="46" y={baseline - 13} fill="#8B929B" fontSize="11" fontFamily="inherit">
-                {n2(totals?.[s.hour] ?? 0)} degmin
+              <text x="46" y={baseline - 15} fill="#8B929B" fontSize="11" fontFamily="inherit">
+                {n2(s.degmin)} degmin
               </text>
             </g>
           )
@@ -126,7 +120,7 @@ export default function Ridgeline ({ segments, totals, stats }) {
         {inRange
           ? `Dashed line is WBGT ${THRESHOLD} C, the exposure threshold. Filled area above it is what the degree-minute metric counts. `
           : `No hour on this approach reaches WBGT ${THRESHOLD} C, so the threshold line sits outside the plotted range. `}
-        Vertical range is {n1(LO_C)} to {n1(HI_C)} C, shared by all four rows.
+        Vertical range is {n1(LO_C)} to {n1(HI_C)} C, shared by all four rows. Click a row to move every view to that kickoff hour.
       </p>
     </div>
   )
