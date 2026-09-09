@@ -56,6 +56,7 @@ def intervention_over(hour_cond, diffuse_transmission):
         np.array([hour_cond["tair_mean"]]) * units.degC,
         np.array([hour_cond["tdew_mean"]]) * units.degC,
         np.array([hour_cond["wind_mean"]]) * units("m/s"),
+        d_globe=c.GLOBE_DIAMETER_M * units.m,
     )
     wbgt_val = float(np.asarray(out["Twbg"])[0])
     return max(0.0, wbgt_val - THRESHOLD_C)

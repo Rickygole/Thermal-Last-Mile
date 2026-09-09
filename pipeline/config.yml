@@ -14,6 +14,7 @@ walk:
   wind_measurement_height_m: 10.0
   wind_pedestrian_height_m: 2.0
   surface_roughness_m: 0.03
+  globe_diameter_m: 0.15
 
 hours:
   - "15"
