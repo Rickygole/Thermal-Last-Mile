@@ -6,6 +6,12 @@ export const n2 = v => (Number.isFinite(v) ? v.toFixed(2) : '--')
 
 export const pct = v => (Number.isFinite(v) ? `${Math.round(v)}%` : '--')
 
+export const pct1 = v => (Number.isFinite(v) ? `${v.toFixed(1)}%` : '--')
+
+export function usdExact (v) {
+  return Number.isFinite(v) ? `$${Math.round(v).toLocaleString('en-US')}` : '--'
+}
+
 export function usd (v) {
   if (!Number.isFinite(v)) return '--'
   if (v >= 1000000) return `$${(v / 1000000).toFixed(2)}M`

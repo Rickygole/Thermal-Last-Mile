@@ -3,7 +3,7 @@ import DeckMap from '../components/DeckMap.jsx'
 import EmptyState from '../components/EmptyState.jsx'
 import { ProvenanceChip } from '../components/Chips.jsx'
 import { exposureLayer, pathCasingLayer } from '../lib/layers.js'
-import { heatLayers } from '../lib/heat.js'
+import { heatLayers, useRasterWindow } from '../lib/heat.js'
 import { expoUrl, matchedBounds } from '../lib/data.js'
 import { useStore } from '../store.js'
 import { LA_CONTEXT, VENUE_VIEWS } from '../lib/venues.js'
@@ -59,6 +59,7 @@ function Side ({ title, subtitle, view, bounds, layers, stats, chain, chainLabel
 
 export default function Transfer ({ data }) {
   const hour = useStore(s => s.hour)
+  const mountedHours = useRasterWindow(hour)
   const [houBounds, laBounds] = useMemo(() => matchedBounds(data.bounds, data.laBounds), [data.bounds, data.laBounds])
   const laCity = data.cities.find(c => c.id === 'los_angeles')
 
@@ -67,6 +68,7 @@ export default function Transfer ({ data }) {
       ...(data.heat.available
         ? heatLayers({
             hour,
+            hours: mountedHours,
             heat: 0.42,
             urlFor: expoUrl,
             bounds: data.heat.bounds || data.meta?.raster_bounds,
@@ -76,7 +78,7 @@ export default function Transfer ({ data }) {
       pathCasingLayer({ segments: data.segments, selected: null, idSuffix: '-hou' }),
       exposureLayer({ segments: data.segments, hour, max: data.max.all, selected: null, idSuffix: '-hou' })
     ],
-    [hour, data]
+    [hour, mountedHours, data]
   )
 
   const laLayers = useMemo(

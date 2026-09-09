@@ -1,7 +1,35 @@
+import { useRef } from 'react'
 import { BitmapLayer } from '@deck.gl/layers'
 import { EXPOSURE, HEAT_ANCHORS, glsl } from './color.js'
-import { HOURS } from '../store.js'
 import { ms } from './motion.js'
+
+export const RASTER_WINDOW = 4
+
+export function useRasterWindow (hour, cap = RASTER_WINDOW) {
+  const held = useRef([])
+  if (held.current[0] !== hour) {
+    held.current = [hour, ...held.current.filter(h => h !== hour)].slice(0, cap)
+  }
+  return held.current
+}
+
+export function prefetchImages (urls) {
+  if (typeof window === 'undefined') return
+  const queue = urls.slice()
+  const step = () => {
+    const url = queue.shift()
+    if (!url) return
+    const img = new Image()
+    img.decoding = 'async'
+    img.src = url
+    if (queue.length) schedule()
+  }
+  const schedule = () => {
+    if (window.requestIdleCallback) window.requestIdleCallback(step, { timeout: 2000 })
+    else window.setTimeout(step, 120)
+  }
+  schedule()
+}
 
 export const HEAT_DOMAIN = [24, 44]
 
@@ -41,9 +69,10 @@ HeatSurfaceLayer.defaultProps = {
   anchors: { type: 'array', value: HEAT_ANCHORS, compare: true }
 }
 
-export function heatLayers ({ hour, heat, urlFor, bounds, domain, anchors }) {
+export function heatLayers ({ hour, hours, heat, urlFor, bounds, domain, anchors }) {
   if (!bounds || heat <= 0) return []
-  return HOURS.map(
+  const mounted = hours && hours.length ? hours : [hour]
+  return mounted.map(
     h =>
       new HeatSurfaceLayer({
         id: `heat-${h}`,

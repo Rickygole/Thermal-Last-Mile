@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import DeckMap from '../components/DeckMap.jsx'
 import Ridgeline from '../components/Ridgeline.jsx'
 import { buildingLayer, exposureLayer, fanFlowLayer, pathCasingLayer, shadeLayers } from '../lib/layers.js'
-import { heatLayers } from '../lib/heat.js'
+import { heatLayers, useRasterWindow } from '../lib/heat.js'
 import { expoUrl } from '../lib/data.js'
 import { useLoopClock } from '../lib/useClock.js'
 import { setScreen, useStore } from '../store.js'
@@ -14,16 +14,17 @@ export default function Walk ({ data }) {
   const heat = useStore(s => s.heat)
   const pitch = useStore(s => s.pitch)
   const time = useLoopClock(8000, true)
+  const mountedHours = useRasterWindow(hour)
   const bounds = data.heat.bounds || data.meta?.raster_bounds || data.bounds
   const stat = data.stats[hour]
 
   const layers = useMemo(() => {
     const surface = data.heat.available
       ? [
-          ...shadeLayers(hour, bounds, 0.12),
-          ...heatLayers({ hour, heat, urlFor: expoUrl, bounds, domain: data.heat.domain, anchors: data.heat.anchors })
+          ...shadeLayers(hour, bounds, 0.12, mountedHours),
+          ...heatLayers({ hour, hours: mountedHours, heat, urlFor: expoUrl, bounds, domain: data.heat.domain, anchors: data.heat.anchors })
         ]
-      : shadeLayers(hour, bounds, 0.35)
+      : shadeLayers(hour, bounds, 0.35, mountedHours)
     const buildings = buildingLayer({ buildings: data.buildings, pitch, idSuffix: '-walk' })
     return [
       ...surface,
@@ -32,7 +33,7 @@ export default function Walk ({ data }) {
       exposureLayer({ segments: data.segments, hour, max: data.max.all, selected: null, idSuffix: '-walk', dim: true }),
       fanFlowLayer({ trips: data.trips, hour, max: data.max.all, currentTime: time })
     ]
-  }, [hour, heat, pitch, bounds, data, time])
+  }, [hour, mountedHours, heat, pitch, bounds, data, time])
 
   return (
     <div className="walk">
@@ -75,8 +76,8 @@ export default function Walk ({ data }) {
       </div>
       <div className="walk-foot">
         <Ridgeline segments={data.segments} threshold={data.threshold} />
-        <button type="button" className="continue" onClick={() => setScreen('map')}>
-          Rank every segment
+        <button type="button" className="continue" onClick={() => setScreen('clock')}>
+          Now ask what time the match starts
           <span aria-hidden="true">&rarr;</span>
         </button>
       </div>

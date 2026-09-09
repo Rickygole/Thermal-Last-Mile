@@ -1,14 +1,19 @@
 import { useRef } from 'react'
-import { HOURS, setHour, useStore } from '../store.js'
+import { HOURS, setHour, setScreen, useStore } from '../store.js'
 import { arrowSelect } from '../lib/keys.js'
 import { exposureCss } from '../lib/color.js'
 import { n0, n1, n2, pct, tempC } from '../lib/format.js'
 
-export default function HourScrubber ({ totals, stats, walk, threshold }) {
+export default function HourScrubber ({ totals, stats, walk, threshold, clock }) {
   const hour = useStore(s => s.hour)
   const refs = useRef([])
   const stat = stats ? stats[hour] : null
   const peak = Math.max(...HOURS.map(h => walk?.[h] ?? 0)) || 1
+  const baselineHour = clock ? String(clock.summary?.baseline_hour ?? '15') : null
+  const baselineValue = baselineHour ? clock.hours?.[baselineHour]?.fan_hours_above_threshold ?? 0 : 0
+  const hourValue = clock ? clock.hours?.[hour]?.fan_hours_above_threshold ?? 0 : 0
+  const freed = baselineValue - hourValue
+  const treeCeiling = clock?.summary?.tree_only_ceiling_at_1500?.max_fan_hours_removable_at_15_00 ?? null
 
   return (
     <section className="panel pane" aria-label="Kickoff hour">
@@ -50,6 +55,22 @@ export default function HourScrubber ({ totals, stats, walk, threshold }) {
             : 'interval unavailable'}
         </div>
       </div>
+      {clock ? (
+        <div className="notice">
+          {freed > 0
+            ? `Moving kickoff from ${baselineHour}:00 to ${hour}:00 removes ${n0(freed)} fan degree-hours at no capital cost${
+                Number.isFinite(treeCeiling) && freed > treeCeiling
+                  ? `, more than the ${n0(treeCeiling)} that the largest modelled tree planting can buy.`
+                  : '.'
+              }`
+            : freed < 0
+              ? `This hour is ${n0(-freed)} fan degree-hours worse than the ${baselineHour}:00 baseline.`
+              : `This is the ${baselineHour}:00 baseline hour.`}{' '}
+          <button type="button" className="linky" onClick={() => setScreen('clock')}>
+            Open The Clock
+          </button>
+        </div>
+      ) : null}
       <div className="detail">
         <div className="row">
           <span>Peak segment WBGT</span>

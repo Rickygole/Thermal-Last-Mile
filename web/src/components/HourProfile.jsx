@@ -3,10 +3,10 @@ import { HOURS, setHour, useStore } from '../store.js'
 import { n1, n2, pct } from '../lib/format.js'
 
 const W = 320
-const ROW = 38
+const ROW = 28
 const HEAD = 16
 const BAR_X = 46
-const BAR_W = 116
+const BAR_W = 88
 const AX_X = 190
 const AX_W = 112
 
@@ -21,7 +21,7 @@ export function buildSeries (source) {
   }))
 }
 
-export default function HourProfile ({ series, anchors = HEAT_ANCHORS, unit = 'degmin per fan', title = 'All four kickoffs', note }) {
+export default function HourProfile ({ series, anchors = HEAT_ANCHORS, unit = 'degmin per fan', title = 'Every modelled kickoff', note }) {
   const hour = useStore(s => s.hour)
   const [LOW_C, MID_C, HIGH_C] = anchors
   const axisX = c => AX_X + ((Math.max(LOW_C, Math.min(HIGH_C, c)) - LOW_C) / (HIGH_C - LOW_C)) * AX_W

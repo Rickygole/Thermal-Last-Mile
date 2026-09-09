@@ -105,8 +105,8 @@ export default function RankedList ({ segments, hour, max, treated }) {
         })}
       </ul>
       <p className="label">
-        {ranked.length} segments, {exceeded ? 'ranked by degree-minutes' : 'ranked by WBGT'}. Four ticks per row are the four kickoff
-        hours. Up and down arrows move through the list.
+        {ranked.length} segments, {exceeded ? 'ranked by degree-minutes' : 'ranked by WBGT'}. One tick per row for each of the {HOURS.length} modelled kickoff
+        hours, noon to {HOURS[HOURS.length - 1]}:00. Up and down arrows move through the list.
       </p>
     </section>
   )

@@ -2,12 +2,12 @@ import { BitmapLayer, PathLayer, PolygonLayer } from '@deck.gl/layers'
 import { TripsLayer } from '@deck.gl/geo-layers'
 import { ACCENT, exposureColor, lighten } from './color.js'
 import { shadeUrl } from './data.js'
-import { HOURS } from '../store.js'
 import { ms } from './motion.js'
 
-export function shadeLayers (hour, bounds, opacity = 0.16) {
+export function shadeLayers (hour, bounds, opacity = 0.16, hours) {
   if (!bounds || opacity <= 0) return []
-  return HOURS.map(
+  const mounted = hours && hours.length ? hours : [hour]
+  return mounted.map(
     h =>
       new BitmapLayer({
         id: `shade-${h}`,

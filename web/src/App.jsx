@@ -1,10 +1,12 @@
+import { useEffect } from 'react'
 import { useData } from './lib/data.js'
-import { useStore } from './store.js'
+import { syncScreenFromHash, useStore } from './store.js'
 import ScreenNav from './components/ScreenNav.jsx'
 import { ProvenanceChip, ProvisionalChip } from './components/Chips.jsx'
 import EmptyState from './components/EmptyState.jsx'
 import Skeleton from './components/Skeleton.jsx'
 import Walk from './screens/Walk.jsx'
+import Clock from './screens/Clock.jsx'
 import MapScreen from './screens/MapScreen.jsx'
 import Ledger from './screens/Ledger.jsx'
 import Transfer from './screens/Transfer.jsx'
@@ -15,6 +17,11 @@ export default function App () {
   const { status, data, errors } = useData()
   const screen = useStore(s => s.screen)
   const hour = useStore(s => s.hour)
+
+  useEffect(() => {
+    window.addEventListener('hashchange', syncScreenFromHash)
+    return () => window.removeEventListener('hashchange', syncScreenFromHash)
+  }, [])
 
   const body = () => {
     if (status === 'loading') {
@@ -34,6 +41,7 @@ export default function App () {
       )
     }
     if (screen === 'walk') return <Walk data={data} />
+    if (screen === 'clock') return <Clock data={data} />
     if (screen === 'map') return <MapScreen data={data} />
     if (screen === 'ledger') return <Ledger data={data} />
     return <Transfer data={data} />
@@ -53,6 +61,19 @@ export default function App () {
           <span>WBGT {tempC(data.threshold)} threshold</span>
           <span className="sep" aria-hidden="true" />
           <span>{n0(data.segments.length)} Houston segments</span>
+        </div>
+      )
+    }
+    if (screen === 'clock') {
+      const clock = data.clock
+      const baseline = clock ? String(clock.summary?.baseline_hour ?? '15') : '15'
+      return (
+        <div className="topline" aria-label="Current view">
+          <span>{n0(clock ? (clock.modeled_hours || []).length : 0)} kickoff hours modelled</span>
+          <span className="sep" aria-hidden="true" />
+          <span>{baseline}:00 baseline</span>
+          <span className="sep" aria-hidden="true" />
+          <span>{hour}:00 selected</span>
         </div>
       )
     }

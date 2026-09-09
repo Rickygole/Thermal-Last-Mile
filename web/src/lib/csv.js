@@ -1,4 +1,4 @@
-import { HOURS } from '../store.js'
+import { BASELINE_HOUR, HOURS } from '../store.js'
 
 const cell = v => {
   const s = String(v ?? '')
@@ -17,7 +17,7 @@ export function segmentsToCsv (segments) {
     'svi',
     'treatable',
     ...HOURS.flatMap(h => [`degmin_${h}`, `degmin_lo_${h}`, `degmin_hi_${h}`, `wbgt_${h}`, `shade_frac_${h}`]),
-    'fan_degmin_peak'
+    `fan_degmin_${BASELINE_HOUR}00`
   ]
   const rows = segments.map((s, i) => [
     i + 1,
@@ -30,7 +30,7 @@ export function segmentsToCsv (segments) {
     s.svi,
     (s.treatable || []).join(' '),
     ...HOURS.flatMap(h => [s.degmin[h], s.degmin_lo?.[h], s.degmin_hi?.[h], s.wbgt?.[h], s.shade_frac?.[h]]),
-    Math.round(s.degmin['15'] * s.fans)
+    Math.round((s.degmin[BASELINE_HOUR] ?? 0) * s.fans)
   ])
   return `${[head, ...rows].map(r => r.map(cell).join(',')).join('\n')}\n`
 }

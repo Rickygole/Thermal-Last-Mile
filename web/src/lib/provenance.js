@@ -75,8 +75,24 @@ function transferState (data) {
   }
 }
 
+function clockState (data) {
+  if (!data.clock) {
+    return {
+      tone: 'unverified',
+      label: 'KICKOFF CLOCK MISSING',
+      detail: 'kickoff_clock.json did not load, so no hour sweep can be shown.'
+    }
+  }
+  return {
+    tone: 'illustrative',
+    label: 'HOURS SWEPT, NOT BOUND TO FIXTURES',
+    detail: data.clock.fixture_binding_note
+  }
+}
+
 export function provenanceFor (screen, data) {
   if (!data) return null
+  if (screen === 'clock') return clockState(data)
   if (screen === 'ledger') return ledgerState(data)
   if (screen === 'transfer') return transferState(data)
   return houstonState(data)

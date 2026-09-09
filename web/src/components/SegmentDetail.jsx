@@ -1,7 +1,7 @@
 import HourProfile, { buildSeries } from './HourProfile.jsx'
 import { setSelected } from '../store.js'
 import { exposureBand, exposureCss, BAND_LABEL } from '../lib/color.js'
-import { n0, n1, n2, pct, tempC } from '../lib/format.js'
+import { n0, n1, n2, pct, pct1, tempC } from '../lib/format.js'
 
 export default function SegmentDetail ({ segment, hour, max, treated, corridor, corridorLabel, anchors, threshold, worst }) {
   if (!segment) {
@@ -19,7 +19,7 @@ export default function SegmentDetail ({ segment, hour, max, treated, corridor, 
         <HourProfile
           series={buildSeries(corridor)}
           anchors={anchors}
-          title="Corridor across the afternoon"
+          title="Corridor across the kickoff window"
           unit="degmin summed, peak WBGT"
         />
       </section>
@@ -82,18 +82,26 @@ export default function SegmentDetail ({ segment, hour, max, treated, corridor, 
         </div>
         <div className="row">
           <span>Canopy</span>
-          <span>{segment.canopy_pct ? pct(segment.canopy_pct) : 'not modelled in this run'}</span>
+          <span>{Number.isFinite(segment.canopy_pct) ? pct1(segment.canopy_pct) : 'not joined in this run'}</span>
         </div>
         <div className="row">
           <span>Social vulnerability</span>
-          <span>{segment.svi ? n2(segment.svi) : 'not modelled in this run'}</span>
+          <span>
+            {Number.isFinite(segment.svi) ? (
+              <>
+                {n2(segment.svi)} <span className="label">tract percentile</span>
+              </>
+            ) : (
+              'not joined in this run'
+            )}
+          </span>
         </div>
         <div className="row">
           <span>Treatable with</span>
           <span>{(segment.treatable || []).join(', ') || 'none'}</span>
         </div>
       </div>
-      <HourProfile series={buildSeries(segment)} title="This segment across the afternoon" unit="degmin per fan" />
+      <HourProfile series={buildSeries(segment)} title="This segment across the kickoff window" unit="degmin per fan" />
     </section>
   )
 }

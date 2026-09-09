@@ -1,6 +1,6 @@
 import { SCREENS, setScreen, useStore } from '../store.js'
 
-const LABEL = { walk: 'The Walk', map: 'The Map', ledger: 'The Ledger', transfer: 'The Transfer' }
+const LABEL = { walk: 'The Walk', clock: 'The Clock', map: 'The Map', ledger: 'The Ledger', transfer: 'The Transfer' }
 
 export default function ScreenNav () {
   const screen = useStore(s => s.screen)

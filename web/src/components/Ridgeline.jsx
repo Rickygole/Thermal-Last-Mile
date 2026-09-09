@@ -6,7 +6,7 @@ import { n0, n1, n2, tempC } from '../lib/format.js'
 
 const W = 1400
 const LABEL_W = 128
-const ROW = 54
+const ROW = 34
 const PAD_T = 22
 
 function pickApproach (segments) {
@@ -59,12 +59,12 @@ export default function Ridgeline ({ segments, threshold }) {
   const height = PAD_T + HOURS.length * ROW + 18
   const inRange = THRESHOLD > LO_C && THRESHOLD < HI_C
 
-  const yFor = (v, baseline) => baseline - ((Math.max(LO_C, Math.min(HI_C, v)) - LO_C) / (HI_C - LO_C)) * (ROW - 22)
+  const yFor = (v, baseline) => baseline - ((Math.max(LO_C, Math.min(HI_C, v)) - LO_C) / (HI_C - LO_C)) * (ROW - 8)
 
   return (
     <div className="ridgeline panel pane">
       <div className="pane-head">
-        <h3>Wet bulb globe temperature along the walk, all four kickoffs</h3>
+        <h3>Wet bulb globe temperature along the walk, every modelled kickoff</h3>
         <span className="label">
           {APPROACH_LABEL[picked.key] || picked.key}, platform on the left, gate on the right
         </span>
@@ -101,10 +101,7 @@ export default function Ridgeline ({ segments, threshold }) {
                 {s.hour}:00
               </text>
               <text x="46" y={baseline} fill="#8B929B" fontSize="11" fontFamily="inherit">
-                {n1(s.peak)} C peak
-              </text>
-              <text x="46" y={baseline - 15} fill="#8B929B" fontSize="11" fontFamily="inherit">
-                {n2(s.degmin)} degmin
+                {n1(s.peak)} C peak, {n2(s.degmin)} degmin
               </text>
             </g>
           )
@@ -120,7 +117,9 @@ export default function Ridgeline ({ segments, threshold }) {
         {inRange
           ? `Dashed line is WBGT ${tempC(THRESHOLD)}, the exposure threshold. Filled area above it is what the degree-minute metric counts. `
           : `No hour on this approach reaches WBGT ${tempC(THRESHOLD)}, so the threshold line sits outside the plotted range. `}
-        Vertical range is {n1(LO_C)} to {n1(HI_C)} C, shared by all four rows. Click a row to move every view to that kickoff hour.
+        Vertical range is {n1(LO_C)} to {n1(HI_C)} C, shared by all ten rows, so the gap between rows is what the kickoff hour does
+        and the wobble inside a row is what position along the walk does. The gap between rows is much the larger of the two. Click a
+        row to move every view to that kickoff hour.
       </p>
     </div>
   )

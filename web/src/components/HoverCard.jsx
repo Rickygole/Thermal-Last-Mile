@@ -1,5 +1,5 @@
 import { BAND_LABEL, exposureBand, exposureCss } from '../lib/color.js'
-import { n0, n1, n2, pct } from '../lib/format.js'
+import { n0, n1, n2, pct, pct1 } from '../lib/format.js'
 
 export default function HoverCard ({ hover, hour, max, treated }) {
   if (!hover) return null
@@ -53,6 +53,12 @@ export default function HoverCard ({ hover, hour, max, treated }) {
       <div className="hc-row">
         <span>Shaded</span>
         <span>{pct((s.shade_frac?.[hour] ?? 0) * 100)}</span>
+      </div>
+      <div className="hc-row">
+        <span>Canopy, vulnerability</span>
+        <span>
+          {Number.isFinite(s.canopy_pct) ? pct1(s.canopy_pct) : '--'}, {Number.isFinite(s.svi) ? n2(s.svi) : '--'}
+        </span>
       </div>
       <div className="hc-row">
         <span>Fans, length</span>

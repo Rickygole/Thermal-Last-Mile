@@ -1,4 +1,5 @@
 import { useMemo, useRef } from 'react'
+import { fansClearOfExtreme, pathFor } from '../lib/data.js'
 import { n0, usd } from '../lib/format.js'
 
 const W = 300
@@ -8,16 +9,17 @@ const PAD_R = 8
 const PAD_T = 10
 const PAD_B = 18
 
-export function curvePoints (solutions, levels) {
-  if (!solutions || !levels.length) return []
+export function curvePoints (solutions, levels, horizon) {
+  const path = pathFor(solutions, horizon)
+  if (!path || !levels.length) return []
   return levels.map(level => {
-    const s = solutions.path[String(level)] || {}
+    const s = path[String(level)] || {}
     return {
       level,
       spent: s.spent ?? 0,
       averted: s.averted_degmin ?? 0,
       cpd: s.cost_per_degmin ?? 0,
-      fans: s.fans_below_threshold ?? 0,
+      fans: fansClearOfExtreme(s),
       count: Array.isArray(s.set) ? s.set.length : 0
     }
   })

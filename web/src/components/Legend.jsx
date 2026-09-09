@@ -41,7 +41,7 @@ export default function Legend ({ max, hour, heat, threshold }) {
           <span className="mid">{n2(max / 2)}</span>
           <span>{n2(max)}</span>
         </div>
-        <p className="label">Scaled to the highest segment value in the afternoon, so the four hours stay comparable.</p>
+        <p className="label">Scaled to the highest segment value across the whole kickoff window, so every modelled hour stays comparable.</p>
         <div className="legend">
           <span className="item">
             <span className="swatch accent" aria-hidden="true" /> Funded intervention

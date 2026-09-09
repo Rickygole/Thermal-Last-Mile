@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { HOURS } from '../store.js'
-import { HEAT_DOMAIN } from './heat.js'
+import { HEAT_DOMAIN, prefetchImages } from './heat.js'
 import { anchorsFor } from './color.js'
 import { APPROACH_LABEL } from './venues.js'
 
@@ -269,6 +269,10 @@ export function useData () {
       getJson('buildings.geojson', false),
       getJson('expo_meta.json', false),
       getJson('cities_method.json', false),
+      getJson('kickoff_clock.json', false),
+      getJson('equity.json', false),
+      getJson('uhi_validation.json', false),
+      getJson('fan_volumes.json', false),
       surfacePresent()
     ]).then(results => {
       if (!live) return
@@ -288,6 +292,7 @@ export function useData () {
       const rawThreshold = meta?.wbgt_threshold_c ?? meta?.threshold_wbgt_c
       const threshold = Number.isFinite(rawThreshold) ? rawThreshold : null
       const approaches = approachSummary(segments)
+      prefetchImages([...HOURS.map(expoUrl), ...HOURS.map(shadeUrl)])
       setState({
         status: 'ready',
         errors,
@@ -300,6 +305,10 @@ export function useData () {
           solutions,
           cities: Array.isArray(cities) ? cities : [],
           citiesMethod: byName['cities_method.json'].value || null,
+          clock: byName['kickoff_clock.json'].value || null,
+          equity: byName['equity.json'].value || null,
+          uhi: byName['uhi_validation.json'].value || null,
+          fanVolumes: byName['fan_volumes.json'].value || null,
           meta: meta || null,
           threshold,
           heat: heatMeta(byName['expo_meta.json'].value, meta?.raster_bounds || segBounds, threshold, rasterPresent),
@@ -347,25 +356,40 @@ export function matchedBounds (a, b) {
   return [build(sa), build(sb)]
 }
 
-export function budgetLevels (solutions) {
-  if (!solutions || !solutions.path) return []
-  return Object.keys(solutions.path)
+export function pathFor (solutions, horizon) {
+  if (!solutions) return null
+  if (horizon === 'mature') return solutions.path_mature || solutions.path || null
+  return solutions.path || null
+}
+
+export function hasMaturePath (solutions) {
+  return Boolean(solutions && solutions.path_mature)
+}
+
+export function budgetLevels (solutions, horizon) {
+  const path = pathFor(solutions, horizon)
+  if (!path) return []
+  return Object.keys(path)
     .map(Number)
     .filter(Number.isFinite)
     .sort((a, b) => a - b)
 }
 
-export function solutionAt (solutions, budget) {
-  if (!solutions || !solutions.path) return null
+export function solutionAt (solutions, budget, horizon) {
+  const path = pathFor(solutions, horizon)
+  if (!path) return null
   const key = String(budget)
-  if (solutions.path[key]) return solutions.path[key]
-  const keys = budgetLevels(solutions)
+  if (path[key]) return path[key]
+  const keys = budgetLevels(solutions, horizon)
   let best = null
   for (const k of keys) {
     if (k <= budget) best = k
   }
-  return best === null ? null : solutions.path[String(best)]
+  return best === null ? null : path[String(best)]
 }
+
+export const fansClearOfExtreme = solution =>
+  solution ? solution.fans_clear_of_extreme ?? solution.fans_below_threshold ?? 0 : 0
 
 export function interventionPoints (set, segments) {
   if (!Array.isArray(set)) return []
