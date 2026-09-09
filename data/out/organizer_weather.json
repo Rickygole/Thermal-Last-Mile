@@ -1,0 +1,104 @@
+{
+  "organizer_data_limitation": "these datasets are hackathon organiser sample data, transformed from the real underlying sources with multiplicative noise added to counts and visitation, additive noise added to temperatures and other bounded environmental values, and spatial jittering applied to coordinates. the organizers state that findings from this data should not be used to make valid, reliable, or actionable assessments of any city, district, venue, or geographic area. every number in this file is used only for corroboration, relative weighting, or workflow demonstration, never as a measurement of real Houston conditions",
+  "method": "the organizers' daily-weather sample only covers 2020-01-01 through 2024-12-31, so it has no rows for the actual 2026 match dates in config.yml. for each match date this file instead averages the organizers' KDWH observations across every available year on that same month and day, and reports it next to this pipeline's own real ASOS observations for the actual 2026 match date at KHOU, KIAH and KSGR, already fetched by pipeline/common.py and pipeline/s2_wbgt.py. this is a same season sanity check, not a same day comparison, and the organizer side additionally carries the additive temperature noise and jittered station identity the organizers disclose. ASOS observations are not replaced or blended with this organizer data anywhere in the physics pipeline, they are shown side by side here only",
+  "weather_station_used": "KDWH",
+  "weather_station_note": "the organizers' daily-weather sample carries 401 US station identifiers and no city or market column, and none of those identifiers are KHOU, KIAH, or KSGR, the three ASOS stations this pipeline already uses for Houston meteorology. KDWH, David Wayne Hooks Memorial Airport in Spring, Texas on the north side of the Houston metro, is the one identifier in the organizers' list recognizable as a real Houston area station, so it is used here",
+  "n_kdwh_rows_all_years": 1089,
+  "comparisons": [
+    {
+      "match_date": "2026-06-26",
+      "organizer_kdwh_same_calendar_day_climatology": {
+        "n_years_sampled": 4,
+        "years_sampled": [
+          2020,
+          2022,
+          2023,
+          2024
+        ],
+        "avg_temperature_c_mean": 30.06,
+        "max_temperature_c_mean": 34.93,
+        "min_temperature_c_mean": 25.06,
+        "avg_relative_humidity_pct_mean": 67.9,
+        "avg_wind_speed_knots_mean": 5.16,
+        "avg_dew_point_f_mean": 73.01,
+        "avg_dew_point_f_mean_note": "the organizers' column is named AVERAGE_DEW_POINT_F, implying Fahrenheit, but the organizers' own data dictionary documents its nationwide range as -999998.5 to 36.81, a maximum that is implausibly low for a Fahrenheit dew point across five years of every US climate zone including Houston and Miami summers, and consistent instead with a Celsius dew point. values observed for KDWH near the actual 2026 match dates confirm this, landing around 22 to 23 and converting cleanly to a mid seventies Fahrenheit dew point that matches the ASOS observations below once converted. this file therefore treats AVERAGE_DEW_POINT_F as Celsius despite its name and converts it to Fahrenheit for the comparison"
+      },
+      "asos_observed_actual_date": {
+        "stations_used": [
+          "KHOU",
+          "KIAH",
+          "KSGR"
+        ],
+        "avg_temperature_c_mean": 29.45,
+        "max_temperature_c_mean": 33.52,
+        "min_temperature_c_mean": 26.3,
+        "avg_relative_humidity_pct_mean": 73.13,
+        "avg_wind_speed_knots_mean": 10.33,
+        "avg_dew_point_f_mean": 74.86
+      }
+    },
+    {
+      "match_date": "2026-06-29",
+      "organizer_kdwh_same_calendar_day_climatology": {
+        "n_years_sampled": 2,
+        "years_sampled": [
+          2020,
+          2023
+        ],
+        "avg_temperature_c_mean": 31.04,
+        "max_temperature_c_mean": 34.86,
+        "min_temperature_c_mean": 26.66,
+        "avg_relative_humidity_pct_mean": 67.21,
+        "avg_wind_speed_knots_mean": 5.83,
+        "avg_dew_point_f_mean": 73.94,
+        "avg_dew_point_f_mean_note": "the organizers' column is named AVERAGE_DEW_POINT_F, implying Fahrenheit, but the organizers' own data dictionary documents its nationwide range as -999998.5 to 36.81, a maximum that is implausibly low for a Fahrenheit dew point across five years of every US climate zone including Houston and Miami summers, and consistent instead with a Celsius dew point. values observed for KDWH near the actual 2026 match dates confirm this, landing around 22 to 23 and converting cleanly to a mid seventies Fahrenheit dew point that matches the ASOS observations below once converted. this file therefore treats AVERAGE_DEW_POINT_F as Celsius despite its name and converts it to Fahrenheit for the comparison"
+      },
+      "asos_observed_actual_date": {
+        "stations_used": [
+          "KHOU",
+          "KIAH",
+          "KSGR"
+        ],
+        "avg_temperature_c_mean": 30.17,
+        "max_temperature_c_mean": 34.63,
+        "min_temperature_c_mean": 27.04,
+        "avg_relative_humidity_pct_mean": 74.1,
+        "avg_wind_speed_knots_mean": 11.12,
+        "avg_dew_point_f_mean": 76.5
+      }
+    },
+    {
+      "match_date": "2026-07-04",
+      "organizer_kdwh_same_calendar_day_climatology": {
+        "n_years_sampled": 4,
+        "years_sampled": [
+          2020,
+          2022,
+          2023,
+          2024
+        ],
+        "avg_temperature_c_mean": 30.02,
+        "max_temperature_c_mean": 35.79,
+        "min_temperature_c_mean": 24.86,
+        "avg_relative_humidity_pct_mean": 68.09,
+        "avg_wind_speed_knots_mean": 3.68,
+        "avg_dew_point_f_mean": 73.64,
+        "avg_dew_point_f_mean_note": "the organizers' column is named AVERAGE_DEW_POINT_F, implying Fahrenheit, but the organizers' own data dictionary documents its nationwide range as -999998.5 to 36.81, a maximum that is implausibly low for a Fahrenheit dew point across five years of every US climate zone including Houston and Miami summers, and consistent instead with a Celsius dew point. values observed for KDWH near the actual 2026 match dates confirm this, landing around 22 to 23 and converting cleanly to a mid seventies Fahrenheit dew point that matches the ASOS observations below once converted. this file therefore treats AVERAGE_DEW_POINT_F as Celsius despite its name and converts it to Fahrenheit for the comparison"
+      },
+      "asos_observed_actual_date": {
+        "stations_used": [
+          "KHOU",
+          "KIAH",
+          "KSGR"
+        ],
+        "avg_temperature_c_mean": 30.0,
+        "max_temperature_c_mean": 35.74,
+        "min_temperature_c_mean": 24.82,
+        "avg_relative_humidity_pct_mean": 71.78,
+        "avg_wind_speed_knots_mean": 5.77,
+        "avg_dew_point_f_mean": 74.76
+      }
+    }
+  ],
+  "fetched_utc": "2026-09-09T02:11:09Z"
+}

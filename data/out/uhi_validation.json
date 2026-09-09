@@ -1,0 +1,17 @@
+{
+  "organizer_data_limitation": "these datasets are hackathon organiser sample data, transformed from the real underlying sources with multiplicative noise added to counts and visitation, additive noise added to temperatures and other bounded environmental values, and spatial jittering applied to coordinates. the organizers state that findings from this data should not be used to make valid, reliable, or actionable assessments of any city, district, venue, or geographic area. every number in this file is used only for corroboration, relative weighting, or workflow demonstration, never as a measurement of real Houston conditions",
+  "method": "urban-heat-index shards filtered to MARKET Houston, then to the lon/lat study bounding box read from data/interim/raster_bounds.json, the same 1 m grid the rest of this pipeline uses. surviving points were located on that grid and the Landsat ST_B10 land surface temperature anomaly this pipeline already computes in pipeline/lst_houston.py (field minus area mean) was sampled at the matching pixel. rank (spearman) and linear (pearson) correlation between the organizers' 1 to 11 UHI index and that sampled anomaly are reported. adding a constant to the anomaly changes neither correlation, so this result is identical whether compared against the anomaly or against the raw Landsat temperature",
+  "n_houston_market_points": 80959,
+  "n_points_inside_study_bbox": 210,
+  "study_bbox_lonlat": [
+    -95.41785467271838,
+    29.67645755100104,
+    -95.40377872116676,
+    29.693122911337934
+  ],
+  "lst_area_mean_c": 51.08598709106445,
+  "spearman_r": 0.147,
+  "pearson_r": 0.193,
+  "verdict": "weak rank agreement between the organizers' sample UHI index and this pipeline's Landsat derived heat anomaly at the sampled points. given the small sample size inside such a small study area, the additive noise the organizers disclose, and the coarse 1 to 11 ordinal scale of their index, this is read as a limited and inconclusive corroboration attempt, not a contradiction of the Landsat field",
+  "fetched_utc": "2026-09-09T02:09:34Z"
+}
