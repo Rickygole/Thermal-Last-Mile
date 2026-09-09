@@ -58,6 +58,14 @@ running the path recoloured by shade.
 
 ![The Walk](docs/img/walk.png)
 
+### The Clock
+
+The seven matches that were actually played, each measured against its own observed
+weather, its own date's sun geometry, and a shade mask rebaked for that date and hour.
+The 26 June evening match is the control.
+
+![The Clock](docs/img/clock.png)
+
 ### The Map
 
 The working view. Segment exposure across the catchment, a ranked list, a shade budget
