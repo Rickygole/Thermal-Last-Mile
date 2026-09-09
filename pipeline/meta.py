@@ -84,6 +84,24 @@ def main():
     }
 
     sources = gather_hour_sources()
+    first_hour_uhi = wbgt_meta_by_hour[c.kickoff_hours()[0]]["uhi"]
+    sources.append(
+        {
+            "layer": "land surface temperature for spatial urban heat island coupling",
+            "product": first_hour_uhi["lst_source"],
+            "access": first_hour_uhi["lst_access"],
+            "n_scenes_used": first_hour_uhi["n_lst_scenes_used"],
+            "scenes": first_hour_uhi["lst_scenes_used"],
+            "years_searched": first_hour_uhi["lst_years_searched"],
+            "max_cloud_cover_pct": first_hour_uhi["lst_max_cloud_cover_pct"],
+            "beta_lst_to_tair": first_hour_uhi["beta_lst_to_tair"],
+            "beta_note": first_hour_uhi["beta_note"],
+            "beta_citation": first_hour_uhi["beta_citation"],
+            "overpass_time_note": first_hour_uhi["overpass_time_note"],
+            "provider": "Microsoft Planetary Computer, USGS Landsat Collection 2 Level 2",
+            "licence": "public domain USGS Landsat data, Planetary Computer terms of use",
+        }
+    )
     sources.append(
         {
             "layer": "solar irradiance",
@@ -150,6 +168,28 @@ def main():
         },
         "n_segments": segments_meta["n_segments"],
         "wbgt_threshold_c": segments_meta["wbgt_threshold_c"],
+        "wbgt_spatial_range_by_hour_c": {
+            str(hour): {
+                "min_c": wbgt_meta_by_hour[hour]["wbgt_min_c"],
+                "max_c": wbgt_meta_by_hour[hour]["wbgt_max_c"],
+                "range_c": wbgt_meta_by_hour[hour]["wbgt_spatial_range_c"],
+                "tair_min_c": wbgt_meta_by_hour[hour]["tair_min_c"],
+                "tair_max_c": wbgt_meta_by_hour[hour]["tair_max_c"],
+            }
+            for hour in c.kickoff_hours()
+        },
+        "wbgt_spatial_range_note": (
+            "before the land surface temperature urban heat island coupling was "
+            "added, the WBGT raster varied by roughly 0.02 to 0.03 C across the "
+            "entire study area at every kickoff hour, driven almost entirely by "
+            "inverse distance weighted interpolation between three ASOS stations "
+            "10 to 40 km away rather than by any measured within site variation. "
+            "the ranges reported here in wbgt_spatial_range_by_hour_c are the "
+            "current per hour spatial spread after coupling the meteorological "
+            "grid to a real Landsat land surface temperature field, see the land "
+            "surface temperature source entry above for the overpass timing "
+            "limitation of that field"
+        ),
     }
 
     c.write_json(c.OUT_DIR / "meta.json", meta)
