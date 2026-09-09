@@ -23,7 +23,7 @@ function Side ({ title, subtitle, view, bounds, layers, stats, chain, chainLabel
         </div>
         {provenance ? (
           <>
-            <ProvenanceChip state={provenance} className="wide" />
+            <ProvenanceChip state={provenance} className="wide" quiet />
             <p className="label">{provenance.detail}</p>
           </>
         ) : null}
@@ -61,7 +61,6 @@ export default function Transfer ({ data }) {
   const hour = useStore(s => s.hour)
   const [houBounds, laBounds] = useMemo(() => matchedBounds(data.bounds, data.laBounds), [data.bounds, data.laBounds])
   const laCity = data.cities.find(c => c.id === 'los_angeles')
-  const stat = data.stats[hour]
 
   const houstonLayers = useMemo(
     () => [
@@ -141,10 +140,6 @@ export default function Transfer ({ data }) {
           { k: 'Ledger canopy', v: `${n1(laCity?.canopy_pct)}%`, note: 'Venue radius, not the route', tone: 'measured' }
         ]}
       />
-      <p className="sr-only">
-        Houston corridor peak segment WBGT at {hour}:00 is {n1(stat.peak_wbgt)} degrees celsius. No equivalent Los Angeles figure
-        exists.
-      </p>
     </div>
   )
 }

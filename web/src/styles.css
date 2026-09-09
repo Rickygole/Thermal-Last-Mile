@@ -68,6 +68,9 @@ button {
   border-bottom: 0.5px solid var(--border);
 }
 
+.topbar .chip { max-width: 34ch; white-space: normal; line-height: 1.25; text-align: left; }
+.topbar .topline { flex: 0 1 auto; min-width: 0; }
+
 .topbar .brand { display: flex; align-items: baseline; gap: 8px; }
 .topbar .brand span { color: var(--muted); font-size: 11px; }
 .spacer { flex: 1; }

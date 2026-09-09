@@ -22,19 +22,54 @@ PATH_WIDTH_NOTE = (
 
 NRG_CAPACITY = 72220
 NRG_CAPACITY_NOTE = "Houston Texans official NRG Stadium seating capacity"
-APPROACH_MODE_SHARE = {
+INVENTED_APPROACH_MODE_SHARE = {
     "metrorail_stadium_park": 0.10,
     "lot_c": 0.45,
     "rideshare_kirby": 0.15,
     "fan_fest": 0.10,
 }
-MODE_SHARE_NOTE = (
+INVENTED_MODE_SHARE_NOTE = (
     "approach mode shares are a modeled assumption, not an observed survey, "
     "reflecting a Sunbelt surface lot dominant stadium like NRG where most "
     "fans park and walk, with smaller transit, rideshare and fan fest shares. "
     "shares sum to less than 1.0 since a residual share arrives directly at "
     "gates by other means not represented by these four origins"
 )
+FAN_VOLUMES_PATH = c.OUT_DIR / "fan_volumes.json"
+
+
+def load_mode_share():
+    if FAN_VOLUMES_PATH.exists():
+        fan_volumes = c.read_json(FAN_VOLUMES_PATH)
+        share = fan_volumes.get("derived_relative_share")
+        if share and fan_volumes.get("plausible", False):
+            return (
+                dict(share),
+                "data/out/fan_volumes.json, derived_relative_share, an evidence "
+                "based relative weighting across the four approaches built from "
+                "the organizers' core-poi-geometry and store-visits sample data, "
+                "see that file for method and the organizers' sample data "
+                "limitation",
+                "organizer_derived",
+            )
+        return (
+            dict(INVENTED_APPROACH_MODE_SHARE),
+            "data/out/fan_volumes.json exists but was marked implausible or "
+            "carried no usable share, see its plausibility_notes. fell back to "
+            "the invented constants below. "
+            + INVENTED_MODE_SHARE_NOTE,
+            "invented_fallback_implausible_organizer_data",
+        )
+    return (
+        dict(INVENTED_APPROACH_MODE_SHARE),
+        "data/out/fan_volumes.json was not found, run pipeline/s9_organizer.py "
+        "to derive it from organizer data. fell back to the invented "
+        "constants below. " + INVENTED_MODE_SHARE_NOTE,
+        "invented_fallback_no_organizer_data",
+    )
+
+
+APPROACH_MODE_SHARE, MODE_SHARE_NOTE, MODE_SHARE_SOURCE = load_mode_share()
 
 WBGT_THRESHOLD_C = c.CFG["walk"]["wbgt_threshold_c"]
 WALK_SPEED_MPS = c.CFG["walk"]["speed_mps"]

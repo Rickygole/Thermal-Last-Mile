@@ -7,13 +7,13 @@ export function ProvisionalChip ({ label = 'PROVISIONAL DATA', title }) {
   )
 }
 
-export function ProvenanceChip ({ state, className = '' }) {
+export function ProvenanceChip ({ state, className = '', quiet = false }) {
   if (!state) return null
   return (
     <span className={`chip ${state.tone} ${className}`.trim()} title={state.detail}>
       <span className="dot" aria-hidden="true" />
       {state.label}
-      <span className="sr-only">. {state.detail}</span>
+      {quiet ? null : <span className="sr-only">. {state.detail}</span>}
     </span>
   )
 }
