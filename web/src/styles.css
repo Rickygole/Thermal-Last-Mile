@@ -196,13 +196,15 @@ button {
   grid-template-rows: 1fr auto;
 }
 
-.walk-map { position: relative; }
+.walk-map { position: relative; min-height: 420px; overflow: hidden; }
 
 .walk-overlay {
   position: absolute;
   left: 24px;
   top: 24px;
   max-width: 34ch;
+  max-height: calc(100% - 48px);
+  overflow-y: auto;
   padding: 16px;
   z-index: 2;
 }
