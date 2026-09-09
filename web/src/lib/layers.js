@@ -3,6 +3,7 @@ import { TripsLayer } from '@deck.gl/geo-layers'
 import { ACCENT, exposureColor, lighten } from './color.js'
 import { shadeUrl } from './data.js'
 import { HOURS } from '../store.js'
+import { ms } from './motion.js'
 
 export function shadeLayers (hour, bounds, opacity = 0.16) {
   if (!bounds || opacity <= 0) return []
@@ -14,7 +15,7 @@ export function shadeLayers (hour, bounds, opacity = 0.16) {
         bounds,
         opacity: h === hour ? opacity : 0,
         tintColor: [255, 255, 255],
-        transitions: { opacity: 200 },
+        transitions: { opacity: ms(200) },
         pickable: false
       })
   )
@@ -55,7 +56,7 @@ export function pathCasingLayer ({ segments, selected, idSuffix = '' }) {
     capRounded: true,
     jointRounded: true,
     pickable: false,
-    transitions: { getWidth: 150 },
+    transitions: { getWidth: ms(150) },
     updateTriggers: { getWidth: [selected] }
   })
 }
@@ -77,7 +78,7 @@ export function exposureLayer ({ segments, hour, max, selected, onSelect, onHove
     highlightColor: [231, 233, 236, 120],
     onClick: onSelect ? info => onSelect(info.object ? info.object.id : null) : undefined,
     onHover: onHover ? info => onHover(info.object ? { kind: 'segment', object: info.object, x: info.x, y: info.y } : null) : undefined,
-    transitions: { getColor: 200, getWidth: 150 },
+    transitions: { getColor: ms(200), getWidth: ms(150) },
     updateTriggers: { getColor: [hour, max], getWidth: [selected] }
   })
 }
@@ -89,14 +90,14 @@ export function fundedLayer ({ segments, treated, idSuffix = '' }) {
     id: `funded${idSuffix}`,
     data,
     getPath: d => d.coords,
-    getColor: [...ACCENT, 170],
-    getWidth: 18,
+    getColor: [...ACCENT, 125],
+    getWidth: 17,
     widthUnits: 'pixels',
     widthMinPixels: 8,
     capRounded: true,
     jointRounded: true,
     pickable: false,
-    transitions: { getColor: 200 },
+    transitions: { getColor: ms(200) },
     updateTriggers: { getColor: [data.length] }
   })
 }
