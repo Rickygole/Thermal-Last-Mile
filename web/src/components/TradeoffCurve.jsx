@@ -94,7 +94,7 @@ export default function TradeoffCurve ({ points, index, onPick }) {
         }}
       >
         <line x1={PAD_L} x2={W - PAD_R} y1={H - PAD_B} y2={H - PAD_B} stroke="#2E353E" strokeWidth="0.5" />
-        <path d={geometry.area} fill="rgba(45, 162, 187, 0.16)" />
+        <path d={geometry.area} fill="rgba(45, 162, 187, 0.10)" />
         <path d={geometry.line} fill="none" stroke="var(--accent)" strokeWidth="1.5" strokeLinejoin="round" />
         {kneePoint ? (
           <g>
@@ -134,7 +134,7 @@ export default function TradeoffCurve ({ points, index, onPick }) {
           <div className="v">{n0(nextMarginal)} degmin</div>
         </div>
         <div className="stat">
-          <div className="k">First {usd(100000)} averted</div>
+          <div className="k">Opening {usd(100000)} averted</div>
           <div className="v">{n0(geometry.peak)} degmin</div>
         </div>
       </div>
