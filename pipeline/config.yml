@@ -54,3 +54,6 @@ optimizer:
 raster:
   resolution_m: 1.0
   max_march_steps: 400
+
+uhi:
+  beta_lst_to_tair: 0.2

@@ -45,17 +45,17 @@ export default function App () {
           <h1>Thermal Last Mile</h1>
           <span>Rail platform to stadium gate, Houston 2026</span>
         </div>
-        {data ? (
+        {data && data.segments.length ? (
           <div className="topline" aria-label="Current view">
             <span>{hour}:00 kickoff</span>
             <span className="sep" aria-hidden="true" />
-            <span>WBGT 32 C threshold</span>
+            <span>WBGT {data.threshold} C threshold</span>
             <span className="sep" aria-hidden="true" />
             <span>{data.segments.length} segments</span>
           </div>
         ) : null}
         <div className="spacer" />
-        <ObservedChip />
+        {data && data.segments.length ? <ObservedChip /> : null}
         {data && data.meta && data.meta.provisional ? <ProvisionalChip /> : null}
         {data && data.heat.available && data.heat.provisional ? (
           <ProvisionalChip label="SURFACE PROVISIONAL" title="The continuous surface is a placeholder field calibrated to pipeline segment output, not a pipeline raster" />

@@ -21,7 +21,7 @@ export default function Walk ({ data }) {
     const surface = data.heat.available
       ? [
           ...shadeLayers(hour, bounds, 0.12),
-          ...heatLayers({ hour, heat, urlFor: expoUrl, bounds, domain: data.heat.domain })
+          ...heatLayers({ hour, heat, urlFor: expoUrl, bounds, domain: data.heat.domain, anchors: data.heat.anchors })
         ]
       : shadeLayers(hour, bounds, 0.35)
     const buildings = buildingLayer({ buildings: data.buildings, pitch, idSuffix: '-walk' })
@@ -46,12 +46,12 @@ export default function Walk ({ data }) {
         />
         <div className="walk-overlay panel">
           <h2>
-            One fan, one walk, {n2(data.totals[hour])} degree-minutes above WBGT 32 at {hour}:00.
+            One fan, one walk, {n2(data.walk[hour])} degree-minutes above WBGT {data.threshold} C at {hour}:00.
           </h2>
           <p>
-            {data.meta?.origin || 'The rail platform'} to {data.meta?.venue || 'the stadium'}. The surface is modelled wet bulb
-            globe temperature across the whole catchment, the lines are the walking segments coloured by what one fan accumulates
-            on them.
+            The average across {data.approaches.length} approaches, weighted by how many fans use each. The surface is modelled wet
+            bulb globe temperature across the whole catchment, the lines are the walking segments coloured by what one fan
+            accumulates on them.
           </p>
           <div className="stat-grid">
             <div className="stat">
@@ -74,7 +74,7 @@ export default function Walk ({ data }) {
         </div>
       </div>
       <div className="walk-foot">
-        <Ridgeline segments={data.segments} totals={data.totals} stats={data.stats} />
+        <Ridgeline segments={data.segments} threshold={data.threshold} />
         <button type="button" className="continue" onClick={() => setScreen('map')}>
           Rank every segment
           <span aria-hidden="true">&rarr;</span>

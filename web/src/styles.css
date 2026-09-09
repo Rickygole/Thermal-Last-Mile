@@ -479,7 +479,7 @@ input[type="range"]::-moz-range-thumb { width: 14px; height: 14px; border: 2px s
   display: grid;
   grid-template-columns: 344px 1fr 348px;
   gap: var(--gap);
-  padding: var(--gap);
+  padding: var(--gap) var(--gap) 34px;
 }
 
 .sk-col { display: flex; flex-direction: column; gap: var(--gap); min-height: 0; }
@@ -523,4 +523,66 @@ input[type="range"]::-moz-range-thumb { width: 14px; height: 14px; border: 2px s
 
 @media (max-width: 1400px) {
   .map-screen { grid-template-columns: 300px 1fr 316px; }
+}
+
+.col.right > .pane { flex: 0 0 auto; }
+.rank-row .name .seq { color: var(--muted); font-size: 11px; }
+
+.rank-row .dot-funded {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+.budget-rail {
+  display: grid;
+  grid-template-columns: minmax(200px, 1fr) minmax(200px, 1fr) minmax(260px, 320px);
+  align-items: start;
+  gap: var(--gap) 20px;
+}
+
+.budget-rail .br-main { display: grid; gap: 10px; align-content: start; }
+.budget-rail .br-stats { align-content: start; }
+.budget-rail .br-curve { display: grid; gap: 8px; }
+.budget-rail .stat-grid { grid-template-columns: 1fr 1fr; }
+
+@media (max-width: 1400px) {
+  .budget-rail { grid-template-columns: 1fr 1fr; }
+  .budget-rail .br-curve { grid-column: 1 / -1; }
+}
+
+.maplibregl-ctrl-scale {
+  background: rgba(29, 33, 40, 0.85);
+  border: 0.5px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  color: var(--muted);
+  font-size: 10px;
+  font-family: var(--font);
+  font-variant-numeric: tabular-nums;
+  padding: 1px 5px;
+}
+
+.ledger-top { display: grid; grid-template-columns: minmax(300px, 400px) minmax(420px, 1fr); gap: 24px; align-items: start; margin-bottom: 24px; }
+.ledger-top .ledger-head { margin-bottom: 0; }
+.scatter svg { display: block; width: 100%; height: auto; }
+
+@media (max-width: 1100px) {
+  .ledger-top { grid-template-columns: 1fr; }
+}
+
+.tradeoff svg { max-height: 120px; }
+.hour-profile svg { max-height: 210px; }
+.scatter svg { max-height: 330px; }
+.ridgeline svg { max-height: 300px; }
+.map-hold { min-height: 320px; }
+
+@media (max-width: 1400px) {
+  .col.center { overflow-y: auto; }
+  .topline { display: none; }
+  .budget-rail .br-curve { grid-column: 1 / -1; }
 }

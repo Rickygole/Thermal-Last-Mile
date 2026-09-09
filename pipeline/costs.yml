@@ -71,3 +71,14 @@ constants:
     value: 0.15
     note: fraction of global horizontal irradiance reaching a fully shaded pedestrian
     citation: "Derived from NSRDB DHI to GHI ratio for the match hours."
+  uhi_coupling_beta:
+    value: 0.2
+    note: >
+      daytime coupling coefficient between land surface temperature anomaly and
+      near surface air temperature anomaly, applied as
+      tair_cell = tair_station_interpolated + beta * (lst_cell - lst_area_mean),
+      where lst_cell and lst_area_mean come from pooled Landsat Collection 2
+      Level 2 ST_B10 surface temperature. Published daytime values for this
+      coefficient are typically in the 0.1 to 0.3 range, 0.2 is used here as a
+      representative mid range value.
+    citation: "Schwarz, N., Schlink, U., Franck, U., Grossmann, K. 2012. Relationship of land surface and air temperatures and its implications for quantifying urban heat island indicators, an application for the city of Leipzig, Germany. Ecological Indicators 18, 693-704."

@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-09-09T00:53:57.463Z",
+  "generated_utc": "2026-09-09T01:27:47.504Z",
   "provisional": false,
   "quantity": "wet bulb globe temperature",
   "unit": "degrees celsius",
@@ -34,30 +34,30 @@
   },
   "hour_stats": {
     "15": {
-      "min_c": 28.99,
-      "max_c": 34.49,
-      "calibration_samples": 137,
+      "min_c": 30.76,
+      "max_c": 36.26,
+      "calibration_samples": 171,
       "sun_elevation_deg": 55,
       "sun_azimuth_deg": 245
     },
     "17": {
-      "min_c": 27.43,
-      "max_c": 32.3,
-      "calibration_samples": 137,
+      "min_c": 28.56,
+      "max_c": 33.42,
+      "calibration_samples": 171,
       "sun_elevation_deg": 33,
       "sun_azimuth_deg": 264
     },
     "19": {
-      "min_c": 26.3,
-      "max_c": 29.3,
-      "calibration_samples": 137,
+      "min_c": 26.79,
+      "max_c": 29.79,
+      "calibration_samples": 171,
       "sun_elevation_deg": 10,
       "sun_azimuth_deg": 283
     },
     "21": {
-      "min_c": 25.64,
-      "max_c": 26.55,
-      "calibration_samples": 137,
+      "min_c": 25.55,
+      "max_c": 26.46,
+      "calibration_samples": 171,
       "sun_elevation_deg": -6,
       "sun_azimuth_deg": 300
     }

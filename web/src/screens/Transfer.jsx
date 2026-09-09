@@ -1,22 +1,26 @@
 import { useMemo } from 'react'
 import DeckMap from '../components/DeckMap.jsx'
 import EmptyState from '../components/EmptyState.jsx'
+import { ProvisionalChip } from '../components/Chips.jsx'
 import { exposureLayer, pathCasingLayer } from '../lib/layers.js'
 import { heatLayers } from '../lib/heat.js'
-import { expoUrl } from '../lib/data.js'
+import { expoUrl, matchedBounds } from '../lib/data.js'
 import { useStore } from '../store.js'
 import { LA_CONTEXT, VENUE_VIEWS } from '../lib/venues.js'
 import { n1 } from '../lib/format.js'
 
 const CHAIN = ['Segment the walk', 'Bake shade masks', 'Solve WBGT per hour', 'Accumulate degree-minutes', 'Greedy shade allocation']
 
-function Side ({ title, subtitle, view, bounds, layers, stats, chain, note, label }) {
+const SCALE_NOTE = 'Both panels are drawn at the same ground scale so the two corridors can be compared by eye.'
+
+function Side ({ title, subtitle, view, bounds, layers, stats, chain, note, label, provisional, scaleNote }) {
   return (
     <div className="side">
       <div className="panel side-head">
         <div className="t">
           <h3>{title}</h3>
           <span className="label">{subtitle}</span>
+          {provisional ? <ProvisionalChip label="PLACEHOLDER GEOMETRY" title="This corridor is drawn from the placeholder generator, not from a pipeline extraction" /> : null}
         </div>
         <div className="stat-grid">
           {stats.map(s => (
@@ -31,6 +35,7 @@ function Side ({ title, subtitle, view, bounds, layers, stats, chain, note, labe
             <span key={c}>{c}</span>
           ))}
         </div>
+        {scaleNote ? <p className="label">{scaleNote}</p> : null}
       </div>
       <div className="map-hold">
         {layers ? (
@@ -45,6 +50,7 @@ function Side ({ title, subtitle, view, bounds, layers, stats, chain, note, labe
 
 export default function Transfer ({ data }) {
   const hour = useStore(s => s.hour)
+  const [houBounds, laBounds] = useMemo(() => matchedBounds(data.bounds, data.laBounds), [data.bounds, data.laBounds])
   const houstonCity = data.cities.find(c => c.id === 'houston')
   const laCity = data.cities.find(c => c.id === 'los_angeles')
 
@@ -53,7 +59,7 @@ export default function Transfer ({ data }) {
       ...(data.heat.available
         ? heatLayers({
             hour,
-            heat: 0.55,
+            heat: 0.42,
             urlFor: expoUrl,
             bounds: data.heat.bounds || data.meta?.raster_bounds,
             domain: data.heat.domain
@@ -82,9 +88,10 @@ export default function Transfer ({ data }) {
         title="Houston 2026"
         subtitle={`${hour}:00 kickoff`}
         view={VENUE_VIEWS.houston}
-        bounds={data.bounds}
+        bounds={houBounds}
         layers={houstonLayers}
         label="Houston walk exposure"
+        scaleNote={SCALE_NOTE}
         chain={CHAIN}
         stats={[
           { k: 'Origin', v: data.meta?.origin || 'Rail platform' },
@@ -96,8 +103,9 @@ export default function Transfer ({ data }) {
       <Side
         title="Los Angeles 2028"
         subtitle={LA_CONTEXT.event}
+        provisional={data.laProvisional}
         view={VENUE_VIEWS.los_angeles}
-        bounds={data.laBounds}
+        bounds={laBounds}
         layers={laLayers}
         label="Los Angeles walk exposure"
         chain={CHAIN}

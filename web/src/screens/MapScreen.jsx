@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { AmbientLight, DirectionalLight, LightingEffect } from '@deck.gl/core'
 import DeckMap from '../components/DeckMap.jsx'
 import RankedList from '../components/RankedList.jsx'
 import BudgetBar from '../components/BudgetBar.jsx'
@@ -9,13 +10,13 @@ import MapControls from '../components/MapControls.jsx'
 import HoverCard from '../components/HoverCard.jsx'
 import Legend from '../components/Legend.jsx'
 import { curvePoints } from '../components/TradeoffCurve.jsx'
-import { buildingLayer, exposureLayer, interventionLayer, pathCasingLayer, shadeLayers } from '../lib/layers.js'
+import { buildingLayer, exposureLayer, fundedLayer, pathCasingLayer, shadeLayers } from '../lib/layers.js'
 import { heatLayers } from '../lib/heat.js'
-import { budgetLevels, expoUrl, interventionPoints, solutionAt } from '../lib/data.js'
+import { budgetLevels, expoUrl, interventionPoints, solutionAt, worstApproach } from '../lib/data.js'
 import { downloadCsv, segmentsToCsv } from '../lib/csv.js'
-import { usePulse } from '../lib/useClock.js'
 import { HOURS, setScreen, setSelected, useStore } from '../store.js'
 import { VENUE_VIEWS } from '../lib/venues.js'
+import { lightDirection, sunFor } from '../lib/sun.js'
 
 export default function MapScreen ({ data }) {
   const hour = useStore(s => s.hour)
@@ -30,10 +31,23 @@ export default function MapScreen ({ data }) {
   const solution = useMemo(() => solutionAt(data.solutions, budget), [data.solutions, budget])
   const funded = useMemo(() => interventionPoints(solution?.set, data.segments), [solution, data.segments])
   const treated = useMemo(() => new Set(funded.map(p => p.id)), [funded])
-  const scale = usePulse(funded.length)
   const rasterBounds = data.heat.bounds || data.meta?.raster_bounds || data.bounds
   const segment = useMemo(() => data.segments.find(s => s.id === selected) || null, [data.segments, selected])
   const onHover = useCallback(info => setHover(info), [])
+  const sun = useMemo(() => sunFor(hour, data.heat), [hour, data.heat])
+  const effects = useMemo(
+    () => [
+      new LightingEffect({
+        ambient: new AmbientLight({ color: [190, 200, 215], intensity: 1.5 }),
+        sun: new DirectionalLight({
+          color: [255, 240, 214],
+          intensity: sun.elev > 0 ? 1.9 : 0.5,
+          direction: lightDirection(sun)
+        })
+      })
+    ],
+    [sun]
+  )
 
   const corridor = useMemo(() => {
     const lo = {}
@@ -51,12 +65,14 @@ export default function MapScreen ({ data }) {
 
   const layers = useMemo(() => {
     const stack = data.heat.available
-      ? heatLayers({ hour, heat, urlFor: expoUrl, bounds: rasterBounds, domain: data.heat.domain })
+      ? heatLayers({ hour, heat, urlFor: expoUrl, bounds: rasterBounds, domain: data.heat.domain, anchors: data.heat.anchors })
       : shadeLayers(hour, rasterBounds, 0.35)
+    const fundedPaths = fundedLayer({ segments: data.segments, treated })
     const buildings = buildingLayer({ buildings: data.buildings, pitch, onHover })
     return [
       ...stack,
       ...(buildings ? [buildings] : []),
+      ...(fundedPaths ? [fundedPaths] : []),
       pathCasingLayer({ segments: data.segments, selected }),
       exposureLayer({
         segments: data.segments,
@@ -65,10 +81,9 @@ export default function MapScreen ({ data }) {
         selected,
         onSelect: setSelected,
         onHover
-      }),
-      interventionLayer({ points: funded, scale, onSelect: setSelected, onHover })
+      })
     ]
-  }, [hour, heat, pitch, rasterBounds, data, selected, funded, scale, onHover])
+  }, [hour, heat, pitch, rasterBounds, data, selected, treated, onHover])
 
   useEffect(() => {
     const onKey = e => {
@@ -86,6 +101,7 @@ export default function MapScreen ({ data }) {
   return (
     <div className="map-screen">
       <div className="col">
+        <HourScrubber totals={data.totals} stats={data.stats} walk={data.walk} threshold={data.threshold} />
         <RankedList segments={data.segments} hour={hour} max={data.max.all} treated={treated} />
         <button type="button" className="continue" onClick={exportCsv}>
           Download ranked segments CSV
@@ -97,18 +113,16 @@ export default function MapScreen ({ data }) {
             view={VENUE_VIEWS.houston}
             bounds={data.bounds}
             layers={layers}
+            effects={effects}
             pitch={pitch}
             label="Segment exposure map over the modelled heat surface"
           >
-            <MapControls buildings={data.buildings.length} />
-            <HoverCard hover={hover} hour={hour} max={data.max.all} />
+            <MapControls buildings={data.buildings.length} sun={sun} hour={hour} />
+            <HoverCard hover={hover} hour={hour} max={data.max.all} treated={treated} anchors={data.heat.anchors} />
           </DeckMap>
         </div>
         <Legend max={data.max.all} hour={hour} heat={data.heat} />
-        <div className="controls-row">
-          <HourScrubber totals={data.totals} stats={data.stats} max={data.max.all} />
-          <BudgetBar solution={solution} levels={levels} points={points} />
-        </div>
+        <BudgetBar solution={solution} levels={levels} points={points} />
       </div>
       <div className="col right">
         <SegmentDetail
@@ -117,6 +131,9 @@ export default function MapScreen ({ data }) {
           max={data.max.all}
           treated={segment ? treated.has(segment.id) : false}
           corridor={corridor}
+          anchors={data.heat.anchors}
+          threshold={data.threshold}
+          worst={worstApproach(data.approaches, hour)}
           corridorLabel={`${data.segments.length} segments on ${data.approaches.length} approaches`}
         />
         <MethodsPanel meta={data.meta} solutionMethod={data.solutions?.meta?.method} heat={data.heat} />

@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import EmptyState from '../components/EmptyState.jsx'
+import CityScatter from '../components/CityScatter.jsx'
 import { exposureCss } from '../lib/color.js'
 import { n0, n1 } from '../lib/format.js'
 import { setScreen } from '../store.js'
@@ -17,6 +18,7 @@ function Sparkbar ({ value, max, focus }) {
 }
 
 export default function Ledger ({ data }) {
+  const threshold = data.threshold
   const cities = useMemo(
     () => data.cities.slice().sort((a, b) => (b.degmin_per_trip ?? 0) - (a.degmin_per_trip ?? 0)),
     [data.cities]
@@ -30,12 +32,20 @@ export default function Ledger ({ data }) {
 
   return (
     <div className="ledger">
-      <div className="ledger-head">
-        <h2>Every host city ranked by heat carried on one fan trip.</h2>
-        <p>
-          Same model, same threshold, same walking speed. Degree-minutes above WBGT 32 accumulated between transit and gate,
-          for the hottest scheduled kickoff. Houston is first, and it is not close.
-        </p>
+      <div className="ledger-top">
+        <div className="ledger-head">
+          <h2>Every host city ranked by heat carried on one fan trip.</h2>
+          <p>
+            Same model, same threshold, same walking speed. Degree-minutes above WBGT {threshold} C accumulated between transit and
+            gate, for the hottest scheduled kickoff. Houston is first, and it is not close.
+          </p>
+          <p>
+            The panel beside it asks the obvious follow up and answers it with a flat line. Canopy percent across a whole city does
+            not predict what a fan carries on the last mile. Latitude, humidity, kickoff time and the geometry of the specific walk
+            do. That is the argument for modelling the walk itself rather than ranking cities by a canopy statistic.
+          </p>
+        </div>
+        <CityScatter cities={cities} focus={FOCUS} />
       </div>
       <div className="multiples">
         {cities.map((c, i) => {
