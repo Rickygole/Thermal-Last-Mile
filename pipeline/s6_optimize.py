@@ -17,6 +17,22 @@ DIFFUSE_FRACTION_SHADED = c.COSTS["constants"]["diffuse_fraction_shaded"]["value
 PATH_WIDTH_M = 2.0
 EXTREME_C = c.CFG["walk"]["wbgt_extreme_c"]
 WBGT_SHADED_FLOOR = EXTREME_C - 4.0
+SEGMENT_LENGTH_M = c.CFG["walk"]["segment_length_m"]
+
+HORIZONS = {
+    "near_term_2026": "coverage_near_term",
+    "mature": "coverage_mature",
+}
+HORIZON_NOTE = (
+    "coverage_near_term scales an intervention's shaded_area_m2 by its canopy_fraction_year5 "
+    "when that field is present in costs.yml, so a tree planted for the 2026 event is credited "
+    "with the canopy it actually has at year five, not the canopy it will have at maturity_years. "
+    "interventions without a canopy_fraction_year5 field, such as the sail and the awning, reach "
+    "full shaded_area_m2 immediately so coverage_near_term equals coverage_mature for them. "
+    "path is the near_term_2026 horizon and is the honest number for the 2026 tournament. "
+    "path_mature is the same greedy allocation logic run against full mature canopy and represents "
+    "the long term legacy value of the same spend, not what the tournament itself will see."
+)
 
 
 def hour_conditions(hour):
@@ -78,7 +94,13 @@ def build_candidates(segments, hours_cond, intervention_over_by_hour):
             shaded_area = spec.get("shaded_area_m2")
             if not shaded_area:
                 continue
-            coverage = min(1.0, shaded_area / (len_m * PATH_WIDTH_M))
+            coverage_mature = min(1.0, shaded_area / (len_m * PATH_WIDTH_M))
+            canopy_fraction_year5 = spec.get("canopy_fraction_year5")
+            maturity_years = spec.get("maturity_years")
+            if canopy_fraction_year5 is not None:
+                coverage_near_term = min(1.0, coverage_mature * canopy_fraction_year5)
+            else:
+                coverage_near_term = coverage_mature
             cost = spec.get("unit_cost_usd")
             if cost is None:
                 continue

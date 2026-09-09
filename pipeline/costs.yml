@@ -65,7 +65,11 @@ constants:
     value: 1.3
     citation: "Fitzpatrick, K. et al. 2006. Another look at pedestrian walking speed. Transportation Research Record 1982."
   threshold_c:
-    value: 32.0
+    value: 28.0
+    note: >
+      mirrors pipeline/config.yml walk.wbgt_threshold_c, which is the value actually read
+      by the pipeline code. this entry is documentation only. the separate extreme tier used
+      for fans_clear_of_extreme is pipeline/config.yml walk.wbgt_extreme_c, currently 32.0.
     citation: "ACSM and OSHA heat stress guidance, continuous exertion limit."
   diffuse_fraction_shaded:
     value: 0.19
