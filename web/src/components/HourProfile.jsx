@@ -3,7 +3,7 @@ import { HOURS, setHour, useStore } from '../store.js'
 import { n1, n2, pct } from '../lib/format.js'
 
 const W = 320
-const ROW = 34
+const ROW = 38
 const HEAD = 16
 const BAR_X = 46
 const BAR_W = 116
@@ -40,7 +40,7 @@ export default function HourProfile ({ series, anchors = HEAT_ANCHORS, unit = 'd
           DEGREE-MINUTES
         </text>
         <text x={AX_X} y="10" fontSize="9" fill="#8B929B" fontFamily="inherit">
-          WBGT {LOW_C} TO {HIGH_C} C
+          WBGT {n1(LOW_C)} TO {n1(HIGH_C)} C
         </text>
         <line x1={axisX(MID_C)} x2={axisX(MID_C)} y1={HEAD - 2} y2={height - 16} stroke="#3A424D" strokeWidth="0.5" strokeDasharray="2 2" />
         {series.map((s, i) => {
@@ -69,7 +69,7 @@ export default function HourProfile ({ series, anchors = HEAT_ANCHORS, unit = 'd
               </text>
               <line x1={AX_X} x2={AX_X + AX_W} y1={mid} y2={mid} stroke="#262B33" strokeWidth="4" strokeLinecap="round" />
               <circle cx={axisX(s.wbgt)} cy={mid} r="4.5" fill={heatCss(s.wbgt, anchors)} stroke="#15171B" strokeWidth="1" />
-              <text x={AX_X + AX_W} y={mid - 8} fontSize="10" fill="#8B929B" fontFamily="inherit" textAnchor="end">
+              <text x={AX_X + AX_W} y={mid + 15} fontSize="10" fill="#8B929B" fontFamily="inherit" textAnchor="end">
                 {n1(s.wbgt)} C{s.shade !== null ? `, ${pct(s.shade * 100)} shaded` : ''}
               </text>
             </g>
