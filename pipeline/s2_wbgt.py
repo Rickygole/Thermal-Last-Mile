@@ -6,8 +6,6 @@ from datetime import datetime
 import numpy as np
 import pandas as pd
 import rasterio
-from metpy.units import units
-from pywbgt import liljegrenWBGT
 from pvlib.location import Location
 from pvlib import solarposition
 
@@ -55,29 +53,10 @@ def build_hour(hour, bounds):
     if missing:
         raise RuntimeError(f"missing ASOS obs for {missing} on {date_str} hour {hour}")
 
-    tair_grid = c.idw_grid(bounds, {s: v["tair_c"] for s, v in station_stats.items()})
-    tdew_grid = c.idw_grid(bounds, {s: v["tdew_c"] for s, v in station_stats.items()})
-    wind_grid = c.idw_grid(bounds, {s: v["wind_ms"] for s, v in station_stats.items()})
-    pres_grid = c.idw_grid(bounds, {s: v["pres_hpa"] for s, v in station_stats.items()})
-
+    tair_grid, tdew_grid, wind_grid, pres_grid = c.station_grids(bounds, station_stats)
     ghi = clearsky_ghi(date_str, hour)
-    lon_grid, lat_grid = c.grid_centers_lonlat(bounds)
-
     utc_dt = hour_to_utc_naive(date_str, hour)
-    n = tair_grid.size
-    dt_index = pd.DatetimeIndex([utc_dt] * n)
-
-    out = liljegrenWBGT(
-        dt_index,
-        lat_grid.ravel(),
-        lon_grid.ravel(),
-        np.full(n, ghi) * units("W/m^2"),
-        pres_grid.ravel() * units.hPa,
-        tair_grid.ravel() * units.degC,
-        tdew_grid.ravel() * units.degC,
-        wind_grid.ravel() * units("m/s"),
-    )
-    wbgt = np.asarray(out["Twbg"], dtype=np.float32).reshape(tair_grid.shape)
+    wbgt = c.compute_wbgt_grid(bounds, tair_grid, tdew_grid, wind_grid, pres_grid, ghi, utc_dt)
 
     transform = c.raster_transform(bounds)
     profile = {
