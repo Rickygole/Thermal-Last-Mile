@@ -601,6 +601,7 @@ def build_organizer_weather(paths):
 
 
 def main():
+    require_share()
     c.ensure_dirs()
     BOX_DIR.mkdir(parents=True, exist_ok=True)
 
