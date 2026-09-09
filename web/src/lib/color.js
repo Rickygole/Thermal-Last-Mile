@@ -1,0 +1,29 @@
+export const EXPOSURE = {
+  low: [151, 196, 89],
+  moderate: [239, 159, 39],
+  severe: [226, 75, 74]
+}
+
+export const ACCENT = [45, 162, 187]
+
+const mix = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t))
+
+export function exposureColor (t) {
+  const c = Math.max(0, Math.min(1, t))
+  if (c < 0.5) return mix(EXPOSURE.low, EXPOSURE.moderate, c / 0.5)
+  return mix(EXPOSURE.moderate, EXPOSURE.severe, (c - 0.5) / 0.5)
+}
+
+export const lighten = (c, t) => c.map(v => Math.round(v + (255 - v) * t))
+
+export const rgbCss = c => `rgb(${c[0]}, ${c[1]}, ${c[2]})`
+
+export const exposureCss = t => rgbCss(exposureColor(t))
+
+export function exposureBand (t) {
+  if (t < 0.34) return 'low'
+  if (t < 0.67) return 'moderate'
+  return 'severe'
+}
+
+export const BAND_LABEL = { low: 'Low', moderate: 'Moderate', severe: 'Severe' }

@@ -1,0 +1,101 @@
+[
+  {
+    "id": "atlanta",
+    "name": "Atlanta",
+    "venue": "Mercedes-Benz Stadium",
+    "degmin_per_trip": 81.1,
+    "canopy_pct": 28.7,
+    "lst_p90_c": 46.9,
+    "matches": 8
+  },
+  {
+    "id": "boston",
+    "name": "Boston",
+    "venue": "Gillette Stadium, Foxborough",
+    "degmin_per_trip": 17.2,
+    "canopy_pct": 65.8,
+    "lst_p90_c": 38.6,
+    "matches": 7
+  },
+  {
+    "id": "dallas",
+    "name": "Dallas",
+    "venue": "AT&T Stadium, Arlington",
+    "degmin_per_trip": 117.8,
+    "canopy_pct": 24.0,
+    "lst_p90_c": 52.3,
+    "matches": 9
+  },
+  {
+    "id": "houston",
+    "name": "Houston",
+    "venue": "NRG Stadium",
+    "degmin_per_trip": 128.4,
+    "canopy_pct": 21.8,
+    "lst_p90_c": 53.5,
+    "matches": 7
+  },
+  {
+    "id": "kansas_city",
+    "name": "Kansas City",
+    "venue": "Arrowhead Stadium",
+    "degmin_per_trip": 61.1,
+    "canopy_pct": 39.4,
+    "lst_p90_c": 45.2,
+    "matches": 6
+  },
+  {
+    "id": "los_angeles",
+    "name": "Los Angeles",
+    "venue": "SoFi Stadium, Inglewood",
+    "degmin_per_trip": 122.2,
+    "canopy_pct": 9.6,
+    "lst_p90_c": 49.7,
+    "matches": 8
+  },
+  {
+    "id": "miami",
+    "name": "Miami",
+    "venue": "Hard Rock Stadium, Miami Gardens",
+    "degmin_per_trip": 105.2,
+    "canopy_pct": 15.5,
+    "lst_p90_c": 48.3,
+    "matches": 7
+  },
+  {
+    "id": "new_york_new_jersey",
+    "name": "New York/New Jersey",
+    "venue": "MetLife Stadium, East Rutherford",
+    "degmin_per_trip": 107.1,
+    "canopy_pct": 26.2,
+    "lst_p90_c": 51.0,
+    "matches": 8
+  },
+  {
+    "id": "philadelphia",
+    "name": "Philadelphia",
+    "venue": "Lincoln Financial Field",
+    "degmin_per_trip": 84.8,
+    "canopy_pct": 33.1,
+    "lst_p90_c": 48.6,
+    "matches": 6
+  },
+  {
+    "id": "san_francisco_bay_area",
+    "name": "San Francisco Bay Area",
+    "venue": "Levi's Stadium, Santa Clara",
+    "degmin_per_trip": 90.3,
+    "canopy_pct": 13.1,
+    "lst_p90_c": 45.6,
+    "matches": 6
+  },
+  {
+    "id": "seattle",
+    "name": "Seattle",
+    "venue": "Lumen Field",
+    "degmin_per_trip": 59.5,
+    "canopy_pct": 26.5,
+    "lst_p90_c": 42.6,
+    "matches": 6
+  }
+]
