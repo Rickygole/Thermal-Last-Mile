@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-09-09T02:32:38Z",
+  "generated_utc": "2026-09-09T02:44:24Z",
   "provisional": false,
   "quantity": "wet bulb globe temperature",
   "unit": "degrees celsius",
@@ -48,72 +48,72 @@
   "native_resolution_m": 1.0,
   "hour_stats": {
     "12": {
-      "min_c": 29.45,
+      "min_c": 29.36,
       "max_c": 33.66,
-      "mean_c": 32.22,
+      "mean_c": 32.2,
       "sun_elevation_deg": 69.9,
       "sun_azimuth_deg": 103.78
     },
     "13": {
-      "min_c": 30.54,
+      "min_c": 30.43,
       "max_c": 36.39,
-      "mean_c": 35.09,
+      "mean_c": 35.08,
       "sun_elevation_deg": 80.98,
       "sun_azimuth_deg": 138.01
     },
     "14": {
-      "min_c": 30.54,
+      "min_c": 30.43,
       "max_c": 36.46,
-      "mean_c": 35.15,
+      "mean_c": 35.14,
       "sun_elevation_deg": 79.77,
       "sun_azimuth_deg": 229.83
     },
     "15": {
-      "min_c": 30.03,
+      "min_c": 29.94,
       "max_c": 35.16,
-      "mean_c": 33.56,
+      "mean_c": 33.54,
       "sun_elevation_deg": 67.92,
       "sun_azimuth_deg": 257.43
     },
     "16": {
-      "min_c": 29.67,
+      "min_c": 29.61,
       "max_c": 34.03,
-      "mean_c": 32.54,
+      "mean_c": 32.52,
       "sun_elevation_deg": 55.0,
       "sun_azimuth_deg": 267.94
     },
     "17": {
-      "min_c": 28.78,
+      "min_c": 28.69,
       "max_c": 32.48,
-      "mean_c": 31.09,
+      "mean_c": 31.07,
       "sun_elevation_deg": 41.99,
       "sun_azimuth_deg": 275.02
     },
     "18": {
-      "min_c": 27.9,
+      "min_c": 27.86,
       "max_c": 31.32,
-      "mean_c": 29.95,
+      "mean_c": 29.94,
       "sun_elevation_deg": 29.11,
       "sun_azimuth_deg": 281.16
     },
     "19": {
-      "min_c": 26.83,
+      "min_c": 26.81,
       "max_c": 29.45,
-      "mean_c": 28.2,
+      "mean_c": 28.19,
       "sun_elevation_deg": 16.5,
       "sun_azimuth_deg": 287.27
     },
     "20": {
-      "min_c": 25.76,
+      "min_c": 25.77,
       "max_c": 27.52,
       "mean_c": 26.44,
       "sun_elevation_deg": 4.43,
       "sun_azimuth_deg": 293.88
     },
     "21": {
-      "min_c": 25.28,
-      "max_c": 27.05,
-      "mean_c": 25.92,
+      "min_c": 25.31,
+      "max_c": 27.06,
+      "mean_c": 25.95,
       "sun_elevation_deg": -7.29,
       "sun_azimuth_deg": 301.5
     }

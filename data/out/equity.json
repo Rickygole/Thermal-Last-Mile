@@ -1,6 +1,6 @@
 {
   "purpose": "answers whether heat exposure and the current cost effectiveness optimizer's spending are distributed regressively with respect to social vulnerability around the four NRG Stadium pedestrian approaches, using the CDC/ATSDR Social Vulnerability Index and NLCD tree canopy joined onto the 172 walk segments produced by pipeline/s5_routes.py",
-  "generated_utc": "2026-09-09T02:33:23Z",
+  "generated_utc": "2026-09-09T02:38:43Z",
   "svi_source": {
     "status": "real",
     "vintage": "2022",
@@ -115,18 +115,18 @@
   "exposure_definition": "exposure_degmin_per_trip is the mean of a segment's degmin field across every modeled kickoff hour in pipeline/config.yml, degmin itself is degree-minutes of WBGT above the 28 C threshold integrated along that segment for one pedestrian trip, this averages across hours rather than summing them because the modeled hours are alternative candidate kickoff times, not stages of a single trip",
   "correlation_exposure_vs_svi_segment_level": {
     "n": 172,
-    "pearson_r": 0.2073,
-    "pearson_p": 0.0064,
-    "spearman_r": 0.2563,
-    "spearman_p": 0.0007,
+    "pearson_r": 0.2068,
+    "pearson_p": 0.0065,
+    "spearman_r": 0.2538,
+    "spearman_p": 0.0008,
     "x": "exposure_degmin_per_trip",
     "y": "svi"
   },
   "correlation_exposure_vs_svi_segment_level_caveat": "this correlation pseudo-replicates SVI, every segment inside the same census tract carries an identical SVI value, so the true independent sample size is the number of distinct tracts, not 172 segments, see correlation_exposure_vs_svi_tract_level below for the honest low powered version",
   "correlation_exposure_vs_svi_tract_level": {
     "n": 3,
-    "pearson_r": 0.4966,
-    "pearson_p": 0.6692,
+    "pearson_r": 0.5002,
+    "pearson_p": 0.6666,
     "spearman_r": 0.5,
     "spearman_p": 0.6667,
     "x": "mean_exposure_degmin_per_trip",
@@ -134,9 +134,9 @@
   },
   "correlation_exposure_vs_canopy_pct": {
     "n": 172,
-    "pearson_r": -0.144,
-    "pearson_p": 0.0595,
-    "spearman_r": -0.2783,
+    "pearson_r": -0.1417,
+    "pearson_p": 0.0637,
+    "spearman_r": -0.2771,
     "spearman_p": 0.0002,
     "x": "exposure_degmin_per_trip",
     "y": "canopy_pct"
@@ -172,7 +172,7 @@
         "n_segments": 172,
         "canopy_pct_min": 0.0,
         "canopy_pct_max": 19.0,
-        "mean_exposure_degmin_per_trip": 0.937
+        "mean_exposure_degmin_per_trip": 0.936
       }
     ]
   },
@@ -195,7 +195,7 @@
           "rideshare_kirby": 25,
           "metrorail_stadium_park": 2
         },
-        "averted_degmin": 3540801.4
+        "averted_degmin": 3540002.6
       },
       "50000": {
         "spent": 49800.0,
@@ -210,7 +210,7 @@
           "rideshare_kirby": 25,
           "metrorail_stadium_park": 32
         },
-        "averted_degmin": 4544731.4
+        "averted_degmin": 4543770.8
       },
       "75000": {
         "spent": 67100.0,
@@ -225,7 +225,7 @@
           "rideshare_kirby": 25,
           "metrorail_stadium_park": 38
         },
-        "averted_degmin": 4752142.9
+        "averted_degmin": 4750550.6
       },
       "2000000": {
         "spent": 1989100.0,
@@ -240,7 +240,7 @@
           "rideshare_kirby": 25,
           "metrorail_stadium_park": 38
         },
-        "averted_degmin": 16439018.1
+        "averted_degmin": 16436667.1
       }
     },
     "dollar_weighted_mean_svi_at_full_cap": 0.4538,
@@ -263,8 +263,8 @@
     "population_not_modeled": "stadium staff, concession and merchandise vendors, parking lot attendants and event security who walk an approach corridor repeatedly across a season rather than once as a ticketed fan does, this population is invisible to every number elsewhere in this pipeline, which is built around a single fan trip",
     "why_it_matters_for_equity": "service and gig staff at large Gulf Coast stadium events are disproportionately drawn from lower income, higher SVI neighborhoods relative to ticket buyers, this is a plausible equity concern based on general labor market patterns for stadium service work, it is not measured in this pipeline, no worker home address or wage data was fetched or is available here",
     "assumption_stated": "illustrative only, assumes a worker walks the full lot_c approach corridor (56 segments) once inbound and once outbound for every one of the 7 Houston NRG World Cup matches listed in pipeline/s7_cities.py, that match count itself is typed from general knowledge in this repository and is flagged there as unverified against FIFA's official schedule, giving 14 total one-way walks across the tournament, and further assumes every walk occurs under the same modeled kickoff-hour heat conditions used for the fan model, which ignores that a worker's actual shift start and end times, breaks, and indoor time differ from a fan's single walk to their seat",
-    "one_way_trip_degmin_this_approach_measured": 53.9,
-    "illustrative_cumulative_degmin_across_shifts": 753.9,
+    "one_way_trip_degmin_this_approach_measured": 53.8,
+    "illustrative_cumulative_degmin_across_shifts": 753.8,
     "ratio_to_a_single_fan_trip": 14.0,
     "mean_svi_along_this_approach": 0.5779,
     "caveat": "the degmin figures used here are real model output for the lot_c approach segments, the multiplication by a shift count is an illustrative what-if scaling, not a measurement of any actual worker's exposure, and no field data on stadium worker schedules, routes, or home tract exists in this repository"
