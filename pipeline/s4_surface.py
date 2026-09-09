@@ -50,6 +50,7 @@ def wbgt_sun_and_shade(utc_dt, lat, lon, ghi_full_sun, pres, tair, tdew, wind):
         tdew * units.degC,
         wind * units("m/s"),
         d_globe=d_globe,
+        zspeed=c.PEDESTRIAN_HEIGHT_M * units.m,
     )
     wbgt_sun = np.asarray(sun["Twbg"], dtype=np.float32)
     if ghi_full_sun <= 0:
