@@ -10,6 +10,7 @@ from shapely.ops import substring
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import common as c
+import lst_houston as lst
 
 PATH_WIDTH_M = 2.0
 PATH_WIDTH_NOTE = (
@@ -87,6 +88,8 @@ def expo_variant(bounds, hour, wbgt_meta, tair_delta, shade_mask):
     stations = wbgt_meta["stations"]
     shifted = {s: {**v, "tair_c": v["tair_c"] + tair_delta} for s, v in stations.items()}
     tair_grid, tdew_grid, wind_grid, pres_grid = c.station_grids(bounds, shifted)
+    lst_field, lst_area_mean, _ = lst.get_uhi_field(bounds)
+    tair_grid = lst.apply_uhi(tair_grid, lst_field, lst_area_mean)
     utc_dt = pd.Timestamp(wbgt_meta["utc_datetime_used"])
     ghi_sun = wbgt_meta["ghi_full_sun_wm2"]
 

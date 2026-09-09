@@ -11,6 +11,7 @@ from pvlib import solarposition
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import common as c
+import lst_houston as lst
 
 TAIR_TOLERANCE_C = 1.0
 TOLERANCE_NOTE = (
@@ -54,6 +55,8 @@ def build_hour(hour, bounds):
         raise RuntimeError(f"missing ASOS obs for {missing} on {date_str} hour {hour}")
 
     tair_grid, tdew_grid, wind_grid, pres_grid = c.station_grids(bounds, station_stats)
+    lst_field, lst_area_mean, lst_meta = lst.get_uhi_field(bounds)
+    tair_grid = lst.apply_uhi(tair_grid, lst_field, lst_area_mean)
     ghi = clearsky_ghi(date_str, hour)
     utc_dt = hour_to_utc_naive(date_str, hour)
     wbgt = c.compute_wbgt_grid(bounds, tair_grid, tdew_grid, wind_grid, pres_grid, ghi, utc_dt)
@@ -84,9 +87,13 @@ def build_hour(hour, bounds):
         "wbgt_model": "pywbgt.liljegrenWBGT",
         "tair_tolerance_c": TAIR_TOLERANCE_C,
         "tair_tolerance_note": TOLERANCE_NOTE,
+        "tair_min_c": float(np.min(tair_grid)),
+        "tair_max_c": float(np.max(tair_grid)),
         "wbgt_min_c": float(np.min(wbgt)),
         "wbgt_max_c": float(np.max(wbgt)),
         "wbgt_mean_c": float(np.mean(wbgt)),
+        "wbgt_spatial_range_c": float(np.max(wbgt) - np.min(wbgt)),
+        "uhi": lst.uhi_meta_block(lst_meta),
     }
     c.write_json(c.INTERIM_DIR / f"wbgt_{hour:02d}_meta.json", meta)
     print(

@@ -7,6 +7,7 @@ import rasterio
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import common as c
+import lst_houston as lst
 
 DIFFUSE_FRACTION_SHADED = c.COSTS["constants"]["diffuse_fraction_shaded"]["value"]
 
@@ -21,6 +22,8 @@ def build_hour(hour, bounds):
     stations = wbgt_meta["stations"]
 
     tair_grid, tdew_grid, wind_grid, pres_grid = c.station_grids(bounds, stations)
+    lst_field, lst_area_mean, lst_meta = lst.get_uhi_field(bounds)
+    tair_grid = lst.apply_uhi(tair_grid, lst_field, lst_area_mean)
 
     ghi_shaded = wbgt_meta["ghi_full_sun_wm2"] * DIFFUSE_FRACTION_SHADED
     utc_dt = pd.Timestamp(wbgt_meta["utc_datetime_used"])

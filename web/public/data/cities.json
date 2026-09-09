@@ -1,101 +1,101 @@
 [
   {
-    "id": "houston",
-    "name": "Houston",
-    "venue": "NRG Stadium",
-    "degmin_per_trip": 16.8,
-    "canopy_pct": 18.2,
-    "lst_p90_c": 41.6,
-    "matches": 7
-  },
-  {
-    "id": "dallas",
-    "name": "Dallas",
-    "venue": "AT&T Stadium",
-    "degmin_per_trip": 15.9,
-    "canopy_pct": 21.4,
-    "lst_p90_c": 40.9,
-    "matches": 9
-  },
-  {
-    "id": "kansas_city",
-    "name": "Kansas City",
-    "venue": "Arrowhead Stadium",
-    "degmin_per_trip": 12.6,
-    "canopy_pct": 27.1,
-    "lst_p90_c": 38.4,
-    "matches": 6
-  },
-  {
     "id": "atlanta",
     "name": "Atlanta",
     "venue": "Mercedes-Benz Stadium",
-    "degmin_per_trip": 11.6,
-    "canopy_pct": 47.9,
-    "lst_p90_c": 37.1,
-    "matches": 8
-  },
-  {
-    "id": "miami",
-    "name": "Miami",
-    "venue": "Hard Rock Stadium",
-    "degmin_per_trip": 11,
-    "canopy_pct": 25.6,
-    "lst_p90_c": 36.2,
-    "matches": 7
-  },
-  {
-    "id": "philadelphia",
-    "name": "Philadelphia",
-    "venue": "Lincoln Financial Field",
-    "degmin_per_trip": 8,
-    "canopy_pct": 20.8,
-    "lst_p90_c": 36,
-    "matches": 6
-  },
-  {
-    "id": "new_york",
-    "name": "New York New Jersey",
-    "venue": "MetLife Stadium",
-    "degmin_per_trip": 7.5,
-    "canopy_pct": 22.3,
-    "lst_p90_c": 35.4,
+    "degmin_per_trip": 48.9,
+    "canopy_pct": 28.7,
+    "lst_p90_c": 46.9,
     "matches": 8
   },
   {
     "id": "boston",
     "name": "Boston",
-    "venue": "Gillette Stadium",
-    "degmin_per_trip": 5.8,
-    "canopy_pct": 26,
-    "lst_p90_c": 34.1,
+    "venue": "Gillette Stadium, Foxborough",
+    "degmin_per_trip": 10.4,
+    "canopy_pct": 65.8,
+    "lst_p90_c": 38.6,
     "matches": 7
+  },
+  {
+    "id": "dallas",
+    "name": "Dallas",
+    "venue": "AT&T Stadium, Arlington",
+    "degmin_per_trip": 71.0,
+    "canopy_pct": 24.0,
+    "lst_p90_c": 52.3,
+    "matches": 9
+  },
+  {
+    "id": "houston",
+    "name": "Houston",
+    "venue": "NRG Stadium",
+    "degmin_per_trip": 77.4,
+    "canopy_pct": 21.8,
+    "lst_p90_c": 53.5,
+    "matches": 7
+  },
+  {
+    "id": "kansas_city",
+    "name": "Kansas City",
+    "venue": "Arrowhead Stadium",
+    "degmin_per_trip": 36.8,
+    "canopy_pct": 39.4,
+    "lst_p90_c": 45.2,
+    "matches": 6
   },
   {
     "id": "los_angeles",
     "name": "Los Angeles",
-    "venue": "SoFi Stadium",
-    "degmin_per_trip": 5.2,
-    "canopy_pct": 15.4,
-    "lst_p90_c": 33.8,
+    "venue": "SoFi Stadium, Inglewood",
+    "degmin_per_trip": 73.6,
+    "canopy_pct": 9.6,
+    "lst_p90_c": 49.7,
     "matches": 8
   },
   {
-    "id": "bay_area",
-    "name": "Bay Area",
-    "venue": "Levi's Stadium",
-    "degmin_per_trip": 2.8,
-    "canopy_pct": 19.7,
-    "lst_p90_c": 31.2,
+    "id": "miami",
+    "name": "Miami",
+    "venue": "Hard Rock Stadium, Miami Gardens",
+    "degmin_per_trip": 63.4,
+    "canopy_pct": 15.5,
+    "lst_p90_c": 48.3,
+    "matches": 7
+  },
+  {
+    "id": "new_york_new_jersey",
+    "name": "New York/New Jersey",
+    "venue": "MetLife Stadium, East Rutherford",
+    "degmin_per_trip": 64.5,
+    "canopy_pct": 26.2,
+    "lst_p90_c": 51.0,
+    "matches": 8
+  },
+  {
+    "id": "philadelphia",
+    "name": "Philadelphia",
+    "venue": "Lincoln Financial Field",
+    "degmin_per_trip": 51.1,
+    "canopy_pct": 33.1,
+    "lst_p90_c": 48.6,
+    "matches": 6
+  },
+  {
+    "id": "san_francisco_bay_area",
+    "name": "San Francisco Bay Area",
+    "venue": "Levi's Stadium, Santa Clara",
+    "degmin_per_trip": 54.4,
+    "canopy_pct": 13.1,
+    "lst_p90_c": 45.6,
     "matches": 6
   },
   {
     "id": "seattle",
     "name": "Seattle",
     "venue": "Lumen Field",
-    "degmin_per_trip": 1.7,
-    "canopy_pct": 28.4,
-    "lst_p90_c": 28.6,
+    "degmin_per_trip": 35.9,
+    "canopy_pct": 26.5,
+    "lst_p90_c": 42.6,
     "matches": 6
   }
 ]
