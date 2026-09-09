@@ -1,18 +1,29 @@
-import { HOURS, setSelected } from '../store.js'
+import HourProfile, { buildSeries } from './HourProfile.jsx'
+import { setSelected } from '../store.js'
 import { exposureBand, exposureCss, BAND_LABEL } from '../lib/color.js'
 import { n0, n1, n2, pct } from '../lib/format.js'
 
-export default function SegmentDetail ({ segment, hour, max, treated }) {
+export default function SegmentDetail ({ segment, hour, max, treated, corridor, corridorLabel }) {
   if (!segment) {
     return (
       <section className="panel pane" aria-label="Segment detail">
-        <h3>Segment detail</h3>
-        <p className="label">Select a segment on the map or in the ranked list.</p>
+        <div className="pane-head">
+          <h3>Whole corridor</h3>
+          <span className="label">nothing selected</span>
+        </div>
+        <p className="label">
+          Click any segment on the map or in the ranked list to swap this panel to that segment. Until then it reports the whole
+          walk, summed over {corridorLabel}.
+        </p>
+        <HourProfile series={buildSeries(corridor)} title="Corridor across the afternoon" unit="degmin per fan, whole walk" />
       </section>
     )
   }
-  const t = (segment.degmin[hour] ?? 0) / max
+  const v = segment.degmin[hour] ?? 0
+  const t = v / max
   const band = exposureBand(t)
+  const lo = segment.degmin_lo?.[hour] ?? v
+  const hi = segment.degmin_hi?.[hour] ?? v
   return (
     <section className="panel pane" aria-label="Segment detail">
       <div className="pane-head">
@@ -26,13 +37,18 @@ export default function SegmentDetail ({ segment, hour, max, treated }) {
           <span className="swatch" style={{ background: exposureCss(t) }} aria-hidden="true" />
           {BAND_LABEL[band]} at {hour}:00
         </span>
-        {treated ? <span className="item">Treated in current budget</span> : null}
+        {treated ? (
+          <span className="item">
+            <span className="swatch accent" aria-hidden="true" />
+            Funded in the current budget
+          </span>
+        ) : null}
       </div>
       <div className="detail">
         <div className="row">
-          <span>Degree-minutes</span>
+          <span>Degree-minutes per fan</span>
           <span>
-            {n2(segment.degmin[hour] ?? 0)} ({n2(segment.degmin_lo?.[hour] ?? 0)} to {n2(segment.degmin_hi?.[hour] ?? 0)})
+            {n2(v)} <span className="label">({n2(lo)} to {n2(hi)})</span>
           </span>
         </div>
         <div className="row">
@@ -48,30 +64,27 @@ export default function SegmentDetail ({ segment, hour, max, treated }) {
           <span>{n0(segment.len_m)} m</span>
         </div>
         <div className="row">
-          <span>Fans per match</span>
+          <span>Fans per match on this approach</span>
           <span>{n0(segment.fans)}</span>
         </div>
         <div className="row">
+          <span>Fan degree-minutes at this hour</span>
+          <span>{n0(v * (segment.fans || 0))}</span>
+        </div>
+        <div className="row">
           <span>Canopy</span>
-          <span>{pct(segment.canopy_pct)}</span>
+          <span>{segment.canopy_pct ? pct(segment.canopy_pct) : 'not modelled in this run'}</span>
         </div>
         <div className="row">
           <span>Social vulnerability</span>
-          <span>{n2(segment.svi)}</span>
+          <span>{segment.svi ? n2(segment.svi) : 'not modelled in this run'}</span>
         </div>
         <div className="row">
           <span>Treatable with</span>
           <span>{(segment.treatable || []).join(', ') || 'none'}</span>
         </div>
       </div>
-      <div className="legend" aria-label="Degree-minutes by hour">
-        {HOURS.map(h => (
-          <span className="item" key={h}>
-            <span className="swatch" style={{ background: exposureCss((segment.degmin[h] ?? 0) / max) }} aria-hidden="true" />
-            {h}:00 {n2(segment.degmin[h] ?? 0)}
-          </span>
-        ))}
-      </div>
+      <HourProfile series={buildSeries(segment)} title="This segment across the afternoon" unit="degmin per fan" />
     </section>
   )
 }

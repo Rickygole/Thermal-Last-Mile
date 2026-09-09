@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-09-09T00:58:12Z",
+  "generated_utc": "2026-09-09T01:06:16Z",
   "model": {
     "wbgt": "Liljegren, J.C. et al. 2008. Modeling the wet bulb globe temperature using standard meteorological measurements. Journal of Occupational and Environmental Hygiene 5(10) 645-655.",
     "implementation": "pywbgt 3.0.7",
@@ -165,6 +165,6 @@
     "svi_note": "social vulnerability index not integrated in this pipeline run, reported as 0.0 pending a real CDC or ATSDR SVI data source",
     "canopy_pct_note": "tree canopy percent not modeled in this pipeline run, reported as 0.0 pending a real canopy raster, the DSM built in s3 covers buildings only"
   },
-  "n_segments": 137,
+  "n_segments": 172,
   "wbgt_threshold_c": 28.0
 }

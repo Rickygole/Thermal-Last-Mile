@@ -78,7 +78,7 @@ function hourStats (segments) {
       peak = Math.max(peak, s.wbgt?.[h] ?? 0)
       shade += s.shade_frac?.[h] ?? 0
       metres += s.len_m || 0
-      if ((s.wbgt?.[h] ?? 0) > 32) over += s.len_m || 0
+      if ((s.degmin[h] ?? 0) > 0) over += s.len_m || 0
     }
     const n = segments.length || 1
     out[h] = {

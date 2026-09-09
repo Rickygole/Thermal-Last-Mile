@@ -3,6 +3,7 @@ import { useStore } from './store.js'
 import ScreenNav from './components/ScreenNav.jsx'
 import { ObservedChip, ProvisionalChip } from './components/Chips.jsx'
 import EmptyState from './components/EmptyState.jsx'
+import Skeleton from './components/Skeleton.jsx'
 import Walk from './screens/Walk.jsx'
 import MapScreen from './screens/MapScreen.jsx'
 import Ledger from './screens/Ledger.jsx'
@@ -14,7 +15,7 @@ export default function App () {
 
   const body = () => {
     if (status === 'loading') {
-      return <EmptyState title="Loading exposure model output" body="Reading the baked pipeline products." />
+      return <Skeleton label="Reading baked pipeline products, nothing on this page is computed in the browser." />
     }
     if (!data || !data.segments.length) {
       return (
@@ -35,6 +36,8 @@ export default function App () {
     return <Transfer data={data} />
   }
 
+  const hour = useStore(s => s.hour)
+
   return (
     <div className="app">
       <header className="topbar">
@@ -42,9 +45,21 @@ export default function App () {
           <h1>Thermal Last Mile</h1>
           <span>Rail platform to stadium gate, Houston 2026</span>
         </div>
+        {data ? (
+          <div className="topline" aria-label="Current view">
+            <span>{hour}:00 kickoff</span>
+            <span className="sep" aria-hidden="true" />
+            <span>WBGT 32 C threshold</span>
+            <span className="sep" aria-hidden="true" />
+            <span>{data.segments.length} segments</span>
+          </div>
+        ) : null}
         <div className="spacer" />
         <ObservedChip />
         {data && data.meta && data.meta.provisional ? <ProvisionalChip /> : null}
+        {data && data.heat.available && data.heat.provisional ? (
+          <ProvisionalChip label="SURFACE PROVISIONAL" title="The continuous surface is a placeholder field calibrated to pipeline segment output, not a pipeline raster" />
+        ) : null}
         <ScreenNav />
       </header>
       <main className="screen">{body()}</main>

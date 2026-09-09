@@ -1,7 +1,9 @@
 import { useMemo } from 'react'
 import DeckMap from '../components/DeckMap.jsx'
 import EmptyState from '../components/EmptyState.jsx'
-import { exposureLayer } from '../lib/layers.js'
+import { exposureLayer, pathCasingLayer } from '../lib/layers.js'
+import { heatLayers } from '../lib/heat.js'
+import { expoUrl } from '../lib/data.js'
 import { useStore } from '../store.js'
 import { LA_CONTEXT, VENUE_VIEWS } from '../lib/venues.js'
 import { n1 } from '../lib/format.js'
@@ -47,14 +49,29 @@ export default function Transfer ({ data }) {
   const laCity = data.cities.find(c => c.id === 'los_angeles')
 
   const houstonLayers = useMemo(
-    () => [exposureLayer({ segments: data.segments, hour, max: data.max.all, selected: null, idSuffix: '-hou' })],
+    () => [
+      ...(data.heat.available
+        ? heatLayers({
+            hour,
+            heat: 0.55,
+            urlFor: expoUrl,
+            bounds: data.heat.bounds || data.meta?.raster_bounds,
+            domain: data.heat.domain
+          })
+        : []),
+      pathCasingLayer({ segments: data.segments, selected: null, idSuffix: '-hou' }),
+      exposureLayer({ segments: data.segments, hour, max: data.max.all, selected: null, idSuffix: '-hou' })
+    ],
     [hour, data]
   )
 
   const laLayers = useMemo(
     () =>
       data.laSegments.length
-        ? [exposureLayer({ segments: data.laSegments, hour, max: data.max.all, selected: null, idSuffix: '-la' })]
+        ? [
+            pathCasingLayer({ segments: data.laSegments, selected: null, idSuffix: '-la' }),
+            exposureLayer({ segments: data.laSegments, hour, max: data.max.all, selected: null, idSuffix: '-la' })
+          ]
         : null,
     [hour, data]
   )

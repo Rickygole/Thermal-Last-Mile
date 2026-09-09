@@ -1,25 +1,67 @@
+import { useRef } from 'react'
 import { HOURS, setHour, useStore } from '../store.js'
-import { n1 } from '../lib/format.js'
+import { arrowSelect } from '../lib/keys.js'
+import { exposureCss } from '../lib/color.js'
+import { n0, n1, n2, pct } from '../lib/format.js'
 
-export default function HourScrubber ({ totals }) {
+export default function HourScrubber ({ totals, stats, max }) {
   const hour = useStore(s => s.hour)
+  const refs = useRef([])
+  const stat = stats ? stats[hour] : null
+  const peak = Math.max(...HOURS.map(h => totals?.[h] ?? 0)) || 1
+
   return (
     <section className="panel pane" aria-label="Kickoff hour">
       <div className="pane-head">
         <h3>Kickoff hour</h3>
-        <span className="label">local time</span>
+        <span className="label">local time, arrow keys move</span>
       </div>
-      <div className="hours" role="group" aria-label="Select kickoff hour">
-        {HOURS.map(h => (
-          <button key={h} type="button" aria-pressed={hour === h} onClick={() => setHour(h)}>
-            {h}:00
+      <div className="hours" role="group" aria-label="Select kickoff hour" onKeyDown={e => arrowSelect(e, HOURS, hour, setHour, refs)}>
+        {HOURS.map((h, i) => (
+          <button
+            key={h}
+            type="button"
+            ref={el => {
+              refs.current[i] = el
+            }}
+            aria-pressed={hour === h}
+            onClick={() => setHour(h)}
+          >
+            <span className="hb">{h}:00</span>
+            <span className="hbar" aria-hidden="true">
+              <span
+                style={{
+                  width: `${Math.max(2, Math.round(((totals?.[h] ?? 0) / peak) * 100))}%`,
+                  background: exposureCss((totals?.[h] ?? 0) / peak)
+                }}
+              />
+            </span>
           </button>
         ))}
       </div>
       <div className="stat">
         <div className="k">Walk exposure per fan at {hour}:00</div>
         <div className="v big">
-          {n1(totals?.[hour] ?? 0)} <span className="label">degree-minutes over WBGT 32</span>
+          {n2(totals?.[hour] ?? 0)} <span className="label">degree-minutes above WBGT 32</span>
+        </div>
+        <div className="label">
+          {stat ? `90 percent interval ${n2(stat.lo)} to ${n2(stat.hi)}` : 'interval unavailable'}
+        </div>
+      </div>
+      <div className="detail">
+        <div className="row">
+          <span>Peak segment WBGT</span>
+          <span>{n1(stat?.peak_wbgt ?? 0)} C</span>
+        </div>
+        <div className="row">
+          <span>Route accumulating exposure</span>
+          <span>
+            {n0(stat?.metres_over ?? 0)} m of {n0(stat?.metres ?? 0)} m, {pct((stat?.share_over ?? 0) * 100)}
+          </span>
+        </div>
+        <div className="row">
+          <span>Mean shade fraction</span>
+          <span>{pct((stat?.shade_mean ?? 0) * 100)}</span>
         </div>
       </div>
     </section>

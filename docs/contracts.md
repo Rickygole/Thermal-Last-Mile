@@ -33,7 +33,7 @@ segment at 1.3 m/s. `degmin_lo` and `degmin_hi` bound the 90 percent interval.
 
 ```json
 {
-  "meta": { "step": 25000, "cap": 2000000, "method": "greedy_submodular" },
+  "meta": { "step": 25000, "cap": 2000000, "method": "greedy_cost_effectiveness" },
   "path": {
     "750000": {
       "set": ["kirby_8500#sail", "murworth#tree"],

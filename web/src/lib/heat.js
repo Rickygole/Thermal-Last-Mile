@@ -23,7 +23,10 @@ export class HeatSurfaceLayer extends BitmapLayer {
   vec3 ramp = t < 0.5
     ? mix(${glsl(EXPOSURE.low)}, ${glsl(EXPOSURE.moderate)}, t * 2.0)
     : mix(${glsl(EXPOSURE.moderate)}, ${glsl(EXPOSURE.severe)}, (t - 0.5) * 2.0);
-  color = vec4(ramp, color.a * (0.5 + 0.5 * t));
+  vec2 uv = geometry.uv;
+  float edge = smoothstep(0.0, 0.055, uv.x) * smoothstep(0.0, 0.055, 1.0 - uv.x)
+    * smoothstep(0.0, 0.055, uv.y) * smoothstep(0.0, 0.055, 1.0 - uv.y);
+  color = vec4(ramp, color.a * (0.28 + 0.72 * t) * edge);
 `
       }
     }

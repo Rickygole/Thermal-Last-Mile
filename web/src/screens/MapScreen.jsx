@@ -1,44 +1,74 @@
-import { useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import DeckMap from '../components/DeckMap.jsx'
 import RankedList from '../components/RankedList.jsx'
 import BudgetBar from '../components/BudgetBar.jsx'
 import HourScrubber from '../components/HourScrubber.jsx'
 import MethodsPanel from '../components/MethodsPanel.jsx'
 import SegmentDetail from '../components/SegmentDetail.jsx'
-import { exposureLayer, interventionLayer, shadeLayers } from '../lib/layers.js'
-import { interventionPoints, solutionAt } from '../lib/data.js'
+import MapControls from '../components/MapControls.jsx'
+import HoverCard from '../components/HoverCard.jsx'
+import Legend from '../components/Legend.jsx'
+import { curvePoints } from '../components/TradeoffCurve.jsx'
+import { buildingLayer, exposureLayer, interventionLayer, pathCasingLayer, shadeLayers } from '../lib/layers.js'
+import { heatLayers } from '../lib/heat.js'
+import { budgetLevels, expoUrl, interventionPoints, solutionAt } from '../lib/data.js'
 import { downloadCsv, segmentsToCsv } from '../lib/csv.js'
 import { usePulse } from '../lib/useClock.js'
-import { setScreen, setSelected, useStore } from '../store.js'
+import { HOURS, setScreen, setSelected, useStore } from '../store.js'
 import { VENUE_VIEWS } from '../lib/venues.js'
-import { exposureCss } from '../lib/color.js'
 
 export default function MapScreen ({ data }) {
   const hour = useStore(s => s.hour)
   const budget = useStore(s => s.budget)
   const selected = useStore(s => s.selected)
+  const heat = useStore(s => s.heat)
+  const pitch = useStore(s => s.pitch)
+  const [hover, setHover] = useState(null)
 
+  const levels = useMemo(() => budgetLevels(data.solutions), [data.solutions])
+  const points = useMemo(() => curvePoints(data.solutions, levels), [data.solutions, levels])
   const solution = useMemo(() => solutionAt(data.solutions, budget), [data.solutions, budget])
-  const points = useMemo(() => interventionPoints(solution?.set, data.segments), [solution, data.segments])
-  const treated = useMemo(() => new Set(points.map(p => p.id)), [points])
-  const scale = usePulse(points.length)
-  const bounds = data.meta?.raster_bounds || data.bounds
+  const funded = useMemo(() => interventionPoints(solution?.set, data.segments), [solution, data.segments])
+  const treated = useMemo(() => new Set(funded.map(p => p.id)), [funded])
+  const scale = usePulse(funded.length)
+  const rasterBounds = data.heat.bounds || data.meta?.raster_bounds || data.bounds
   const segment = useMemo(() => data.segments.find(s => s.id === selected) || null, [data.segments, selected])
+  const onHover = useCallback(info => setHover(info), [])
 
-  const layers = useMemo(
-    () => [
-      ...shadeLayers(hour, bounds),
+  const corridor = useMemo(() => {
+    const lo = {}
+    const hi = {}
+    const wbgt = {}
+    const shade = {}
+    for (const h of HOURS) {
+      lo[h] = data.stats[h].lo
+      hi[h] = data.stats[h].hi
+      wbgt[h] = data.stats[h].peak_wbgt
+      shade[h] = data.stats[h].shade_mean
+    }
+    return { degmin: data.totals, lo, hi, wbgt, shade_frac: shade }
+  }, [data])
+
+  const layers = useMemo(() => {
+    const stack = data.heat.available
+      ? heatLayers({ hour, heat, urlFor: expoUrl, bounds: rasterBounds, domain: data.heat.domain })
+      : shadeLayers(hour, rasterBounds, 0.35)
+    const buildings = buildingLayer({ buildings: data.buildings, pitch, onHover })
+    return [
+      ...stack,
+      ...(buildings ? [buildings] : []),
+      pathCasingLayer({ segments: data.segments, selected }),
       exposureLayer({
         segments: data.segments,
         hour,
         max: data.max.all,
         selected,
-        onSelect: setSelected
+        onSelect: setSelected,
+        onHover
       }),
-      interventionLayer({ points, scale, onSelect: setSelected })
-    ],
-    [hour, bounds, data, selected, points, scale]
-  )
+      interventionLayer({ points: funded, scale, onSelect: setSelected, onHover })
+    ]
+  }, [hour, heat, pitch, rasterBounds, data, selected, funded, scale, onHover])
 
   useEffect(() => {
     const onKey = e => {
@@ -63,34 +93,36 @@ export default function MapScreen ({ data }) {
       </div>
       <div className="col center">
         <div className="map-hold">
-          <DeckMap view={VENUE_VIEWS.houston} bounds={data.bounds} layers={layers} label="Segment exposure map" />
+          <DeckMap
+            view={VENUE_VIEWS.houston}
+            bounds={data.bounds}
+            layers={layers}
+            pitch={pitch}
+            label="Segment exposure map over the modelled heat surface"
+          >
+            <MapControls buildings={data.buildings.length} />
+            <HoverCard hover={hover} hour={hour} max={data.max.all} />
+          </DeckMap>
         </div>
-        <div className="legend panel pane" aria-label="Legend">
-          <span className="item">
-            <span className="swatch" style={{ background: exposureCss(0.05) }} aria-hidden="true" /> Low
-          </span>
-          <span className="item">
-            <span className="swatch" style={{ background: exposureCss(0.5) }} aria-hidden="true" /> Moderate
-          </span>
-          <span className="item">
-            <span className="swatch" style={{ background: exposureCss(1) }} aria-hidden="true" /> Severe
-          </span>
-          <span className="item">
-            <span className="swatch" style={{ background: 'var(--accent)' }} aria-hidden="true" /> Funded intervention
-          </span>
-          <span className="spacer" />
-          <button type="button" className="ghost" onClick={() => setScreen('ledger')}>
-            Compare host cities
-          </button>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--gap)' }}>
-          <HourScrubber totals={data.totals} />
-          <BudgetBar solution={solution} cap={data.solutions?.meta?.cap} step={data.solutions?.meta?.step} />
+        <Legend max={data.max.all} hour={hour} heat={data.heat} />
+        <div className="controls-row">
+          <HourScrubber totals={data.totals} stats={data.stats} max={data.max.all} />
+          <BudgetBar solution={solution} levels={levels} points={points} />
         </div>
       </div>
-      <div className="col" style={{ overflowY: 'auto' }}>
-        <SegmentDetail segment={segment} hour={hour} max={data.max.all} treated={segment ? treated.has(segment.id) : false} />
-        <MethodsPanel meta={data.meta} solutionMethod={data.solutions?.meta?.method} />
+      <div className="col right">
+        <SegmentDetail
+          segment={segment}
+          hour={hour}
+          max={data.max.all}
+          treated={segment ? treated.has(segment.id) : false}
+          corridor={corridor}
+          corridorLabel={`${data.segments.length} segments on ${data.approaches.length} approaches`}
+        />
+        <MethodsPanel meta={data.meta} solutionMethod={data.solutions?.meta?.method} heat={data.heat} />
+        <button type="button" className="ghost" onClick={() => setScreen('ledger')}>
+          Compare host cities
+        </button>
       </div>
     </div>
   )
