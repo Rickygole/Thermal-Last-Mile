@@ -183,11 +183,17 @@ Pipeline:
 ```
 uv venv --python 3.11 .venv
 uv pip install --python .venv/bin/python -r requirements.txt
-.venv/bin/python pipeline/s1_network.py
 .venv/bin/python pipeline/run_all.py
 ```
 
-Stages skip any output that already exists. Pass `--force` to rebuild.
+Stages skip any output that already exists. Pass `--force` to rebuild, or
+`--force-stage s5` to rebuild one.
+
+The organiser dataset stage is deliberately excluded from `run_all.py`. Those datasets
+are confidential to competition participants, so the share identifier is not committed.
+Set `ORGANIZER_SHARE` from the organisers' resources page and run
+`pipeline/s9_organizer.py` directly if you have access. Everything else reproduces
+without it.
 
 Application:
 
