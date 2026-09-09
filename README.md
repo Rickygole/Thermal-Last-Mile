@@ -18,6 +18,17 @@ temperature above the threshold, integrated over the time each person spends wal
 Reporting it as fan-hours would inflate the quantity by a factor of six and it is not
 what the model computes.
 
+## Scope and disclaimer
+
+Student research prototype. Not an engineering assessment, not a safety certification,
+and not a basis for public safety or capital allocation decisions. Figures are modelled
+estimates from public data with stated substitutions and uncertainties, and are not
+validated against field measurement of wet bulb globe temperature. Segment rankings
+indicate modelled relative exposure only and do not establish that any location is or is
+not safe. Wet bulb globe temperature thresholds are population level occupational
+guidance; nothing here is medical advice. Not affiliated with or endorsed by FIFA, NRG
+Park, Houston METRO, or any host city; venue and competition names are used descriptively.
+
 ## The metric
 
 Degree-minutes above WBGT 28, accumulated by one fan walking a segment at 1.3 m/s.

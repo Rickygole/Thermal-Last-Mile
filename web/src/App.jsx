@@ -3,6 +3,7 @@ import { useData } from './lib/data.js'
 import { syncScreenFromHash, useStore } from './store.js'
 import ScreenNav from './components/ScreenNav.jsx'
 import ThemeToggle from './components/ThemeToggle.jsx'
+import Disclaimer from './components/Disclaimer.jsx'
 import { ProvenanceChip, ProvisionalChip } from './components/Chips.jsx'
 import EmptyState from './components/EmptyState.jsx'
 import Skeleton from './components/Skeleton.jsx'
@@ -114,6 +115,7 @@ export default function App () {
         <ThemeToggle />
       </header>
       <main className="screen">{body()}</main>
+      <Disclaimer />
     </div>
   )
 }
