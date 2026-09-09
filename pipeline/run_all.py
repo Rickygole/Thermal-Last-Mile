@@ -10,7 +10,7 @@ import common as c
 PIPELINE_DIR = Path(__file__).resolve().parent
 HOURS = c.kickoff_hours()
 
-STAGES = ["s2", "s3", "s4", "s5", "s6", "meta"]
+STAGES = ["s2", "s3", "s4", "s5", "s6", "s8", "meta"]
 
 SCRIPTS = {
     "s2": "s2_wbgt.py",
@@ -18,6 +18,7 @@ SCRIPTS = {
     "s4": "s4_surface.py",
     "s5": "s5_routes.py",
     "s6": "s6_optimize.py",
+    "s8": "s8_surface_png.py",
     "meta": "meta.py",
 }
 
@@ -27,7 +28,9 @@ OUTPUT_FILES = {
         c.OUT_DIR / "solutions.json",
         c.OUT_DIR / "meta.json",
     ]
-    + [c.OUT_DIR / f"shade_{h:02d}.png" for h in HOURS],
+    + [c.OUT_DIR / f"shade_{h:02d}.png" for h in HOURS]
+    + [c.OUT_DIR / f"expo_{h:02d}.png" for h in HOURS]
+    + [c.OUT_DIR / "expo_meta.json", c.OUT_DIR / "cities.json"],
 }
 
 
