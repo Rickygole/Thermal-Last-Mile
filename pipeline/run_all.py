@@ -10,7 +10,7 @@ import common as c
 PIPELINE_DIR = Path(__file__).resolve().parent
 HOURS = c.kickoff_hours()
 
-STAGES = ["s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s10", "s12", "meta"]
+STAGES = ["s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s10", "s11", "s12", "meta"]
 
 SCRIPTS = {
     "s1": "s1_network.py",
@@ -22,6 +22,7 @@ SCRIPTS = {
     "s7": "s7_cities.py",
     "s8": "s8_surface_png.py",
     "s10": "s10_kickoff.py",
+    "s11": "s11_vulnerability.py",
     "s12": "s12_retrospective.py",
     "meta": "meta.py",
 }
