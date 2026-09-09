@@ -5,7 +5,7 @@ their providers, recorded per layer in `data/out/meta.json`.
 
 | Source | Products derived here | Licence | Obligation met by |
 | --- | --- | --- | --- |
-| OpenStreetMap | `segments.geojson`, `buildings.geojson`, the walk graph, the building surface model, venue footprint and gates | ODbL 1.0 | Attribution shown on every map view in the application, and stated here. Derived geometry is published under ODbL. |
+| OpenStreetMap | `segments.geojson`, the walk graph, the building surface model, venue footprint and gates | ODbL 1.0 | Attribution shown on every map view in the application, and stated here. Derived geometry is published under ODbL. |
 | Landsat Collection 2 Level 2 (USGS) | surface temperature field, city ledger LST | public domain | credited in `meta.json` and the methods panel |
 | NLCD Tree Canopy Cover 2021 (MRLC) | city ledger canopy | public domain | credited in `meta.json` |
 | ASOS via Iowa Environmental Mesonet | meteorological inputs | public domain | credited in `meta.json` |
@@ -14,9 +14,22 @@ their providers, recorded per layer in `data/out/meta.json`.
 
 ## ODbL note
 
-The pedestrian network, building footprints and derived segment geometry are a
-produced work from OpenStreetMap data. They are attributed above and on screen,
-and are made available under the same ODbL terms.
+`data/out/segments.geojson` conveys OpenStreetMap geometry and OpenStreetMap street
+names, so under ODbL 1.0 it is a **Derivative Database**, not a Produced Work. The same
+applies to the ranked CSV the application exports, which carries those names and
+geometry derived lengths. Both are therefore made available under ODbL 1.0, as section
+4.4 share alike requires, and OpenStreetMap is attributed on every map view.
+
+A Produced Work under ODbL is something created from the database that is not itself a
+database, such as a rendered map image or a chart. The screen captures in `docs/img` are
+Produced Works. The geometry files are not, and are licensed accordingly.
+
+## Scope of the MIT licence
+
+The MIT grant in `LICENSE` covers the source code in `pipeline/` and `web/src/` only. It
+does not cover the data products in `data/out/` or `web/public/data/`, which carry the
+licences of their providers as tabled above. In particular `segments.geojson` and any CSV
+exported from it are ODbL 1.0, not MIT.
 
 ## Organiser data note
 

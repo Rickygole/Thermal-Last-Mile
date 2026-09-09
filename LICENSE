@@ -1,5 +1,11 @@
 MIT License
 
+This licence covers the source code in pipeline/ and web/src/ only. It does not cover the
+data products in data/out/ or web/public/data/, which carry the licences of their
+providers as recorded in DATA_LICENSES.md and data/out/meta.json. In particular
+data/out/segments.geojson, and any CSV exported from it, is a Derivative Database of
+OpenStreetMap and is licensed under ODbL 1.0, not under the terms below.
+
 Copyright (c) 2026 The Thermal Last Mile authors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

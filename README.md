@@ -94,7 +94,9 @@ The physics runs offline and the browser only draws.
 If a value can appear on screen, it exists on disk before the browser opens. The budget
 slider does not solve an optimization, it indexes an array. The hour scrubber does not
 compute a shadow, it crossfades two baked masks. There is no server, no API and no
-database, so there is nothing to cold start, exceed a quota, or go down during judging.
+database of our own, so there is nothing of ours to cold start or exceed a quota. The one
+external dependency is the basemap tile service, and if it fails the map falls back to a
+flat background with every data layer still drawn.
 
 ### Shade enters the physics correctly
 
@@ -166,7 +168,10 @@ anyway and the discipline is worth more than the appearance of completeness.
   ranking is weighted by it.
 - Validation covers the spatial interpolation of station observations, not the WBGT model
   itself, because no instrumented WBGT record exists for this site and these dates.
-  Leave one out cross validation across three stations gives RMSE 0.82 C and bias 0.02 C.
+  Leave one out cross validation across 3 stations and 30 samples gives
+  RMSE 1.05 C and bias 0.03 C. These figures are generated into `meta.json` by the
+  pipeline and rendered in the methods panel; that file is authoritative if this prose
+  ever lags behind it.
 
 The organiser sources are named on screen in the methods panel and the curated catalog is
 vendored at `data/raw/organizers/`.
@@ -231,10 +236,11 @@ Performance targets: first paint under 2 s, hour change to recolour under 250 ms
 drag at 60 fps with zero recompute, and zero network calls after load beyond basemap
 tiles.
 
-## Output for a public works department
+## Output an agency can evaluate
 
 The Map screen exports the ranked segment list as CSV with costs attached, so the result
-is an artifact an agency can open on Monday rather than only a demo.
+is a checkable artifact rather than only a demo. It is a modelled ranking offered for
+evaluation, not a substitute for an agency's own assessment.
 
 ## What is measured, and what is not
 
