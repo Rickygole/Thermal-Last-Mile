@@ -208,19 +208,36 @@ export function worstApproach (approaches, hour) {
   return best
 }
 
-function heatMeta (raw, fallbackBounds, threshold) {
-  const available = Boolean(raw)
+function surfaceAnchors (raw, threshold) {
+  const stats = raw && raw.hour_stats ? Object.values(raw.hour_stats) : []
+  const tops = stats.map(v => v.max_c).filter(Number.isFinite)
+  if (!tops.length) return anchorsFor(threshold)
+  const high = Math.max(threshold + 4, Math.ceil(Math.max(...tops) * 2) / 2)
+  return [threshold - 4, threshold, high]
+}
+
+function heatMeta (raw, fallbackBounds, threshold, rasterPresent) {
+  const available = Boolean(raw) || Boolean(rasterPresent)
   return {
     available,
     bounds: (raw && raw.bounds) || fallbackBounds || null,
     domain: (raw && raw.domain_c) || HEAT_DOMAIN,
-    anchors: anchorsFor(threshold),
+    anchors: surfaceAnchors(raw, threshold),
     provisional: raw ? Boolean(raw.provisional) : true,
     method: (raw && raw.method) || null,
     quantity: (raw && raw.quantity) || 'wet bulb globe temperature',
     grid: (raw && raw.grid) || null,
     stats: (raw && raw.hour_stats) || null,
     inputs: (raw && raw.inputs) || null
+  }
+}
+
+async function surfacePresent () {
+  try {
+    const res = await fetch(expoUrl(HOURS[0]), { method: 'HEAD', cache: 'force-cache' })
+    return res.ok
+  } catch (err) {
+    return false
   }
 }
 
@@ -236,13 +253,16 @@ export function useData () {
       getJson('meta.json', true),
       getJson('la_segments.geojson', false),
       getJson('buildings.geojson', false),
-      getJson('expo_meta.json', false)
+      getJson('expo_meta.json', false),
+      surfacePresent()
     ]).then(results => {
       if (!live) return
-      const byName = Object.fromEntries(results.map(r => [r.name, r]))
+      const rasterPresent = results[results.length - 1] === true
+      const byName = Object.fromEntries(results.slice(0, -1).map(r => [r.name, r]))
       const errors = results.filter(r => r.required && r.error).map(r => `${r.name} (${r.error})`)
       const segments = toSegments(byName['segments.geojson'].value)
       const laSegments = toSegments(byName['la_segments.geojson'].value)
+      const laProvisional = Boolean(byName['la_segments.geojson'].value?.properties?.provisional)
       const solutions = byName['solutions.json'].value
       const cities = byName['cities.json'].value
       const meta = byName['meta.json'].value
@@ -256,12 +276,13 @@ export function useData () {
         data: {
           segments,
           laSegments,
+          laProvisional,
           buildings,
           solutions,
           cities: Array.isArray(cities) ? cities : [],
           meta: meta || null,
           threshold,
-          heat: heatMeta(byName['expo_meta.json'].value, meta?.raster_bounds || segBounds, threshold),
+          heat: heatMeta(byName['expo_meta.json'].value, meta?.raster_bounds || segBounds, threshold, rasterPresent),
           max: maxima(segments),
           totals: totals(segments),
           stats: hourStats(segments),
@@ -280,6 +301,30 @@ export function useData () {
   }, [])
 
   return state
+}
+
+export function matchedBounds (a, b) {
+  if (!a || !b) return [a, b]
+  const span = box => {
+    const lat = (box[1] + box[3]) / 2
+    return {
+      lat,
+      lon: (box[2] - box[0]) * 111320 * Math.cos((lat * Math.PI) / 180),
+      y: (box[3] - box[1]) * 110540,
+      cx: (box[0] + box[2]) / 2,
+      cy: (box[1] + box[3]) / 2
+    }
+  }
+  const sa = span(a)
+  const sb = span(b)
+  const wide = Math.max(sa.lon, sb.lon)
+  const tall = Math.max(sa.y, sb.y)
+  const build = s => {
+    const dLon = wide / 2 / (111320 * Math.cos((s.lat * Math.PI) / 180))
+    const dLat = tall / 2 / 110540
+    return [s.cx - dLon, s.cy - dLat, s.cx + dLon, s.cy + dLat]
+  }
+  return [build(sa), build(sb)]
 }
 
 export function budgetLevels (solutions) {
