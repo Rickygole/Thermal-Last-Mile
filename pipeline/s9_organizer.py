@@ -33,6 +33,18 @@ WEATHER_STATION_NOTE = (
     "the organizers' list recognizable as a real Houston area station, so it "
     "is used here"
 )
+DEW_POINT_UNIT_NOTE = (
+    "the organizers' column is named AVERAGE_DEW_POINT_F, implying Fahrenheit, "
+    "but the organizers' own data dictionary documents its nationwide range as "
+    "-999998.5 to 36.81, a maximum that is implausibly low for a Fahrenheit "
+    "dew point across five years of every US climate zone including Houston "
+    "and Miami summers, and consistent instead with a Celsius dew point. "
+    "values observed for KDWH near the actual 2026 match dates confirm this, "
+    "landing around 22 to 23 and converting cleanly to a mid seventies "
+    "Fahrenheit dew point that matches the ASOS observations below once "
+    "converted. this file therefore treats AVERAGE_DEW_POINT_F as Celsius "
+    "despite its name and converts it to Fahrenheit for the comparison"
+)
 
 WEATHER_CANONICAL_COLUMNS = [
     "CITY_LOCATION_IDENTIFIER",
@@ -345,7 +357,7 @@ def build_fan_volumes(poi_paths, visits_paths):
     total_volume = sum(v["estimated_relative_visit_volume"] for v in per_approach.values())
     total_poi = sum(v["poi_count"] for v in per_approach.values())
 
-    old_shares = s5.APPROACH_MODE_SHARE
+    old_shares = s5.INVENTED_APPROACH_MODE_SHARE
     total_share_assumption = round(sum(old_shares.values()), 4)
 
     if total_volume > 0:
@@ -374,12 +386,28 @@ def build_fan_volumes(poi_paths, visits_paths):
             "treat this weighting as a stable estimate"
         )
     share_values = list(derived_share.values())
-    if share_values and max(share_values) > 0 and (max(share_values) / max(min(share_values), 1e-9)) > 20:
+    if share_values and max(share_values) > 0 and (max(share_values) / max(min(share_values), 1e-9)) > 10:
         plausible = False
         plausibility_notes.append(
             "the largest and smallest derived approach shares differ by more "
-            "than 20x, a spread this pipeline treats as implausible rather "
+            "than 10x, a spread this pipeline treats as implausible rather "
             "than smoothing over"
+        )
+    if derived_share.get("lot_c", 0.0) < old_shares.get("lot_c", 0.0) * 0.5:
+        plausible = False
+        plausibility_notes.append(
+            "lot_c sits inside a stadium surface parking lot, which by "
+            "definition contains almost no core-poi-geometry commercial "
+            "establishments of its own, whatever the true gameday foot "
+            "traffic through it. a nearby POI or category visit rate density "
+            "proxy structurally undercounts a parking lot approach and can "
+            "structurally overcount an approach that happens to border more "
+            "ordinary retail unrelated to stadium arrivals. the derived share "
+            "for lot_c fell to less than half of the original invented "
+            "estimate, consistent with this known structural bias rather than "
+            "genuine evidence that lot_c carries fewer fans on gameday, so "
+            "this run is not trusted and the pipeline falls back to the "
+            "invented constants"
         )
 
     return {
@@ -461,10 +489,11 @@ def build_organizer_weather(paths):
                 "avg_relative_humidity_pct_mean": round(float(rows["AVERAGE_RELATIVE_HUMIDITY"].mean()), 2),
                 "avg_wind_speed_knots_mean": round(float(rows["AVERAGE_WIND_SPEED_KNOTS"].mean()), 2),
                 "avg_dew_point_f_mean": (
-                    round(float(rows["AVERAGE_DEW_POINT_F"].mean()), 2)
+                    round(float(rows["AVERAGE_DEW_POINT_F"].mean()) * 9.0 / 5.0 + 32.0, 2)
                     if rows["AVERAGE_DEW_POINT_F"].notna().any()
                     else None
                 ),
+                "avg_dew_point_f_mean_note": DEW_POINT_UNIT_NOTE,
             }
 
         station_daily = []
