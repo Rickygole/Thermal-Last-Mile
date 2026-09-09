@@ -181,7 +181,11 @@ function buildSegments (list) {
       })
     })
   }
-  return { type: 'FeatureCollection', features }
+  return {
+    type: 'FeatureCollection',
+    properties: { provisional: true, source: 'placeholder generator, not pipeline output' },
+    features
+  }
 }
 
 const LA_STATION = [-118.35296, 33.96139]
