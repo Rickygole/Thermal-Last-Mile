@@ -61,6 +61,10 @@ constants:
     name: Liljegren
     implementation: pywbgt.liljegrenWBGT
     citation: "Liljegren, J.C. et al. 2008. Modeling the wet bulb globe temperature using standard meteorological measurements. Journal of Occupational and Environmental Hygiene 5(10) 645-655."
+  wind_unit:
+    value: mph
+    note: the Iowa Environmental Mesonet ASOS sped field is wind speed in miles per hour, not knots. every observed value in this archive is an exact multiple of 1.15078, the knots to mph constant, which confirms the station reported integer knots and the service converted to mph. converting with the knots factor would overstate wind by 15.1 percent and bias wet bulb globe temperature low.
+    citation: "Iowa Environmental Mesonet ASOS download service field documentation, sped, wind speed in miles per hour."
   walk_speed_mps:
     value: 1.3
     citation: "Fitzpatrick, K. et al. 2006. Another look at pedestrian walking speed. Transportation Research Record 1982."
