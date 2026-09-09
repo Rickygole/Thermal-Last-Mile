@@ -21,7 +21,8 @@ export default function BudgetBar ({ solution, levels, points }) {
   const treated = solution && Array.isArray(solution.set) ? solution.set.length : 0
 
   return (
-    <section className="panel pane" aria-label="Shade budget">
+    <section className="panel pane budget-rail" aria-label="Shade budget">
+      <div className="br-main">
       <div className="pane-head">
         <h3>Shade budget</h3>
         <span className="label">
@@ -54,7 +55,8 @@ export default function BudgetBar ({ solution, levels, points }) {
           }
         }}
       />
-      <div className="stat-grid">
+      </div>
+      <div className="stat-grid br-stats">
         <div className="stat">
           <div className="k">Averted per fan</div>
           <div className="v">{n1(solution?.averted_per_fan ?? 0)} degmin</div>
@@ -74,7 +76,9 @@ export default function BudgetBar ({ solution, levels, points }) {
           </div>
         </div>
       </div>
-      <TradeoffCurve points={points} index={index} onPick={applyIndex} />
+      <div className="br-curve">
+        <TradeoffCurve points={points} index={index} onPick={applyIndex} />
+      </div>
     </section>
   )
 }

@@ -1,5 +1,5 @@
 import { HEAT_ANCHORS, exposureCss, heatCss } from '../lib/color.js'
-import { n2 } from '../lib/format.js'
+import { n1, n2 } from '../lib/format.js'
 
 export default function Legend ({ max, hour, heat }) {
   const anchors = heat?.anchors || HEAT_ANCHORS
@@ -19,9 +19,9 @@ export default function Legend ({ max, hour, heat }) {
           <span className="tick" style={{ left: '50%' }} />
         </div>
         <div className="ramp-scale" aria-hidden="true">
-          <span>{LOW_C}</span>
-          <span className="mid">{MID_C} threshold</span>
-          <span>{HIGH_C} and above</span>
+          <span>{n1(LOW_C)} and below</span>
+          <span className="mid">{n1(MID_C)} threshold</span>
+          <span>{n1(HIGH_C)} and above</span>
         </div>
         <p className="label">
           {heat && heat.available
@@ -32,7 +32,7 @@ export default function Legend ({ max, hour, heat }) {
       <div className="legend-block">
         <div className="pane-head">
           <h3>Segments, degree-minutes per fan</h3>
-          <span className="label">above WBGT {MID_C} C</span>
+          <span className="label">above WBGT {n1(MID_C)} C</span>
         </div>
         <div className="ramp" style={{ background: `linear-gradient(90deg, ${exposureCss(0)}, ${exposureCss(0.5)}, ${exposureCss(1)})` }} aria-hidden="true" />
         <div className="ramp-scale" aria-hidden="true">
@@ -40,6 +40,7 @@ export default function Legend ({ max, hour, heat }) {
           <span className="mid">{n2(max / 2)}</span>
           <span>{n2(max)}</span>
         </div>
+        <p className="label">Scaled to the highest segment value in the afternoon, so the four hours stay comparable.</p>
         <div className="legend">
           <span className="item">
             <span className="swatch accent" aria-hidden="true" /> Funded intervention

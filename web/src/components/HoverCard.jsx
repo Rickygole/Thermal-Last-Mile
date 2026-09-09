@@ -1,7 +1,7 @@
 import { BAND_LABEL, exposureBand, exposureCss } from '../lib/color.js'
 import { n0, n1, n2, pct } from '../lib/format.js'
 
-export default function HoverCard ({ hover, hour, max }) {
+export default function HoverCard ({ hover, hour, max, treated }) {
   if (!hover) return null
   const style = { left: Math.round(hover.x) + 14, top: Math.round(hover.y) + 14 }
   if (hover.kind === 'building') {
@@ -60,6 +60,12 @@ export default function HoverCard ({ hover, hour, max }) {
           {n0(s.fans)}, {n0(s.len_m)} m
         </span>
       </div>
+      {treated && treated.has(s.id) ? (
+        <div className="hc-row">
+          <span>Allocation</span>
+          <span>funded at this budget</span>
+        </div>
+      ) : null}
     </div>
   )
 }

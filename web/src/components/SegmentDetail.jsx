@@ -3,7 +3,7 @@ import { setSelected } from '../store.js'
 import { exposureBand, exposureCss, BAND_LABEL } from '../lib/color.js'
 import { n0, n1, n2, pct } from '../lib/format.js'
 
-export default function SegmentDetail ({ segment, hour, max, treated, corridor, corridorLabel }) {
+export default function SegmentDetail ({ segment, hour, max, treated, corridor, corridorLabel, anchors, threshold, worst }) {
   if (!segment) {
     return (
       <section className="panel pane" aria-label="Segment detail">
@@ -12,10 +12,16 @@ export default function SegmentDetail ({ segment, hour, max, treated, corridor, 
           <span className="label">nothing selected</span>
         </div>
         <p className="label">
-          Click any segment on the map or in the ranked list to swap this panel to that segment. Until then it reports the whole
-          walk, summed over {corridorLabel}.
+          Click any segment on the map or in the ranked list to swap this panel to that segment. Until then it reports every
+          modelled segment summed, {corridorLabel}.
+          {worst ? ` The worst approach at ${hour}:00 is the ${worst.label.toLowerCase()}, ${n2(worst.degmin[hour] ?? 0)} degmin for ${n0(worst.fans)} fans.` : ''}
         </p>
-        <HourProfile series={buildSeries(corridor)} title="Corridor across the afternoon" unit="degmin per fan, whole walk" />
+        <HourProfile
+          series={buildSeries(corridor)}
+          anchors={anchors}
+          title="Corridor across the afternoon"
+          unit="degmin summed, peak WBGT"
+        />
       </section>
     )
   }
@@ -27,7 +33,10 @@ export default function SegmentDetail ({ segment, hour, max, treated, corridor, 
   return (
     <section className="panel pane" aria-label="Segment detail">
       <div className="pane-head">
-        <h3>{segment.name}</h3>
+        <h3>
+          {segment.name}
+          {segment.of > 1 ? <span className="label"> segment {segment.seq} of {segment.of}</span> : null}
+        </h3>
         <button type="button" className="ghost" onClick={() => setSelected(null)}>
           Clear
         </button>
@@ -46,7 +55,7 @@ export default function SegmentDetail ({ segment, hour, max, treated, corridor, 
       </div>
       <div className="detail">
         <div className="row">
-          <span>Degree-minutes per fan</span>
+          <span>Degree-minutes per fan, threshold {threshold} C</span>
           <span>
             {n2(v)} <span className="label">({n2(lo)} to {n2(hi)})</span>
           </span>

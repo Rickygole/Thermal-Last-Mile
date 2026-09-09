@@ -1,6 +1,6 @@
 import { useMemo, useRef } from 'react'
 import { HOURS, setSelected, useStore } from '../store.js'
-import { BAND_LABEL, exposureBand, exposureCss } from '../lib/color.js'
+import { exposureCss } from '../lib/color.js'
 import { n0, n1, n2 } from '../lib/format.js'
 
 function MicroHours ({ segment, max }) {
@@ -44,6 +44,8 @@ export default function RankedList ({ segments, hour, max, treated }) {
     )
   }
 
+  const activeIdx = Math.max(0, ranked.findIndex(s => s.id === selected))
+
   const onKeyDown = e => {
     if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return
     const nodes = [...listRef.current.querySelectorAll('button')]
@@ -70,21 +72,25 @@ export default function RankedList ({ segments, hour, max, treated }) {
         {ranked.map((s, i) => {
           const v = s.degmin[hour] ?? 0
           const t = v / max
-          const band = exposureBand(t)
           const isTreated = treated.has(s.id)
           return (
             <li key={s.id}>
               <button
                 type="button"
                 className="rank-row"
+                tabIndex={i === activeIdx ? 0 : -1}
                 aria-pressed={selected === s.id}
                 onClick={() => setSelected(selected === s.id ? null : s.id)}
               >
                 <span className="idx">{i + 1}</span>
                 <span className="who">
-                  <span className="name">{s.name}</span>
+                  <span className="name">
+                    {s.name}
+                    {s.of > 1 ? <span className="seq"> {s.seq}/{s.of}</span> : null}
+                  </span>
                   <span className="sub">
-                    {exceeded ? BAND_LABEL[band] : `${n1(s.wbgt?.[hour] ?? 0)} C`}, {n0(s.fans)} fans, {n0(s.len_m)} m
+                    {isTreated ? <span className="dot-funded" aria-hidden="true" /> : null}
+                    {s.approach_label || 'approach'}, {n0(s.len_m)} m, {n0(s.fans)} fans
                     {isTreated ? ', funded' : ''}
                   </span>
                 </span>
@@ -100,7 +106,7 @@ export default function RankedList ({ segments, hour, max, treated }) {
       </ul>
       <p className="label">
         {ranked.length} segments, {exceeded ? 'ranked by degree-minutes' : 'ranked by WBGT'}. Four ticks per row are the four kickoff
-        hours.
+        hours. Up and down arrows move through the list.
       </p>
     </section>
   )
