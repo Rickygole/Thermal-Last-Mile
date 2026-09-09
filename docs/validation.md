@@ -88,12 +88,18 @@ its `degmin` for that hour, divided by 60 (`pipeline/s10_kickoff.py`,
 `fan_hours_above_threshold`). Substituting `degmin_lo` and `degmin_hi` for `degmin` in that
 same formula gives an honest low and high aggregate. Doing this for the 15:00 baseline
 kickoff gives approximately 50,000 to 93,000 fan-degree-hours around the central estimate
-reported in `data/out/kickoff_clock.json` (`hours.15.fan_hours_above_threshold`). For the
-7 scheduled Houston matches summed (`data/out/kickoff_clock.json`,
-`as_scheduled.tournament_total_fan_hours_above_threshold`), the same substitution gives
-approximately 210,000 to 475,000 fan-degree-hours around the central figure. Both bands
-are wide, and a hinge function like degree-minutes above a fixed threshold has a large
-local condition number, so a wide band here is the honest result of the underlying
+reported in `data/out/kickoff_clock.json` (`hours.15.fan_hours_above_threshold`).
+
+Evaluating that same hour sweep at the seven real kickoff hours gives a central 352,554
+with a band of 224,057 to 493,735, which is minus 36 percent and plus 40 percent. That
+band is indicative for the measured tournament total of 297,665 rather than computed on
+it, because the retrospective in `data/out/retrospective.json` uses each match's own
+observed weather while the sweep uses one representative date per hour. The two are
+different quantities and the sweep total is the larger of them, so the band should be read
+as a scale for the uncertainty rather than as bounds on the measured figure.
+
+Both bands are wide, and a hinge function like degree-minutes above a fixed threshold has
+a large local condition number, so a wide band here is the honest result of the underlying
 physics, not a sign the model is loosely built.
 
 ## Substitutions made in place of measured or licensed inputs, and their expected bias

@@ -8,7 +8,7 @@ measures it. This project measures it, ranks every sidewalk segment by how much
 dangerous heat a fan actually absorbs crossing it, and reports where a fixed shade
 budget removes the most exposure per dollar.
 
-The measured result: **297,664 fan-degree-hours above the heat stress limit accumulated on the last mile across the seven NRG matches of 14 June to 4 July 2026, measured against each match's own observed weather. Six of the seven kicked off at noon, and 91.7 percent of the total traces to that. The one match played at 19:00 stayed below the threshold.**
+The measured result: **297,665 fan-degree-hours above the heat stress limit accumulated on the last mile across the seven NRG matches of 14 June to 4 July 2026, measured against each match's own observed weather. Six of the seven kicked off at noon, and 91.7 percent of the total traces to that. The one match played at 19:00 stayed below the threshold.**
 
 The unit is degree-hours, not hours. It is the accumulated excess of wet bulb globe
 temperature above the threshold, integrated over the time each person spends walking.

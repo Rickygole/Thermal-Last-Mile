@@ -253,7 +253,7 @@ even at a fixed kickoff hour, which a generalized sweep by construction cannot s
 matches, it recomputes that same date's exposure at 19:00 instead, the hour the one
 already-evening match actually used, holding that date's own observed weather fixed and
 changing only the clock hour and the resulting sun geometry and shade. Across the six noon
-matches, this counterfactual removes 261,784 of the 297,665 tournament-wide fan-degree-hours,
+matches, this counterfactual removes 273,066 of the 297,665 tournament-wide fan-degree-hours,
 **91.7 percent**, at zero capital cost, purely from moving kickoff to an hour NRG had
 already used once during this same tournament
 (`data/out/retrospective.json`, `counterfactual_evening_kickoff.totals`). This is not a
