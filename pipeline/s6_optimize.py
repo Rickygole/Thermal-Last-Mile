@@ -35,6 +35,19 @@ HORIZON_NOTE = (
 )
 
 
+HORIZON_CROSSOVER_NOTE = (
+    "above roughly 1.2 million dollars the near term horizon credits more averted "
+    "exposure than the mature horizon for the identical purchased set. this is not "
+    "double counting. coverage on a segment is capped at the path area, so a mature "
+    "tree occupying 0.70 of the path leaves only 0.30 for a shade sail, while a year "
+    "five tree occupying 0.315 leaves 0.685 for it. a sail transmits less diffuse "
+    "radiation than a tree canopy, so shifting area from tree to sail raises the "
+    "credited relief. the crossover follows from treating path area as a shared budget "
+    "between overlapping interventions, so the two horizons are two scenarios and not "
+    "bounds on one another."
+)
+
+
 def hour_conditions(hour):
     wbgt_meta = c.read_json(c.INTERIM_DIR / f"wbgt_{hour:02d}_meta.json")
     expo_meta = c.read_json(c.INTERIM_DIR / f"expo_{hour:02d}_meta.json")
@@ -342,7 +355,13 @@ def main():
         }
 
     solution = {
-        "meta": {"step": STEP, "cap": CAP, "method": METHOD, "coverage_horizon_note": HORIZON_NOTE},
+        "meta": {
+            "step": STEP,
+            "cap": CAP,
+            "method": METHOD,
+            "coverage_horizon_note": HORIZON_NOTE,
+            "horizon_crossover_note": HORIZON_CROSSOVER_NOTE,
+        },
         "path": paths["near_term_2026"],
         "path_mature": paths["mature"],
         "intervention_effectiveness": intervention_effectiveness,
