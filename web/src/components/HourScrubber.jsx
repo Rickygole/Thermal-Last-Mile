@@ -4,11 +4,11 @@ import { arrowSelect } from '../lib/keys.js'
 import { exposureCss } from '../lib/color.js'
 import { n0, n1, n2, pct } from '../lib/format.js'
 
-export default function HourScrubber ({ totals, stats, max }) {
+export default function HourScrubber ({ totals, stats, walk, threshold }) {
   const hour = useStore(s => s.hour)
   const refs = useRef([])
   const stat = stats ? stats[hour] : null
-  const peak = Math.max(...HOURS.map(h => totals?.[h] ?? 0)) || 1
+  const peak = Math.max(...HOURS.map(h => walk?.[h] ?? 0)) || 1
 
   return (
     <section className="panel pane" aria-label="Kickoff hour">
@@ -31,8 +31,8 @@ export default function HourScrubber ({ totals, stats, max }) {
             <span className="hbar" aria-hidden="true">
               <span
                 style={{
-                  width: `${Math.max(2, Math.round(((totals?.[h] ?? 0) / peak) * 100))}%`,
-                  background: exposureCss((totals?.[h] ?? 0) / peak)
+                  width: `${Math.max(2, Math.round(((walk?.[h] ?? 0) / peak) * 100))}%`,
+                  background: exposureCss((walk?.[h] ?? 0) / peak)
                 }}
               />
             </span>
@@ -40,12 +40,14 @@ export default function HourScrubber ({ totals, stats, max }) {
         ))}
       </div>
       <div className="stat">
-        <div className="k">Walk exposure per fan at {hour}:00</div>
+        <div className="k">Average fan trip at {hour}:00, weighted by approach volume</div>
         <div className="v big">
-          {n2(totals?.[hour] ?? 0)} <span className="label">degree-minutes above WBGT 32</span>
+          {n2(walk?.[hour] ?? 0)} <span className="label">degree-minutes above WBGT {threshold} C</span>
         </div>
         <div className="label">
-          {stat ? `90 percent interval ${n2(stat.lo)} to ${n2(stat.hi)}` : 'interval unavailable'}
+          {stat
+            ? `All ${n0(stat.metres)} m of modelled segment sums to ${n2(totals?.[hour] ?? 0)} degmin, 90 percent interval ${n2(stat.lo)} to ${n2(stat.hi)}`
+            : 'interval unavailable'}
         </div>
       </div>
       <div className="detail">

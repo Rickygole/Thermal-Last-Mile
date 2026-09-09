@@ -9,3 +9,13 @@ export const LA_CONTEXT = {
   event: 'Olympic Games 2028',
   window: 'July 14 to July 30'
 }
+
+export const APPROACH_LABEL = {
+  metrorail_stadium_park: 'METRORail platform approach',
+  lot_c: 'Lot C approach',
+  rideshare_kirby: 'Kirby rideshare approach',
+  fan_fest: 'Fan fest approach',
+  k_line_downtown_inglewood: 'K Line Downtown Inglewood approach',
+  prairie_ave_gate: 'Prairie Avenue approach',
+  unknown: 'Approach'
+}

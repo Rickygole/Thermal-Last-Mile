@@ -8,7 +8,7 @@ export class HeatSurfaceLayer extends BitmapLayer {
   getShaders () {
     const base = super.getShaders()
     const [lo, hi] = this.props.domain || HEAT_DOMAIN
-    const [a0, a1, a2] = HEAT_ANCHORS
+    const [a0, a1, a2] = this.props.anchors || HEAT_ANCHORS
     const span = (hi - lo).toFixed(4)
     return {
       ...base,
@@ -34,9 +34,13 @@ export class HeatSurfaceLayer extends BitmapLayer {
 }
 
 HeatSurfaceLayer.layerName = 'HeatSurfaceLayer'
-HeatSurfaceLayer.defaultProps = { ...BitmapLayer.defaultProps, domain: { type: 'array', value: HEAT_DOMAIN, compare: true } }
+HeatSurfaceLayer.defaultProps = {
+  ...BitmapLayer.defaultProps,
+  domain: { type: 'array', value: HEAT_DOMAIN, compare: true },
+  anchors: { type: 'array', value: HEAT_ANCHORS, compare: true }
+}
 
-export function heatLayers ({ hour, heat, urlFor, bounds, domain }) {
+export function heatLayers ({ hour, heat, urlFor, bounds, domain, anchors }) {
   if (!bounds || heat <= 0) return []
   return HOURS.map(
     h =>
@@ -45,6 +49,7 @@ export function heatLayers ({ hour, heat, urlFor, bounds, domain }) {
         image: urlFor(h),
         bounds,
         domain: domain || HEAT_DOMAIN,
+        anchors: anchors || HEAT_ANCHORS,
         opacity: h === hour ? heat : 0,
         transitions: { opacity: 220 },
         pickable: false,

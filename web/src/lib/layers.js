@@ -1,36 +1,8 @@
-import { BitmapLayer, IconLayer, PathLayer, PolygonLayer } from '@deck.gl/layers'
+import { BitmapLayer, PathLayer, PolygonLayer } from '@deck.gl/layers'
 import { TripsLayer } from '@deck.gl/geo-layers'
 import { ACCENT, exposureColor, lighten } from './color.js'
 import { shadeUrl } from './data.js'
 import { HOURS } from '../store.js'
-
-let iconCache = null
-
-function iconUrl () {
-  if (iconCache) return iconCache
-  const size = 64
-  const canvas = document.createElement('canvas')
-  canvas.width = size
-  canvas.height = size
-  const ctx = canvas.getContext('2d')
-  ctx.beginPath()
-  ctx.arc(size / 2, size / 2, 22, 0, Math.PI * 2)
-  ctx.fillStyle = 'rgba(21, 23, 27, 0.9)'
-  ctx.fill()
-  ctx.lineWidth = 4
-  ctx.strokeStyle = `rgb(${ACCENT.join(',')})`
-  ctx.stroke()
-  ctx.beginPath()
-  ctx.moveTo(size / 2, 20)
-  ctx.lineTo(size - 20, size / 2)
-  ctx.lineTo(size / 2, size - 20)
-  ctx.lineTo(20, size / 2)
-  ctx.closePath()
-  ctx.fillStyle = `rgb(${ACCENT.join(',')})`
-  ctx.fill()
-  iconCache = canvas.toDataURL('image/png')
-  return iconCache
-}
 
 export function shadeLayers (hour, bounds, opacity = 0.16) {
   if (!bounds || opacity <= 0) return []
@@ -110,19 +82,22 @@ export function exposureLayer ({ segments, hour, max, selected, onSelect, onHove
   })
 }
 
-export function interventionLayer ({ points, scale, onSelect, onHover }) {
-  return new IconLayer({
-    id: 'interventions',
-    data: points,
-    getIcon: () => ({ url: iconUrl(), width: 64, height: 64, mask: false }),
-    getPosition: d => d.position,
-    getSize: 18,
-    sizeScale: scale,
-    sizeUnits: 'pixels',
-    pickable: Boolean(onSelect || onHover),
-    onClick: onSelect ? info => onSelect(info.object ? info.object.id : null) : undefined,
-    onHover: onHover ? info => onHover(info.object ? { kind: 'intervention', object: info.object, x: info.x, y: info.y } : null) : undefined,
-    updateTriggers: { getPosition: points.length }
+export function fundedLayer ({ segments, treated, idSuffix = '' }) {
+  const data = segments.filter(s => treated.has(s.id))
+  if (!data.length) return null
+  return new PathLayer({
+    id: `funded${idSuffix}`,
+    data,
+    getPath: d => d.coords,
+    getColor: [...ACCENT, 170],
+    getWidth: 18,
+    widthUnits: 'pixels',
+    widthMinPixels: 8,
+    capRounded: true,
+    jointRounded: true,
+    pickable: false,
+    transitions: { getColor: 200 },
+    updateTriggers: { getColor: [data.length] }
   })
 }
 
@@ -135,7 +110,8 @@ export function fanFlowLayer ({ trips, hour, max, currentTime }) {
     getColor: d => lighten(exposureColor((d.degmin[hour] ?? 0) / max), 0.35),
     opacity: 1,
     widthMinPixels: 4,
-    rounded: true,
+    jointRounded: true,
+    capRounded: true,
     trailLength: 900,
     currentTime,
     updateTriggers: { getColor: [hour, max] }

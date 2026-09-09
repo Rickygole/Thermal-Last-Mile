@@ -9,9 +9,6 @@ const BAR_X = 46
 const BAR_W = 116
 const AX_X = 190
 const AX_W = 112
-const [LOW_C, MID_C, HIGH_C] = HEAT_ANCHORS
-
-const axisX = c => AX_X + ((Math.max(LOW_C, Math.min(HIGH_C, c)) - LOW_C) / (HIGH_C - LOW_C)) * AX_W
 
 export function buildSeries (source) {
   return HOURS.map(h => ({
@@ -24,8 +21,10 @@ export function buildSeries (source) {
   }))
 }
 
-export default function HourProfile ({ series, unit = 'degmin per fan', title = 'All four kickoffs', note }) {
+export default function HourProfile ({ series, anchors = HEAT_ANCHORS, unit = 'degmin per fan', title = 'All four kickoffs', note }) {
   const hour = useStore(s => s.hour)
+  const [LOW_C, MID_C, HIGH_C] = anchors
+  const axisX = c => AX_X + ((Math.max(LOW_C, Math.min(HIGH_C, c)) - LOW_C) / (HIGH_C - LOW_C)) * AX_W
   const peak = Math.max(...series.map(s => Math.max(s.degmin, s.hi ?? 0)), 0)
   const scale = peak > 0 ? peak : 1
   const height = HEAD + series.length * ROW + 14
@@ -69,7 +68,7 @@ export default function HourProfile ({ series, unit = 'degmin per fan', title = 
                 {n2(s.degmin)}
               </text>
               <line x1={AX_X} x2={AX_X + AX_W} y1={mid} y2={mid} stroke="#262B33" strokeWidth="4" strokeLinecap="round" />
-              <circle cx={axisX(s.wbgt)} cy={mid} r="4.5" fill={heatCss(s.wbgt)} stroke="#15171B" strokeWidth="1" />
+              <circle cx={axisX(s.wbgt)} cy={mid} r="4.5" fill={heatCss(s.wbgt, anchors)} stroke="#15171B" strokeWidth="1" />
               <text x={AX_X + AX_W} y={mid - 8} fontSize="10" fill="#8B929B" fontFamily="inherit" textAnchor="end">
                 {n1(s.wbgt)} C{s.shade !== null ? `, ${pct(s.shade * 100)} shaded` : ''}
               </text>

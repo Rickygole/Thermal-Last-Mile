@@ -1,14 +1,13 @@
 import { HEAT_ANCHORS, exposureCss, heatCss } from '../lib/color.js'
 import { n2 } from '../lib/format.js'
 
-const [LOW_C, MID_C, HIGH_C] = HEAT_ANCHORS
-
-const STOPS = Array.from({ length: 13 }, (_, i) => {
-  const c = LOW_C + ((HIGH_C - LOW_C) * i) / 12
-  return `${heatCss(c)} ${Math.round((i / 12) * 100)}%`
-}).join(', ')
-
 export default function Legend ({ max, hour, heat }) {
+  const anchors = heat?.anchors || HEAT_ANCHORS
+  const [LOW_C, MID_C, HIGH_C] = anchors
+  const stops = Array.from({ length: 13 }, (_, i) => {
+    const c = LOW_C + ((HIGH_C - LOW_C) * i) / 12
+    return `${heatCss(c, anchors)} ${Math.round((i / 12) * 100)}%`
+  }).join(', ')
   return (
     <section className="panel pane legend-panel" aria-label="Legend">
       <div className="legend-block">
@@ -16,7 +15,7 @@ export default function Legend ({ max, hour, heat }) {
           <h3>Surface, wet bulb globe temperature</h3>
           <span className="label">degrees C at {hour}:00</span>
         </div>
-        <div className="ramp" style={{ background: `linear-gradient(90deg, ${STOPS})` }} aria-hidden="true">
+        <div className="ramp" style={{ background: `linear-gradient(90deg, ${stops})` }} aria-hidden="true">
           <span className="tick" style={{ left: '50%' }} />
         </div>
         <div className="ramp-scale" aria-hidden="true">
@@ -33,7 +32,7 @@ export default function Legend ({ max, hour, heat }) {
       <div className="legend-block">
         <div className="pane-head">
           <h3>Segments, degree-minutes per fan</h3>
-          <span className="label">above WBGT 32</span>
+          <span className="label">above WBGT {MID_C} C</span>
         </div>
         <div className="ramp" style={{ background: `linear-gradient(90deg, ${exposureCss(0)}, ${exposureCss(0.5)}, ${exposureCss(1)})` }} aria-hidden="true" />
         <div className="ramp-scale" aria-hidden="true">

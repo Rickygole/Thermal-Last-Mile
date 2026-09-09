@@ -21,21 +21,3 @@ export function useLoopClock (duration, active) {
   }, [duration, active])
   return time
 }
-
-export function usePulse (trigger, ms = 220) {
-  const [scale, setScale] = useState(1)
-  const frame = useRef(0)
-  useEffect(() => {
-    if (reduced()) return undefined
-    const start = performance.now()
-    const tick = now => {
-      const t = Math.min(1, (now - start) / ms)
-      setScale(1 + 0.35 * Math.sin(t * Math.PI))
-      if (t < 1) frame.current = requestAnimationFrame(tick)
-      else setScale(1)
-    }
-    frame.current = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(frame.current)
-  }, [trigger, ms])
-  return scale
-}

@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { HOURS } from '../store.js'
 import { HEAT_DOMAIN } from './heat.js'
+import { anchorsFor } from './color.js'
+import { APPROACH_LABEL } from './venues.js'
 
 const BASE = `${import.meta.env.BASE_URL}data/`
 
@@ -20,7 +22,7 @@ async function getJson (name, required) {
 
 function toSegments (geojson) {
   if (!geojson || !Array.isArray(geojson.features)) return []
-  return geojson.features
+  const segments = geojson.features
     .filter(f => f && f.geometry && f.geometry.type === 'LineString' && f.properties)
     .map((f, i) => ({
       ...f.properties,
@@ -28,6 +30,15 @@ function toSegments (geojson) {
       coords: f.geometry.coordinates
     }))
     .filter(s => s.id && s.degmin)
+  const counts = new Map()
+  for (const s of segments) {
+    const key = s.approach || 'unknown'
+    counts.set(key, (counts.get(key) || 0) + 1)
+    s.seq = counts.get(key)
+    s.approach_label = APPROACH_LABEL[key] || key
+  }
+  for (const s of segments) s.of = counts.get(s.approach || 'unknown')
+  return segments
 }
 
 function toBuildings (geojson) {
@@ -163,17 +174,47 @@ export function approachSummary (segments) {
   return groupByApproach(segments).map(({ approach, segs }) => {
     const metres = segs.reduce((a, s) => a + (s.len_m || 0), 0)
     const perHour = {}
-    for (const h of HOURS) perHour[h] = segs.reduce((a, s) => a + (s.degmin[h] ?? 0), 0)
-    return { approach, segments: segs.length, metres, fans: segs[0]?.fans ?? 0, degmin: perHour }
+    const peak = {}
+    for (const h of HOURS) {
+      perHour[h] = segs.reduce((a, s) => a + (s.degmin[h] ?? 0), 0)
+      peak[h] = segs.reduce((m, s) => Math.max(m, s.wbgt?.[h] ?? 0), 0)
+    }
+    return {
+      approach,
+      label: APPROACH_LABEL[approach] || approach,
+      segments: segs.length,
+      metres,
+      fans: segs[0]?.fans ?? 0,
+      degmin: perHour,
+      peak_wbgt: peak
+    }
   })
 }
 
-function heatMeta (raw, fallbackBounds) {
+export function fanWeighted (approaches) {
+  const fans = approaches.reduce((a, x) => a + (x.fans || 0), 0) || 1
+  const out = { fans }
+  for (const h of HOURS) {
+    out[h] = approaches.reduce((a, x) => a + (x.degmin[h] ?? 0) * (x.fans || 0), 0) / fans
+  }
+  return out
+}
+
+export function worstApproach (approaches, hour) {
+  let best = null
+  for (const a of approaches) {
+    if (!best || (a.degmin[hour] ?? 0) > (best.degmin[hour] ?? 0)) best = a
+  }
+  return best
+}
+
+function heatMeta (raw, fallbackBounds, threshold) {
   const available = Boolean(raw)
   return {
     available,
     bounds: (raw && raw.bounds) || fallbackBounds || null,
     domain: (raw && raw.domain_c) || HEAT_DOMAIN,
+    anchors: anchorsFor(threshold),
     provisional: raw ? Boolean(raw.provisional) : true,
     method: (raw && raw.method) || null,
     quantity: (raw && raw.quantity) || 'wet bulb globe temperature',
@@ -207,6 +248,8 @@ export function useData () {
       const meta = byName['meta.json'].value
       const buildings = toBuildings(byName['buildings.geojson'].value)
       const segBounds = bounds(segments)
+      const threshold = meta?.wbgt_threshold_c ?? meta?.threshold_wbgt_c ?? 32
+      const approaches = approachSummary(segments)
       setState({
         status: 'ready',
         errors,
@@ -217,11 +260,13 @@ export function useData () {
           solutions,
           cities: Array.isArray(cities) ? cities : [],
           meta: meta || null,
-          heat: heatMeta(byName['expo_meta.json'].value, meta?.raster_bounds || segBounds),
+          threshold,
+          heat: heatMeta(byName['expo_meta.json'].value, meta?.raster_bounds || segBounds, threshold),
           max: maxima(segments),
           totals: totals(segments),
           stats: hourStats(segments),
-          approaches: approachSummary(segments),
+          approaches,
+          walk: fanWeighted(approaches),
           bounds: segBounds,
           laBounds: bounds(laSegments),
           trips: buildTrips(segments),
