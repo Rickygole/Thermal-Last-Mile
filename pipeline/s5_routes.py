@@ -371,6 +371,8 @@ def main():
             "nrg_capacity_note": NRG_CAPACITY_NOTE,
             "approach_mode_share": APPROACH_MODE_SHARE,
             "mode_share_note": MODE_SHARE_NOTE,
+            "mode_share_source": MODE_SHARE_SOURCE,
+            "invented_approach_mode_share": INVENTED_APPROACH_MODE_SHARE,
             "treatable_interventions": TREATABLE,
             "uncertainty": UNCERTAINTY_META,
             "svi_note": "social vulnerability index not integrated in this pipeline run, reported as 0.0 pending a real CDC or ATSDR SVI data source",
