@@ -135,6 +135,39 @@ def main():
         }
     )
 
+    organizer_uhi_path = c.OUT_DIR / "uhi_validation.json"
+    if organizer_uhi_path.exists():
+        uhi_validation = c.read_json(organizer_uhi_path)
+        sources.append(
+            {
+                "layer": "urban heat island corroboration using the organizers' sample data",
+                "product": "hackathon organiser urban-heat-index sample dataset, Houston market",
+                "n_points_inside_study_bbox": uhi_validation["n_points_inside_study_bbox"],
+                "spearman_r": uhi_validation["spearman_r"],
+                "pearson_r": uhi_validation["pearson_r"],
+                "verdict": uhi_validation["verdict"],
+                "organizer_data_limitation": uhi_validation["organizer_data_limitation"],
+                "provider": "hackathon organiser organizers via Box",
+                "licence": "hackathon sample data, confidential, see data/out/uhi_validation.json",
+            }
+        )
+
+    organizer_weather_path = c.OUT_DIR / "organizer_weather.json"
+    if organizer_weather_path.exists():
+        organizer_weather = c.read_json(organizer_weather_path)
+        sources.append(
+            {
+                "layer": "organizer weather sample data cross check",
+                "product": "hackathon organiser daily-weather sample dataset, station "
+                + organizer_weather["weather_station_used"],
+                "weather_station_note": organizer_weather["weather_station_note"],
+                "method": organizer_weather["method"],
+                "organizer_data_limitation": organizer_weather["organizer_data_limitation"],
+                "provider": "hackathon organiser organizers via Box",
+                "licence": "hackathon sample data, confidential, see data/out/organizer_weather.json",
+            }
+        )
+
     meta = {
         "generated_utc": c.now_iso(),
         "model": {
@@ -163,6 +196,8 @@ def main():
             "nrg_capacity_note": segments_meta["nrg_capacity_note"],
             "approach_mode_share": segments_meta["approach_mode_share"],
             "mode_share_note": segments_meta["mode_share_note"],
+            "mode_share_source": segments_meta["mode_share_source"],
+            "invented_approach_mode_share": segments_meta["invented_approach_mode_share"],
             "svi_note": segments_meta["svi_note"],
             "canopy_pct_note": segments_meta["canopy_pct_note"],
         },
