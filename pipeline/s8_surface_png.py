@@ -44,11 +44,19 @@ def main():
         alpha = np.where(valid, 255, 0).astype(np.uint8)
         img = Image.fromarray(np.dstack([band, band, band, alpha]), mode="RGBA")
         img.save(c.OUT_DIR / f"expo_{h:02d}.png")
-        hour_stats[str(h)] = {
+        stats = {
             "min_c": round(float(np.nanmin(v)), 2),
             "max_c": round(float(np.nanmax(v)), 2),
             "mean_c": round(float(np.nanmean(v)), 2),
         }
+        shade_meta_path = c.INTERIM_DIR / f"shade_{h:02d}_meta.json"
+        if shade_meta_path.exists():
+            sm = c.read_json(shade_meta_path)
+            if "sun_elevation_deg" in sm:
+                stats["sun_elevation_deg"] = round(float(sm["sun_elevation_deg"]), 2)
+            if "sun_azimuth_deg" in sm:
+                stats["sun_azimuth_deg"] = round(float(sm["sun_azimuth_deg"]), 2)
+        hour_stats[str(h)] = stats
 
     meta = {
         "generated_utc": c.now_iso(),
@@ -62,6 +70,7 @@ def main():
         "hours": [str(h) for h in hours],
         "threshold_c": c.CFG["walk"]["wbgt_threshold_c"],
         "method": "resampled directly from the pipeline exposure rasters written by stage 4, which combine the Liljegren wet bulb globe temperature grid with the raymarched shade mask and the Landsat coupled urban heat island field",
+        "sun_position_source": "pvlib solar position solved in the shadow bake stage, the same geometry that produced the shade masks",
         "source_rasters": [f"data/interim/expo_{h:02d}.tif" for h in hours],
         "native_resolution_m": c.CFG["raster"]["resolution_m"],
         "hour_stats": hour_stats,
