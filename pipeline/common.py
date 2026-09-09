@@ -29,6 +29,8 @@ LOCAL_TZ = "America/Chicago"
 TO_UTM = Transformer.from_crs(CRS_WGS84, CRS_METRIC, always_xy=True)
 TO_WGS84 = Transformer.from_crs(CRS_METRIC, CRS_WGS84, always_xy=True)
 
+ox.settings.cache_folder = str(RAW_DIR / "osmnx_cache")
+
 ASOS_STATIONS = {
     "KHOU": {"lat": 29.6375, "lon": -95.2824, "elevation_m": 14.0, "name": "HOUSTON/WILL HOBBY"},
     "KIAH": {"lat": 29.9844, "lon": -95.3607, "elevation_m": 28.0, "name": "Houston Intercontinental"},
@@ -68,12 +70,21 @@ def cached_get(url, params, cache_dir, name, timeout=30, retries=5):
 
     wait = 5.0
     resp = None
+    last_error = None
     for attempt in range(retries):
-        resp = requests.get(url, params=params, timeout=timeout)
+        try:
+            resp = requests.get(url, params=params, timeout=timeout)
+        except requests.exceptions.RequestException as exc:
+            last_error = exc
+            _time.sleep(wait)
+            wait *= 2
+            continue
         if resp.status_code != 429:
             break
         _time.sleep(wait)
         wait *= 2
+    if resp is None:
+        raise last_error
     resp.raise_for_status()
     text = resp.text
     meta = {
@@ -130,10 +141,21 @@ def asos_day(station, date_str):
         "direct": "no",
         "report_type": 3,
     }
-    text, meta = cached_get(url, params, RAW_DIR / "asos", name)
+    text, meta = cached_get(url, params, RAW_DIR / "asos", name, timeout=60)
     df = pd.read_csv(StringIO(text), na_values=["M"])
     df["valid"] = pd.to_datetime(df["valid"])
     return df
+
+
+def pedestrian_wind(wind_ms):
+    walk = CFG["walk"]
+    z_ref = walk.get("wind_measurement_height_m", 10.0)
+    z_ped = walk.get("wind_pedestrian_height_m", 2.0)
+    z0 = walk.get("surface_roughness_m", 0.03)
+    if wind_ms <= 0 or z_ped <= z0:
+        return max(wind_ms, 0.0)
+    factor = math.log(z_ped / z0) / math.log(z_ref / z0)
+    return max(wind_ms * factor, 0.5)
 
 
 def station_hour_obs(station, date_str, hour):
@@ -150,10 +172,12 @@ def station_hour_obs(station, date_str, hour):
         return None
     if pd.isna(row["tmpc"]) or pd.isna(row["dwpc"]) or pd.isna(row["sped"]):
         return None
+    wind_10m = float(row["sped"]) * 0.514444
     return {
         "tair_c": float(row["tmpc"]),
         "tdew_c": float(row["dwpc"]),
-        "wind_ms": float(row["sped"]) * 0.514444,
+        "wind_ms": pedestrian_wind(wind_10m),
+        "wind_ms_10m": wind_10m,
         "pres_hpa": pres_hpa,
         "valid": str(row["valid"]),
     }
@@ -262,6 +286,7 @@ def compute_routes():
                 best = (length, path, gn)
         length, path, gate_node = best
         coords = []
+        edge_names = []
         for u, v in zip(path[:-1], path[1:]):
             edge_data = min(
                 gp.get_edge_data(u, v).values(), key=lambda d: d.get("length", 0)
@@ -276,12 +301,18 @@ def compute_routes():
                 ]
             if coords and coords[-1] == pts[0]:
                 pts = pts[1:]
+            start_idx = len(coords)
             coords.extend(pts)
+            name = edge_data.get("name")
+            if isinstance(name, list):
+                name = name[0]
+            edge_names.append({"name": name, "start_idx": start_idx, "end_idx": len(coords) - 1})
         routes[key] = {
             "origin_node": onode,
             "gate_node": gate_node,
             "length_m": length,
             "coords_utm": coords,
+            "edge_names": edge_names,
             "label": o["label"],
         }
     write_json(cache_path, routes)
@@ -351,6 +382,34 @@ def idw_grid(bounds, station_values, power=2.0):
         grid += w * val
         wsum += w
     return (grid / wsum).astype(np.float32)
+
+
+def compute_wbgt_grid(bounds, tair_grid, tdew_grid, wind_grid, pres_grid, ghi_value, utc_dt):
+    from metpy.units import units
+    from pywbgt import liljegrenWBGT
+
+    lon_grid, lat_grid = grid_centers_lonlat(bounds)
+    n = tair_grid.size
+    dt_index = pd.DatetimeIndex([utc_dt] * n)
+    out = liljegrenWBGT(
+        dt_index,
+        lat_grid.ravel(),
+        lon_grid.ravel(),
+        np.full(n, ghi_value) * units("W/m^2"),
+        pres_grid.ravel() * units.hPa,
+        tair_grid.ravel() * units.degC,
+        tdew_grid.ravel() * units.degC,
+        wind_grid.ravel() * units("m/s"),
+    )
+    return np.asarray(out["Twbg"], dtype=np.float32).reshape(tair_grid.shape)
+
+
+def station_grids(bounds, station_stats):
+    tair_grid = idw_grid(bounds, {s: v["tair_c"] for s, v in station_stats.items()})
+    tdew_grid = idw_grid(bounds, {s: v["tdew_c"] for s, v in station_stats.items()})
+    wind_grid = idw_grid(bounds, {s: v["wind_ms"] for s, v in station_stats.items()})
+    pres_grid = idw_grid(bounds, {s: v["pres_hpa"] for s, v in station_stats.items()})
+    return tair_grid, tdew_grid, wind_grid, pres_grid
 
 
 def raster_transform(bounds):
