@@ -10,7 +10,9 @@ const FALLBACK_STYLE = {
   layers: [{ id: 'bg', type: 'background', paint: { 'background-color': '#15171B' } }]
 }
 
-export default function DeckMap ({ view, bounds, layers, interactive = true, label }) {
+const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+export default function DeckMap ({ view, bounds, layers, interactive = true, label, pitch = 0, children }) {
   const holder = useRef(null)
   const mapRef = useRef(null)
   const overlayRef = useRef(null)
@@ -70,5 +72,22 @@ export default function DeckMap ({ view, bounds, layers, interactive = true, lab
     )
   }, [ready, bounds])
 
-  return <div className="map-canvas" ref={holder} role="region" aria-label={label} />
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map) return
+    map.easeTo({ pitch, duration: reduced() ? 0 : 260, essential: true })
+  }, [pitch])
+
+  return (
+    <div className="map-frame">
+      <div className="map-canvas" ref={holder} role="region" aria-label={label} />
+      {ready ? null : (
+        <div className="map-loading" role="status">
+          <span className="pulse" aria-hidden="true" />
+          Loading basemap tiles and exposure surface
+        </div>
+      )}
+      {children}
+    </div>
+  )
 }

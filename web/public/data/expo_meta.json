@@ -1,0 +1,65 @@
+{
+  "generated_utc": "2026-09-09T00:53:57.463Z",
+  "provisional": false,
+  "quantity": "wet bulb globe temperature",
+  "unit": "degrees celsius",
+  "domain_c": [
+    24,
+    44
+  ],
+  "encoding": "single channel 8 bit, value maps linearly across domain_c",
+  "bounds": [
+    -95.41785467271838,
+    29.67645755100104,
+    -95.40377872116676,
+    29.693122911337934
+  ],
+  "grid": [
+    640,
+    640
+  ],
+  "hours": [
+    "15",
+    "17",
+    "19",
+    "21"
+  ],
+  "threshold_c": 32,
+  "method": "placeholder continuous field, calibrated to pipeline segment WBGT, OpenStreetMap surface cover and cast shadows from OpenStreetMap building heights",
+  "inputs": {
+    "buildings": 186,
+    "cover_polygons": 159,
+    "building_source": "OpenStreetMap via Overpass API",
+    "height_rule": "height tag where present, else building:levels times 3.5 m per storey, else 3.5 m single storey default"
+  },
+  "hour_stats": {
+    "15": {
+      "min_c": 28.99,
+      "max_c": 34.49,
+      "calibration_samples": 137,
+      "sun_elevation_deg": 55,
+      "sun_azimuth_deg": 245
+    },
+    "17": {
+      "min_c": 27.43,
+      "max_c": 32.3,
+      "calibration_samples": 137,
+      "sun_elevation_deg": 33,
+      "sun_azimuth_deg": 264
+    },
+    "19": {
+      "min_c": 26.3,
+      "max_c": 29.3,
+      "calibration_samples": 137,
+      "sun_elevation_deg": 10,
+      "sun_azimuth_deg": 283
+    },
+    "21": {
+      "min_c": 25.64,
+      "max_c": 26.55,
+      "calibration_samples": 137,
+      "sun_elevation_deg": -6,
+      "sun_azimuth_deg": 300
+    }
+  }
+}

@@ -1,5 +1,5 @@
 import { deflateSync } from 'node:zlib'
-import { mkdirSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -392,14 +392,500 @@ function shadeMask (hour) {
   return greyPng(size, size, px)
 }
 
-mkdirSync(OUT, { recursive: true })
-const segments = buildSegments(APPROACHES)
-const laSegments = buildSegments(LA_APPROACHES)
-writeFileSync(`${OUT}/segments.geojson`, JSON.stringify(segments))
-writeFileSync(`${OUT}/la_segments.geojson`, JSON.stringify(laSegments))
-writeFileSync(`${OUT}/solutions.json`, JSON.stringify(buildSolutions(segments)))
-const houstonTrip = segments.features.reduce((a, f) => a + f.properties.degmin['15'], 0) / 3
-writeFileSync(`${OUT}/cities.json`, JSON.stringify(buildCities(houstonTrip), null, 2))
-writeFileSync(`${OUT}/meta.json`, JSON.stringify(buildMeta(), null, 2))
-for (const h of HOURS) writeFileSync(`${OUT}/shade_${h}.png`, shadeMask(h))
-process.stdout.write(`wrote ${segments.features.length} segments and ${HOURS.length} shade masks to public/data\n`)
+const OVERPASS = 'https://overpass-api.de/api/interpreter'
+const SURF = 640
+const DOMAIN = [24, 44]
+const SUN = {
+  15: { elev: 55, az: 245 },
+  17: { elev: 33, az: 264 },
+  19: { elev: 10, az: 283 },
+  21: { elev: -6, az: 300 }
+}
+const COVER = {
+  parking: 1.35,
+  retail: 1.05,
+  commercial: 1.05,
+  civic: 0.7,
+  residential: 0.35,
+  brownfield: 0.8,
+  grass: -0.75,
+  recreation_ground: -0.85,
+  park: -1.35,
+  wood: -1.6
+}
+
+async function overpass (query) {
+  const res = await fetch(OVERPASS, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'User-Agent': 'thermal-last-mile-data/1.0' },
+    body: `data=${encodeURIComponent(query)}`,
+    signal: AbortSignal.timeout(120000)
+  })
+  if (!res.ok) throw new Error(`overpass http ${res.status}`)
+  return res.json()
+}
+
+function readJson (name) {
+  try {
+    return JSON.parse(readFileSync(`${OUT}/${name}`, 'utf8'))
+  } catch (err) {
+    return null
+  }
+}
+
+function readBounds () {
+  const meta = readJson('meta.json')
+  const b = meta && meta.raster_bounds
+  return Array.isArray(b) && b.length === 4 ? b : BOUNDS
+}
+
+function parseHeight (tags) {
+  const h = tags.height || tags['building:height']
+  if (h) {
+    const v = parseFloat(String(h).replace(',', '.'))
+    if (Number.isFinite(v) && v > 0) return { height: round(v, 1), source: 'tagged' }
+  }
+  const levels = tags['building:levels']
+  if (levels) {
+    const v = parseFloat(levels)
+    if (Number.isFinite(v) && v > 0) return { height: round(v * 3.5, 1), source: 'levels' }
+  }
+  return { height: 3.5, source: 'default' }
+}
+
+function ringOf (el) {
+  if (!Array.isArray(el.geometry)) return null
+  const ring = el.geometry.filter(p => p && Number.isFinite(p.lon)).map(p => [round(p.lon, 6), round(p.lat, 6)])
+  if (ring.length < 4) return null
+  const first = ring[0]
+  const last = ring[ring.length - 1]
+  if (first[0] !== last[0] || first[1] !== last[1]) ring.push([first[0], first[1]])
+  return ring
+}
+
+function bbox (bounds) {
+  return `${bounds[1]},${bounds[0]},${bounds[3]},${bounds[2]}`
+}
+
+async function fetchBuildings (bounds) {
+  const box = bbox(bounds)
+  const data = await overpass(`[out:json][timeout:90];(way["building"](${box}););out geom tags;`)
+  const features = []
+  const counts = { tagged: 0, levels: 0, default: 0 }
+  for (const el of data.elements || []) {
+    const ring = ringOf(el)
+    if (!ring) continue
+    const tags = el.tags || {}
+    const { height, source } = parseHeight(tags)
+    counts[source] += 1
+    features.push({
+      type: 'Feature',
+      geometry: { type: 'Polygon', coordinates: [ring] },
+      properties: {
+        id: `way/${el.id}`,
+        name: tags.name || null,
+        height,
+        height_source: source,
+        kind: tags.leisure === 'stadium' || tags.building === 'stadium' ? 'venue' : 'building'
+      }
+    })
+  }
+  return {
+    type: 'FeatureCollection',
+    features,
+    properties: {
+      source: 'OpenStreetMap via Overpass API',
+      licence: 'ODbL',
+      height_rule: 'height tag where present, else building:levels times 3.5 m per storey, else 3.5 m single storey default',
+      height_source_counts: counts,
+      fetched_utc: new Date().toISOString()
+    }
+  }
+}
+
+async function fetchCover (bounds) {
+  const box = bbox(bounds)
+  const data = await overpass(
+    `[out:json][timeout:90];(way["amenity"="parking"](${box});way["landuse"](${box});way["leisure"="park"](${box});way["natural"="wood"](${box}););out geom tags;`
+  )
+  const out = []
+  for (const el of data.elements || []) {
+    const ring = ringOf(el)
+    if (!ring) continue
+    const t = el.tags || {}
+    const kind = t.amenity === 'parking' ? 'parking' : t.landuse || t.leisure || t.natural
+    if (!(kind in COVER)) continue
+    out.push({ kind, ring })
+  }
+  return out
+}
+
+function syntheticBuildings (bounds) {
+  const features = []
+  const [w, s, e, n] = bounds
+  for (let i = 0; i < 90; i++) {
+    const cx = w + (e - w) * rnd()
+    const cy = s + (n - s) * rnd()
+    const dx = (e - w) * (0.006 + rnd() * 0.012)
+    const dy = (n - s) * (0.005 + rnd() * 0.011)
+    features.push({
+      type: 'Feature',
+      geometry: {
+        type: 'Polygon',
+        coordinates: [
+          [
+            [cx - dx, cy - dy],
+            [cx + dx, cy - dy],
+            [cx + dx, cy + dy],
+            [cx - dx, cy + dy],
+            [cx - dx, cy - dy]
+          ]
+        ]
+      },
+      properties: { id: `synthetic/${i}`, name: null, height: round(4 + rnd() * 26, 1), height_source: 'default', kind: 'building' }
+    })
+  }
+  return {
+    type: 'FeatureCollection',
+    features,
+    properties: {
+      source: 'synthetic placeholder footprints',
+      licence: 'none',
+      height_rule: 'randomised, no observed height data',
+      height_source_counts: { tagged: 0, levels: 0, default: features.length },
+      fetched_utc: new Date().toISOString()
+    }
+  }
+}
+
+function syntheticCover (bounds) {
+  const [w, s, e, n] = bounds
+  const out = []
+  const kinds = ['parking', 'parking', 'grass', 'park', 'commercial']
+  for (let i = 0; i < 40; i++) {
+    const cx = w + (e - w) * rnd()
+    const cy = s + (n - s) * rnd()
+    const dx = (e - w) * (0.02 + rnd() * 0.05)
+    const dy = (n - s) * (0.02 + rnd() * 0.045)
+    out.push({
+      kind: kinds[i % kinds.length],
+      ring: [
+        [cx - dx, cy - dy],
+        [cx + dx, cy - dy],
+        [cx + dx, cy + dy],
+        [cx - dx, cy + dy],
+        [cx - dx, cy - dy]
+      ]
+    })
+  }
+  return out
+}
+
+function projector (bounds, width, height) {
+  const [w, s, e, n] = bounds
+  return {
+    x: lon => ((lon - w) / (e - w)) * width,
+    y: lat => ((n - lat) / (n - s)) * height,
+    mppX: ((e - w) * 111320 * Math.cos((((n + s) / 2) * Math.PI) / 180)) / width,
+    mppY: ((n - s) * 110540) / height
+  }
+}
+
+function fillPolygon (ringPx, width, height, cb) {
+  let minY = Infinity
+  let maxY = -Infinity
+  for (const p of ringPx) {
+    if (p[1] < minY) minY = p[1]
+    if (p[1] > maxY) maxY = p[1]
+  }
+  const y0 = Math.max(0, Math.floor(minY))
+  const y1 = Math.min(height - 1, Math.ceil(maxY))
+  const xs = []
+  for (let y = y0; y <= y1; y++) {
+    xs.length = 0
+    const cy = y + 0.5
+    for (let i = 0, j = ringPx.length - 1; i < ringPx.length; j = i++) {
+      const a = ringPx[j]
+      const b = ringPx[i]
+      if (a[1] === b[1]) continue
+      if (cy >= Math.min(a[1], b[1]) && cy < Math.max(a[1], b[1])) {
+        xs.push(a[0] + ((cy - a[1]) / (b[1] - a[1])) * (b[0] - a[0]))
+      }
+    }
+    if (xs.length < 2) continue
+    xs.sort((p, q) => p - q)
+    for (let k = 0; k + 1 < xs.length; k += 2) {
+      const x0 = Math.max(0, Math.ceil(xs[k] - 0.5))
+      const x1 = Math.min(width - 1, Math.floor(xs[k + 1] - 0.5))
+      for (let x = x0; x <= x1; x++) cb(y * width + x)
+    }
+  }
+}
+
+function boxBlur (field, width, height, radius) {
+  const tmp = new Float32Array(field.length)
+  const norm = 1 / (radius * 2 + 1)
+  for (let y = 0; y < height; y++) {
+    let sum = 0
+    for (let k = -radius; k <= radius; k++) sum += field[y * width + Math.min(width - 1, Math.max(0, k))]
+    for (let x = 0; x < width; x++) {
+      tmp[y * width + x] = sum * norm
+      const add = field[y * width + Math.min(width - 1, x + radius + 1)]
+      const drop = field[y * width + Math.max(0, x - radius)]
+      sum += add - drop
+    }
+  }
+  for (let x = 0; x < width; x++) {
+    let sum = 0
+    for (let k = -radius; k <= radius; k++) sum += tmp[Math.min(height - 1, Math.max(0, k)) * width + x]
+    for (let y = 0; y < height; y++) {
+      field[y * width + x] = sum * norm
+      const add = tmp[Math.min(height - 1, y + radius + 1) * width + x]
+      const drop = tmp[Math.max(0, y - radius) * width + x]
+      sum += add - drop
+    }
+  }
+}
+
+function noiseField (width, height) {
+  const out = new Float32Array(width * height)
+  const lattice = (cell, amp) => {
+    const gw = Math.ceil(width / cell) + 2
+    const gh = Math.ceil(height / cell) + 2
+    const grid = new Float32Array(gw * gh)
+    for (let i = 0; i < grid.length; i++) grid[i] = rnd() * 2 - 1
+    for (let y = 0; y < height; y++) {
+      const fy = y / cell
+      const gy = Math.floor(fy)
+      const ty = fy - gy
+      for (let x = 0; x < width; x++) {
+        const fx = x / cell
+        const gx = Math.floor(fx)
+        const tx = fx - gx
+        const a = grid[gy * gw + gx]
+        const b = grid[gy * gw + gx + 1]
+        const c = grid[(gy + 1) * gw + gx]
+        const d = grid[(gy + 1) * gw + gx + 1]
+        const sx = tx * tx * (3 - 2 * tx)
+        const sy = ty * ty * (3 - 2 * ty)
+        out[y * width + x] += amp * (a + (b - a) * sx + (c + (d - c) * sx - (a + (b - a) * sx)) * sy)
+      }
+    }
+  }
+  lattice(96, 0.55)
+  lattice(28, 0.22)
+  lattice(9, 0.08)
+  return out
+}
+
+function segmentSamples (geo) {
+  const out = []
+  if (!geo || !Array.isArray(geo.features)) return out
+  for (const f of geo.features) {
+    if (!f.geometry || f.geometry.type !== 'LineString') continue
+    const cs = f.geometry.coordinates
+    const mid = cs[Math.floor(cs.length / 2)] || cs[0]
+    if (!mid) continue
+    out.push({ lon: mid[0], lat: mid[1], wbgt: f.properties.wbgt || null })
+  }
+  return out
+}
+
+function buildSurface (bounds, buildings, cover, segmentsGeo) {
+  const width = SURF
+  const height = SURF
+  const proj = projector(bounds, width, height)
+  const toPx = ring => ring.map(p => [proj.x(p[0]), proj.y(p[1])])
+
+  const coverDelta = new Float32Array(width * height)
+  for (const c of cover) {
+    const v = COVER[c.kind]
+    const px = toPx(c.ring)
+    fillPolygon(px, width, height, i => {
+      if (Math.abs(v) > Math.abs(coverDelta[i])) coverDelta[i] = v
+    })
+  }
+  const roof = new Float32Array(width * height)
+  const buildingPx = buildings.features.map(f => ({
+    px: toPx(f.geometry.coordinates[0]),
+    height: f.properties.height || 3.5
+  }))
+  for (const b of buildingPx) fillPolygon(b.px, width, height, i => {
+    roof[i] = 1
+    coverDelta[i] = 0.55
+  })
+
+  const noise = noiseField(width, height)
+  const samples = segmentSamples(segmentsGeo)
+  const files = {}
+  const stats = {}
+
+  for (const h of HOURS) {
+    const sun = SUN[h]
+    const solar = SOLAR[h]
+    const shadow = new Float32Array(width * height)
+    if (sun.elev > 0 && solar > 0) {
+      const az = (sun.az * Math.PI) / 180
+      const dirX = -Math.sin(az)
+      const dirY = Math.cos(az)
+      const tan = Math.tan((sun.elev * Math.PI) / 180)
+      for (const b of buildingPx) {
+        const lengthM = Math.min(320, b.height / tan)
+        const stepsCount = Math.max(2, Math.min(70, Math.round(lengthM / 4)))
+        for (let s = 0; s <= stepsCount; s++) {
+          const t = s / stepsCount
+          const ox = (dirX * lengthM * t) / proj.mppX
+          const oy = (-dirY * lengthM * t) / proj.mppY
+          const shifted = b.px.map(p => [p[0] + ox, p[1] + oy])
+          const mag = 1 - 0.55 * t
+          fillPolygon(shifted, width, height, i => {
+            if (mag > shadow[i]) shadow[i] = mag
+          })
+        }
+      }
+    }
+
+    for (let i = 0; i < shadow.length; i++) if (roof[i] > 0) shadow[i] = 0
+
+    const field = new Float32Array(width * height)
+    const coverGain = h === '21' ? 0.22 : 0.55 + 0.75 * solar
+    const shadeDrop = 3.1 * solar
+    for (let i = 0; i < field.length; i++) {
+      field[i] = coverDelta[i] * coverGain - shadow[i] * shadeDrop + noise[i] * (0.5 + 0.5 * solar) + roof[i] * 0.35 * solar
+    }
+    boxBlur(field, width, height, 5)
+    boxBlur(field, width, height, 3)
+
+    let modelled = 0
+    let observed = 0
+    let n = 0
+    for (const s of samples) {
+      if (!s.wbgt || !Number.isFinite(s.wbgt[h])) continue
+      const x = Math.round(proj.x(s.lon))
+      const y = Math.round(proj.y(s.lat))
+      if (x < 0 || y < 0 || x >= width || y >= height) continue
+      modelled += field[y * width + x]
+      observed += s.wbgt[h]
+      n += 1
+    }
+    const offset = n > 0 ? observed / n - modelled / n : BASE_WBGT[h]
+    const px = Buffer.alloc(width * height)
+    let lo = Infinity
+    let hi = -Infinity
+    for (let i = 0; i < field.length; i++) {
+      const wbgt = field[i] + offset
+      if (wbgt < lo) lo = wbgt
+      if (wbgt > hi) hi = wbgt
+      const t = (wbgt - DOMAIN[0]) / (DOMAIN[1] - DOMAIN[0])
+      px[i] = Math.max(0, Math.min(255, Math.round(t * 255)))
+    }
+    files[h] = greyPng(width, height, px)
+    stats[h] = { min_c: round(lo, 2), max_c: round(hi, 2), calibration_samples: n, sun_elevation_deg: sun.elev, sun_azimuth_deg: sun.az }
+  }
+
+  return { files, stats, width, height }
+}
+
+function surfaceMeta (bounds, surface, buildings, cover, real) {
+  return {
+    generated_utc: new Date().toISOString(),
+    provisional: !real,
+    quantity: 'wet bulb globe temperature',
+    unit: 'degrees celsius',
+    domain_c: DOMAIN,
+    encoding: 'single channel 8 bit, value maps linearly across domain_c',
+    bounds,
+    grid: [surface.width, surface.height],
+    hours: HOURS,
+    threshold_c: 32,
+    method: real
+      ? 'placeholder continuous field, calibrated to pipeline segment WBGT, OpenStreetMap surface cover and cast shadows from OpenStreetMap building heights'
+      : 'placeholder continuous field, synthetic surface cover and building footprints',
+    inputs: {
+      buildings: buildings.features.length,
+      cover_polygons: cover.length,
+      building_source: buildings.properties.source,
+      height_rule: buildings.properties.height_rule
+    },
+    hour_stats: surface.stats
+  }
+}
+
+function has (name) {
+  return existsSync(`${OUT}/${name}`)
+}
+
+async function main () {
+  const argv = process.argv.slice(2)
+  const force = argv.includes('--force')
+  const onlyArg = argv.find(a => a.startsWith('--only='))
+  const only = onlyArg ? onlyArg.slice(7).split(',') : null
+  const wants = group => (only ? only.includes(group) : true)
+  const written = []
+  const skipped = []
+  const put = (name, buf) => {
+    if (!force && has(name)) {
+      skipped.push(name)
+      return
+    }
+    writeFileSync(`${OUT}/${name}`, buf)
+    written.push(name)
+  }
+
+  mkdirSync(OUT, { recursive: true })
+
+  if (wants('core')) {
+    const segments = buildSegments(APPROACHES)
+    const laSegments = buildSegments(LA_APPROACHES)
+    put('segments.geojson', JSON.stringify(segments))
+    put('la_segments.geojson', JSON.stringify(laSegments))
+    put('solutions.json', JSON.stringify(buildSolutions(segments)))
+    const houstonTrip = segments.features.reduce((a, f) => a + f.properties.degmin['15'], 0) / 3
+    put('cities.json', JSON.stringify(buildCities(houstonTrip), null, 2))
+    put('meta.json', JSON.stringify(buildMeta(), null, 2))
+    for (const h of HOURS) put(`shade_${h}.png`, shadeMask(h))
+  }
+
+  if (wants('surface')) {
+    const bounds = readBounds()
+    let buildings = null
+    let cover = null
+    let real = true
+    if (!force && has('buildings.geojson')) {
+      buildings = readJson('buildings.geojson')
+      skipped.push('buildings.geojson')
+    }
+    if (!buildings) {
+      try {
+        buildings = await fetchBuildings(bounds)
+        cover = await fetchCover(bounds)
+      } catch (err) {
+        process.stdout.write(`overpass unavailable (${err.message}), falling back to synthetic footprints\n`)
+        buildings = syntheticBuildings(bounds)
+        cover = syntheticCover(bounds)
+        real = false
+      }
+      put('buildings.geojson', JSON.stringify(buildings))
+    }
+    if (!cover) {
+      try {
+        cover = await fetchCover(bounds)
+      } catch (err) {
+        cover = syntheticCover(bounds)
+        real = false
+      }
+    }
+    const segmentsGeo = readJson('segments.geojson')
+    const surface = buildSurface(bounds, buildings, cover, segmentsGeo)
+    for (const h of HOURS) put(`expo_${h}.png`, surface.files[h])
+    put('expo_meta.json', JSON.stringify(surfaceMeta(bounds, surface, buildings, cover, real), null, 2))
+  }
+
+  process.stdout.write(`wrote ${written.length ? written.join(', ') : 'nothing'}\n`)
+  if (skipped.length) process.stdout.write(`kept existing ${skipped.join(', ')}, pass --force to overwrite\n`)
+}
+
+main().catch(err => {
+  process.stderr.write(`${err.stack || err}\n`)
+  process.exit(1)
+})
