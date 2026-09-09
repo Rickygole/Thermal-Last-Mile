@@ -25,6 +25,7 @@ COSTS = yaml.safe_load(open(PIPELINE_DIR / "costs.yml"))
 CRS_WGS84 = "EPSG:4326"
 CRS_METRIC = CFG["site"]["crs_metric"]
 LOCAL_TZ = "America/Chicago"
+MPH_TO_MS = 0.44704
 GLOBE_DIAMETER_M = CFG["walk"].get("globe_diameter_m", 0.15)
 PEDESTRIAN_HEIGHT_M = CFG["walk"].get("wind_pedestrian_height_m", 2.0)
 
@@ -174,7 +175,7 @@ def station_hour_obs(station, date_str, hour):
         return None
     if pd.isna(row["tmpc"]) or pd.isna(row["dwpc"]) or pd.isna(row["sped"]):
         return None
-    wind_10m = float(row["sped"]) * 0.514444
+    wind_10m = float(row["sped"]) * MPH_TO_MS
     return {
         "tair_c": float(row["tmpc"]),
         "tdew_c": float(row["dwpc"]),
