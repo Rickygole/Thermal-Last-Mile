@@ -1,34 +1,34 @@
 interventions:
   sail:
     label: Shade sail, 6 x 6 m
-    unit_cost_usd: 14000
+    unit_cost_usd: 15500
     basis: installed, 10 year service life
     shaded_area_m2: 36
     blocks_direct_beam: true
     diffuse_transmission: 0.15
     legacy_value: high
-    citation: PLACEHOLDER Houston Public Works shade structure unit cost
+    citation: "Recreational Industries. 2025. How Much Does a Shade Canopy Cost? A Practical Guide for Schools, Parks, and Cities, 7 April 2025. Itemised 20 x 20 ft (37 m2) municipal shade structure: structure and fabric 9500 USD, freight 1200 USD, installation 3500 USD, permits and site prep 800 USD, total 15000 to 16000 USD installed. https://recreationalindustries.com/2025/04/07/how-much-does-a-shade-canopy-cost-a-practical-guide-for-schools-parks-and-cities/ . This is a commercial shade contractor cost guide, not a municipal bid tabulation. For scale, the Shade Phoenix Plan (City of Phoenix Office of Heat Response and Mitigation, approved November 2024) budgets about 3 million USD for roughly 20 architectural pedestrian shade structures at signalised intersections, which are far larger engineered canopies."
   tree:
-    label: Street tree, 3 inch caliper
-    unit_cost_usd: 1200
-    basis: planted plus 3 year establishment
+    label: Street tree, 30 gallon, 2 inch caliper
+    unit_cost_usd: 300
+    basis: planted, price includes mulching, staking, fertilizing and watering at planting
     shaded_area_m2: 28
     blocks_direct_beam: true
     diffuse_transmission: 0.30
     maturity_years: 15
     canopy_fraction_year5: 0.45
     legacy_value: high
-    citation: PLACEHOLDER Houston Parks and Recreation street tree program
+    citation: "Trees For Houston, Street Trees programme price list, accessed 2026: 30 gallon tree, 8 to 10 ft tall, 2 inch caliper, 300 USD, price includes planting, initial mulching, staking, fertilizing and one time watering at planting; 15 gallon, 1.5 inch caliper, 160 USD. https://www.treesforhouston.org/streettrees . For comparison the City of Houston Landscape Analysis Form sets the in lieu deposit to the Houston Parks and Recreation Department at 155 USD per tree, https://www.houstontx.gov/planning/Forms/devregs/tree&shrub1.pdf . This price covers planting only and does not include multi year establishment irrigation, which is why it sits well below big city figures such as the roughly 3300 USD per street tree reported for New York City."
   awning:
     label: Bus stop awning retrofit
-    unit_cost_usd: 9500
+    unit_cost_usd: 18700
     basis: per stop
     shaded_area_m2: 18
     blocks_direct_beam: true
     diffuse_transmission: 0.10
     applies_to: wait_not_walk
     legacy_value: medium
-    citation: PLACEHOLDER METRO shelter retrofit cost
+    citation: "Capital Metro (Austin, Texas) board approved shelter contract, reported in Bernier, N. 2023. Do Austin's new bus shelters cut it in the Texas heat? KUT News, 19 July 2023: up to 10.5 million USD for 562 shelters from Tolar Manufacturing over five years, which is 18683 USD per shelter. https://www.kut.org/transportation/2023-07-19/capmetro-new-bus-shelters-heat . Consistent with the Houston region, where Harris County Precinct 4 and METRO committed 6 million USD to bus stop improvements in Gulfton and Sharpstown. Jenkins, C. 2024. 20 infrastructure projects across Harris County to receive 49M in funding. Community Impact, 9 December 2024. https://communityimpact.com/houston/bellaire-meyerland-west-university/government/2024/12/09/20-infrastructure-projects-across-harris-county-to-receive-49m-in-funding/"
   misting:
     label: Misting station
     unit_cost_usd: 6500
@@ -37,24 +37,24 @@ interventions:
     blocks_direct_beam: false
     humidity_ceiling_rh: 60
     legacy_value: low
-    citation: PLACEHOLDER municipal cooling station cost
+    citation: "No public unit cost located for a municipal right of way misting station, figure is an order of magnitude estimate pending sourcing. The only published cost data found covers residential and light commercial systems: Angi, How Much Does an Outdoor Misting System Cost, 2026 data, average 2747 USD, typical range 1957 to 3584 USD, professional grade systems above 5000 USD, https://www.angi.com/articles/how-much-does-outdoor-misting-system-cost.htm . A public installation additionally carries a potable water connection, backflow prevention, metering and vandal resistant hardware, none of which is captured in that range."
   albedo:
     label: High albedo surface coating
-    unit_cost_usd_per_m2: 4.20
+    unit_cost_usd_per_m2: 10.65
     basis: coating, 7 year life
     blocks_direct_beam: false
     surface_temp_drop_c: 6.0
     reflected_load_gain_c: 1.5
     legacy_value: medium
-    citation: PLACEHOLDER cool pavement program cost
+    citation: "City of Los Angeles cool pavement programme, applied cost of 0.99 USD per square foot, which is 10.65 USD per m2, stated by Councilmember Bob Blumenfield, down from 2.50 USD per square foot at the Canoga Park pilot. Carpenter, S. 2021. North Hollywood kicks off next phase of LA cool pavement projects. Spectrum News 1, 4 October 2021. https://spectrumnews1.com/ca/la-west/environment/2021/10/04/north-hollywood-kicks-off-next-phase-of-la-cool-pavement-projects . Corroborated by the City of Phoenix Cool Pavement Program, where Street Transportation Department engineering manager Ryan Stevens gave CoolSeal at 5 USD per square yard of material and up to 14 USD per square yard applied, which is 5.98 to 16.75 USD per m2. Dalal, P. 2022. Phoenix Cool Pavement Program in phase two of finding solution to hot roads. Downtown Devil, 4 October 2022. https://downtowndevil.com/cool-pavement/"
   cooling_bus:
     label: Cooling bus
-    unit_cost_usd_per_day: 2800
+    unit_cost_usd_per_day: 2700
     basis: event only
     blocks_direct_beam: false
     legacy_value: none
     included_to_show_rejection: true
-    citation: PLACEHOLDER event cooling contract rate
+    citation: "Houston charter motorcoach day rate, midpoint of the published 1600 to 3800 USD per day range for a 54 to 56 passenger full size motorcoach. Metropolitan Shuttle, Houston Charter Bus Rental Cost, 2026 rate sheet and invoice data. https://www.metropolitanshuttle.com/charter-bus-rental-cost-houston/ . This is vendor pricing, not a municipal contract rate. No published City of Houston or METRO per day rate for heat emergency cooling buses was located; the City of Houston Heat Emergency Plan describes free rides to cooling centres but publishes no unit cost, https://www.houstontx.gov/citizensnet/2023/HeatEmergencyPlan20230614.html . Excludes staffing, water and site setup."
 
 constants:
   wbgt_model:
@@ -68,9 +68,9 @@ constants:
     value: 32.0
     citation: "ACSM and OSHA heat stress guidance, continuous exertion limit."
   diffuse_fraction_shaded:
-    value: 0.15
+    value: 0.19
     note: fraction of global horizontal irradiance reaching a fully shaded pedestrian
-    citation: "Derived from NSRDB DHI to GHI ratio for the match hours."
+    citation: "Assumed clear sky diffuse horizontal to global horizontal ratio at the modelled solar position for Houston, approximately 0.19. This is a modelled clear sky value, not a measured site value. NSRDB was never queried by this pipeline because the NSRDB API requires a registered key that the pipeline does not hold, so any claim that this ratio was derived from NSRDB observations would be false. The 0.19 figure is consistent with the DHI to GHI ratio produced by standard clear sky models at high sun elevation, for example Ineichen, P. and Perez, R. 2002. A new airmass independent formulation for the Linke turbidity coefficient. Solar Energy 73(3) 151-157, as implemented in pvlib."
   uhi_coupling_beta:
     value: 0.2
     note: >
