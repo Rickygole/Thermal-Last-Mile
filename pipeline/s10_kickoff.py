@@ -193,6 +193,14 @@ def scheduled_block(hour_rows):
     alt_total = best_val * len(matches)
     removed = total - alt_total
     return {
+        "warning": (
+            "this block is NOT a tournament total. it stamps every match with the hour "
+            "sweep value for its kickoff hour, and the sweep uses one representative date "
+            "per hour, so a noon match in mid June carries a late June or July day's "
+            "weather. the measured tournament total, computed against each match's own "
+            "observed weather, is in data/out/retrospective.json and is the only figure "
+            "that should appear in any headline position."
+        ),
         "source": fixtures.get("source"),
         "verified_utc": fixtures.get("verified_utc"),
         "schedule_status_note": (
@@ -217,16 +225,14 @@ def scheduled_block(hour_rows):
         "removed_by_rescheduling_fan_hours": round(removed, 1),
         "removed_by_rescheduling_fraction": round(removed / total, 4) if total else None,
         "statement": (
-            f"as scheduled, the {len(matches)} Houston matches are estimated under this stage's "
-            f"generalized hour sweep to have accumulated {round(total):,} fan degree hours "
-            f"above the threshold on the last mile. had every match instead kicked off at "
-            f"{int(best_hour)}:00, the same sweep estimates {round(alt_total):,} would have "
-            f"been accumulated, a {round(100 * removed / total, 1)} percent difference "
-            "attributable to kickoff hour alone. the matches have already been played, so this "
-            "is a retrospective evaluation of what that scheduling choice cost, not a "
-            "recommendation to reschedule matches that are already over, and it uses the "
-            "generalized sweep rather than each match's own observed weather, see "
-            "data/out/retrospective.json for the measured figure."
+            f"moving kickoff from {BASELINE_HOUR}:00 to {best_hour}:00 removes all modelled "
+            f"exposure ABOVE the {THRESHOLD_C} C threshold on the last mile to NRG Stadium, at zero "
+            "capital cost, since it is a scheduling decision rather than an infrastructure "
+            "spend. this is not the same as removing all heat. the metric counts only the "
+            "excess above the threshold, so an hour whose peak wet bulb globe temperature "
+            "falls just under the line reports zero while still carrying a real thermal "
+            "load. the reduction is sensitive to where the threshold is drawn, and the "
+            "threshold sensitivity is reported in the validation document."
         ),
     }
 
@@ -293,10 +299,20 @@ def main():
         "free_reduction_available_fan_hours": free_reduction_fan_hours,
         "statement": (
             f"moving kickoff from {BASELINE_HOUR}:00 to {best_hour}:00 removes "
-            f"{free_reduction_fraction * 100:.1f} percent of measured fan-hours above the "
+            f"{free_reduction_fraction * 100:.1f} percent of the modelled exposure ABOVE the "
             f"{THRESHOLD_C} C wet bulb globe temperature threshold on the last mile to NRG "
             f"Stadium, at zero capital cost, since it is a scheduling decision rather than an "
-            f"infrastructure spend."
+            f"infrastructure spend. this is not the same as removing all heat. the metric "
+            f"counts only the excess above the threshold, so an hour whose peak falls just "
+            f"under the line reports zero while still carrying a real thermal load, and the "
+            f"reduction is sensitive to where the threshold is drawn."
+        ),
+        "threshold_sensitivity_note": (
+            "the reported reduction depends on the threshold. drawn at a lower reference "
+            "temperature the same schedule change removes a smaller share, because more of "
+            "the day's load is counted. the 28 C action limit used here sits on a steep part "
+            "of that curve, so this figure should be read as threshold conditional rather "
+            "than as an absolute removal of heat exposure."
         ),
         "tree_reference_unit_cost_usd": tree_spec.get("unit_cost_usd"),
         "tree_coverage_horizon_used": "coverage_near_term (year 5 canopy fraction), see coverage_horizon_note",
@@ -314,7 +330,7 @@ def main():
         "coverage_horizon_note": coverage_note,
         "hours": hour_table,
         "summary": summary,
-        "as_scheduled": scheduled_block(hour_table),
+        "hour_sweep_at_fixture_hours_illustrative": scheduled_block(hour_table),
     }
 
     c.write_json(c.OUT_DIR / "kickoff_clock.json", out)
