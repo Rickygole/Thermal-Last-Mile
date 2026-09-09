@@ -8,9 +8,15 @@ measures it. This project measures it, ranks every sidewalk segment by how much
 dangerous heat a fan actually absorbs crossing it, and reports where a fixed shade
 budget removes the most exposure per dollar.
 
-The measured result: **72,139 fan-hours above the heat stress limit accumulate on the
-last mile to NRG at a single 15:00 kickoff. Two thirds of it comes off for $50,000 in
-street trees. Moving that kickoff to 19:00 removes 93 percent of it for nothing.**
+The measured result: **72,139 fan-degree-hours above the heat stress limit accumulate on
+the last mile to NRG at a single 15:00 kickoff, across 11,667 person-hours of walking.
+Moving that kickoff from 15:00 to 19:00 removes 93 percent of it and costs nothing. For
+the matches that cannot move, the ranked list says where to spend.**
+
+The unit is degree-hours, not hours. It is the accumulated excess of wet bulb globe
+temperature above the threshold, integrated over the time each person spends walking.
+Reporting it as fan-hours would inflate the quantity by a factor of six and it is not
+what the model computes.
 
 ## The metric
 
