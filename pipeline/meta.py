@@ -166,6 +166,11 @@ def main():
             "svi_note": segments_meta["svi_note"],
             "canopy_pct_note": segments_meta["canopy_pct_note"],
         },
+        "walk_speed_ms": c.CFG["walk"]["speed_mps"],
+        "walk_segment_length_m": c.CFG["walk"]["segment_length_m"],
+        "globe_diameter_m": c.GLOBE_DIAMETER_M,
+        "venue": c.CFG["site"]["name"],
+        "origins": {k: v.get("label", k) for k, v in c.CFG["origins"].items()},
         "n_segments": segments_meta["n_segments"],
         "wbgt_threshold_c": segments_meta["wbgt_threshold_c"],
         "wbgt_spatial_range_by_hour_c": {
