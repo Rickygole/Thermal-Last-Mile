@@ -13,12 +13,17 @@ TREE_NAME = "tree"
 CAP = c.CFG["optimizer"]["cap"]
 
 FIXTURE_BINDING_NOTE = (
-    "fixture kickoff times for NRG Stadium at the 2026 FIFA World Cup are not bound to a "
-    "verified public source in this analysis, so no specific match is named against any hour "
-    "below. this table is a sweep across the plausible kickoff window, not a claim about a "
-    "scheduled match. before this is shown to a scheduling decision maker, bind each modeled "
-    "hour to the confirmed NRG Stadium fixture list and re-run this stage against the actual "
-    "scheduled kickoffs rather than the full sweep."
+    "fixture kickoff times for the seven NRG Stadium matches of the 2026 FIFA World Cup are "
+    "bound to the verified schedule in config.yml under fixtures, and those matches were played "
+    "between 14 June and 4 July 2026, so as_scheduled below is a retrospective look back at a "
+    "decision already executed, not advice about a decision still open. the hour table itself "
+    "remains the generalized sweep across the plausible kickoff window, built from each hour's "
+    "hottest available match date rather than each match's own observed date, which keeps it "
+    "useful for comparing hours in general and for other venues where the kickoff hour has not "
+    "yet been decided. it is not the true per match measurement of what fans actually absorbed "
+    "at NRG Stadium. that measurement, built from each match's own observed weather and its own "
+    "date's sun geometry with a shade mask rebaked per match rather than reused across dates, is "
+    "in data/out/retrospective.json, produced by pipeline/s12_retrospective.py."
 )
 
 METHOD_NOTE = (
@@ -190,6 +195,13 @@ def scheduled_block(hour_rows):
     return {
         "source": fixtures.get("source"),
         "verified_utc": fixtures.get("verified_utc"),
+        "schedule_status_note": (
+            "these matches have already been played, this block is a retrospective evaluation "
+            "of the kickoff hours they were actually assigned, using this stage's generalized "
+            "hour sweep (each hour's hottest available match date), not each match's own "
+            "observed weather. see data/out/retrospective.json for the true per match "
+            "measurement, produced by pipeline/s12_retrospective.py."
+        ),
         "volatility_note": fixtures.get("note"),
         "matches": matches,
         "tournament_total_fan_hours_above_threshold": round(total, 1),
@@ -205,11 +217,16 @@ def scheduled_block(hour_rows):
         "removed_by_rescheduling_fan_hours": round(removed, 1),
         "removed_by_rescheduling_fraction": round(removed / total, 4) if total else None,
         "statement": (
-            f"as scheduled, the {len(matches)} Houston matches accumulate "
-            f"{round(total):,} fan degree hours above the threshold on the last mile. "
-            f"scheduling every match at {int(best_hour)}:00 instead would leave "
-            f"{round(alt_total):,}, removing {round(100 * removed / total, 1)} percent at "
-            "no capital cost. this is a scheduling decision, not an infrastructure spend."
+            f"as scheduled, the {len(matches)} Houston matches are estimated under this stage's "
+            f"generalized hour sweep to have accumulated {round(total):,} fan degree hours "
+            f"above the threshold on the last mile. had every match instead kicked off at "
+            f"{int(best_hour)}:00, the same sweep estimates {round(alt_total):,} would have "
+            f"been accumulated, a {round(100 * removed / total, 1)} percent difference "
+            "attributable to kickoff hour alone. the matches have already been played, so this "
+            "is a retrospective evaluation of what that scheduling choice cost, not a "
+            "recommendation to reschedule matches that are already over, and it uses the "
+            "generalized sweep rather than each match's own observed weather, see "
+            "data/out/retrospective.json for the measured figure."
         ),
     }
 
