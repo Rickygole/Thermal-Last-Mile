@@ -28,8 +28,9 @@ match_dates:
 
 origins:
   metrorail_stadium_park:
-    lat: 29.6842
-    lon: -95.4103
+    lat: 29.68594
+    lon: -95.40339
+    source: OpenStreetMap railway=station Stadium Park/Astrodome
     label: METRORail Stadium Park / Astrodome platform
   lot_c:
     lat: 29.6795
@@ -47,7 +48,7 @@ origins:
 optimizer:
   step: 25000
   cap: 2000000
-  method: greedy_submodular
+  method: greedy_cost_effectiveness
 
 raster:
   resolution_m: 1.0
