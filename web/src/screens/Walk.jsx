@@ -7,7 +7,7 @@ import { expoUrl } from '../lib/data.js'
 import { useLoopClock } from '../lib/useClock.js'
 import { setScreen, useStore } from '../store.js'
 import { VENUE_VIEWS } from '../lib/venues.js'
-import { n0, n1, n2, pct } from '../lib/format.js'
+import { n0, n1, n2, pct, tempC } from '../lib/format.js'
 
 export default function Walk ({ data }) {
   const hour = useStore(s => s.hour)
@@ -46,7 +46,7 @@ export default function Walk ({ data }) {
         />
         <div className="walk-overlay panel">
           <h2>
-            One fan, one walk, {n2(data.walk[hour])} degree-minutes above WBGT {data.threshold} C at {hour}:00.
+            One fan, one walk, {n2(data.walk[hour])} degree-minutes above WBGT {tempC(data.threshold)} at {hour}:00.
           </h2>
           <p>
             The average across {data.approaches.length} approaches, weighted by how many fans use each. The surface is modelled wet

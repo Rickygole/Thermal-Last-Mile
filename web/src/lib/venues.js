@@ -6,8 +6,7 @@ export const VENUE_VIEWS = {
 export const LA_CONTEXT = {
   origin: 'Metro K Line, Downtown Inglewood',
   venue: 'SoFi Stadium',
-  event: 'Olympic Games 2028',
-  window: 'July 14 to July 30'
+  event: 'Olympic Games 2028'
 }
 
 export const APPROACH_LABEL = {
@@ -15,7 +14,5 @@ export const APPROACH_LABEL = {
   lot_c: 'Lot C approach',
   rideshare_kirby: 'Kirby rideshare approach',
   fan_fest: 'Fan fest approach',
-  k_line_downtown_inglewood: 'K Line Downtown Inglewood approach',
-  prairie_ave_gate: 'Prairie Avenue approach',
   unknown: 'Approach'
 }

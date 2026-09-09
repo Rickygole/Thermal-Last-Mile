@@ -1,6 +1,16 @@
-import { n0, n1, n2, usd } from '../lib/format.js'
+import { n0, n1, n2, tempC, usd } from '../lib/format.js'
 
 const join = parts => parts.filter(Boolean).join(', ')
+
+const UNSOURCED = /^no\b[^.]*\b(located|found|exists|available)\b|order of magnitude estimate/i
+
+function isUnsourced (cost) {
+  if (typeof cost.sourced === 'boolean') return !cost.sourced
+  if (typeof cost.is_proxy === 'boolean') return cost.is_proxy
+  if (typeof cost.citation_status === 'string') return /unsourced|estimate|none/i.test(cost.citation_status)
+  if (typeof cost.citation !== 'string') return false
+  return UNSOURCED.test(cost.citation.split('. ')[0])
+}
 
 export default function MethodsPanel ({ meta, solutionMethod, heat }) {
   if (!meta) {
@@ -14,7 +24,13 @@ export default function MethodsPanel ({ meta, solutionMethod, heat }) {
     )
   }
   const v = meta.validation || {}
-  const threshold = meta.wbgt_threshold_c ?? meta.threshold_wbgt_c ?? 32
+  const rawThreshold = meta.wbgt_threshold_c ?? meta.threshold_wbgt_c
+  const threshold = Number.isFinite(rawThreshold) ? rawThreshold : null
+  const speed = Number.isFinite(meta.walk_speed_ms) ? `, walked at ${n1(meta.walk_speed_ms)} m/s` : ''
+  const segs = Number.isFinite(meta.n_segments) ? `, ${n0(meta.n_segments)} segments` : ''
+  const metric = `Degree-minutes above WBGT ${tempC(threshold)}${speed}${segs}.${speed ? '' : ' Walking speed is not stated in meta.json.'}`
+  const costs = meta.costs || []
+  const unsourced = costs.filter(isUnsourced).length
   return (
     <section className="panel pane methods" aria-label="Methods and provenance">
       <div className="pane-head">
@@ -28,15 +44,16 @@ export default function MethodsPanel ({ meta, solutionMethod, heat }) {
         </div>
         <div>
           <dt>Metric</dt>
-          <dd>
-            Degree-minutes above WBGT {n0(threshold)} C, walked at {n1(meta.walk_speed_ms ?? 1.3)} m/s, {n0(meta.n_segments ?? 0)} segments
-          </dd>
+          <dd>{metric}</dd>
         </div>
         <div>
           <dt>Validation</dt>
           <dd>
-            RMSE {n2(v.rmse_c)} C, bias {n2(v.bias_c)} C, {n0(v.n_stations)} stations, {n0(v.n_samples ?? 0)} samples
-            {v.quantity_validated ? `, on ${v.quantity_validated}` : ''}
+            {Number.isFinite(v.rmse_c)
+              ? `RMSE ${n2(v.rmse_c)} C, bias ${n2(v.bias_c)} C, ${n0(v.n_stations)} stations, ${n0(v.n_samples)} samples${
+                  v.quantity_validated ? `, on ${v.quantity_validated}` : ''
+                }`
+              : 'meta.json reports no validation figures for this run.'}
           </dd>
         </div>
         {v.method ? (
@@ -47,7 +64,7 @@ export default function MethodsPanel ({ meta, solutionMethod, heat }) {
         ) : null}
         <div>
           <dt>Allocation</dt>
-          <dd>{solutionMethod || 'greedy_submodular'}, solved offline, every budget level precomputed</dd>
+          <dd>{solutionMethod ? `${solutionMethod}, solved offline, every budget level precomputed` : 'solutions.json names no method for the allocation.'}</dd>
         </div>
         {heat ? (
           <div>
@@ -57,7 +74,7 @@ export default function MethodsPanel ({ meta, solutionMethod, heat }) {
                 ? join([
                     heat.method,
                     heat.grid ? `${heat.grid[0]} by ${heat.grid[1]} grid` : null,
-                    `domain ${heat.domain[0]} to ${heat.domain[1]} C`
+                    heat.domainStated ? `domain ${heat.domain[0]} to ${heat.domain[1]} C` : 'colour domain not stated in expo_meta.json'
                   ])
                 : 'expo raster not present, the map falls back to the baked shade masks'}
             </dd>
@@ -70,20 +87,36 @@ export default function MethodsPanel ({ meta, solutionMethod, heat }) {
           <div key={`${s.layer}-${i}`} className="src-item">
             <div className="p">{s.product}</div>
             <div className="m">{join([s.layer, s.resolution, s.acquired || s.date_used, s.provider, s.licence])}</div>
-            {s.substitution_note ? <div className="m warn">Substitution: {s.substitution_note}</div> : null}
+            {s.substitution_note ? (
+              <div className="m">
+                <span className="tag assumed">Substitution</span> {s.substitution_note}
+              </div>
+            ) : null}
           </div>
         ))}
       </div>
       <div className="src">
-        <div className="label">Unit costs</div>
-        {(meta.costs || []).map(c => (
-          <div key={c.item} className="src-item">
-            <div className="p">
-              {c.item}, {usd(c.unit_cost_usd)}
+        <div className="label">
+          Unit costs{unsourced ? `, ${n0(unsourced)} of ${n0(costs.length)} with no public unit cost located` : ''}
+        </div>
+        {costs.map(c => {
+          const open = isUnsourced(c)
+          return (
+            <div key={c.item} className={`src-item${open ? ' is-unsourced' : ''}`}>
+              <div className="p">
+                {c.item}, {usd(c.unit_cost_usd)}
+                {open ? <span className="tag assumed">Unsourced estimate</span> : null}
+              </div>
+              {open ? (
+                <div className="m">
+                  No public unit cost was located for this item, so the figure is a stated estimate rather than a citation. The
+                  search that failed is written out below so it can be checked or beaten.
+                </div>
+              ) : null}
+              <div className="m">{c.citation}</div>
             </div>
-            <div className="m">{c.citation}</div>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </section>
   )

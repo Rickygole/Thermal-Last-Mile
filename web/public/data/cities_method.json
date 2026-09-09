@@ -1,0 +1,1027 @@
+{
+  "purpose": "Comparative eleven city ledger, deliberately a lighter weight method than the full raytraced Houston pipeline. This file exists so a reviewer can see exactly which numbers are real measurements and which are documented proxies.",
+  "method_summary": {
+    "buffer": "2 mile geodesic radius buffer around each venue point, built with an azimuthal equidistant projection centered on the venue, not a bounding box",
+    "canopy_pct": "attempted MRLC NLCD Tree Canopy Cover 2021 (CONUS) via the public MRLC GeoServer WCS 2.0.1 endpoint for every city, masked to the exact circular buffer, this succeeded as a real measurement unless a per city fallback note below says otherwise",
+    "lst_p90_c": "attempted Landsat Collection 2 Level 2 ST_B10 surface temperature via the Microsoft Planetary Computer STAC API for every city, pooled across the clearest June through August scenes from 2018 through 2024 with scene level cloud cover under 30 percent, masked to the exact circular buffer, this succeeded as a real measurement unless a per city fallback note below says otherwise",
+    "degmin_per_trip": "NOT a measurement. It is a transparent scaled proxy: degmin_per_trip = k * max(lst_p90_c - 28.0, 0) * (1 - canopy_pct/100) * 15 minutes. The 32.0 threshold is the same WBGT threshold used in the full Houston pipeline, reused here directly against land surface temperature as a scale anchor, this is a modeling assumption, land surface temperature is not wet bulb globe temperature and the two are not physically equivalent. The 15 minute nominal trip duration is a single fixed assumption applied to all eleven cities equally, it is not derived from each city's actual station-to-gate walking distance the way the full Houston pipeline does. The canopy shade multiplier (1 - canopy_pct/100) is a linear, non-directional approximation, it ignores where shade actually falls relative to the walking route and ignores building shadow, which the Houston raytraced bake includes and this method does not.",
+    "degmin_calibration": "the constant k is solved once so that Houston lands at 77.38 degree-minutes per trip, which is the fan weighted mean across the four NRG approaches produced by an actual run of the full Houston s2 through s6 pipeline in this repository, at the 15:00 kickoff hour, using the Liljegren model with the ISO 7243 150 mm globe and a WBGT 28 threshold. This replaces an earlier calibration against a documented example in the data contract, which was not a pipeline output. Every other city is scaled from this anchor by the proxy formula and remains a proxy, not a measurement."
+  },
+  "cities": {
+    "atlanta": {
+      "venue_coordinates": {
+        "lat": 33.7554,
+        "lon": -84.4008
+      },
+      "venue_coordinates_source": "commonly published venue coordinates, not independently surveyed for this task",
+      "buffer_miles": 2.0,
+      "canopy_pct": {
+        "source": "MRLC NLCD Tree Canopy Cover 2021, CONUS, v2021-4",
+        "access": "MRLC GeoServer WCS 2.0.1, coverage mrlc_download__nlcd_tcc_conus_2021_v2021-4",
+        "url": "https://www.mrlc.gov/geoserver/ows",
+        "measurement": "mean percent tree canopy cover across all raster cells (30 m) inside the 2 mile radius buffer, values 0-100 read directly, no cloud or seasonal masking needed since this is an annual land cover product",
+        "is_proxy": false,
+        "n_pixels": 15043
+      },
+      "lst_p90_c": {
+        "source": "Landsat Collection 2 Level 2, ST_B10 surface temperature band, Landsat 8 and 9",
+        "access": "Microsoft Planetary Computer STAC API, collection landsat-c2-l2, asset lwir11, signed via the public SAS token endpoint, read with rasterio over HTTPS",
+        "measurement": "90th percentile of all valid 30 m surface temperature pixels inside the 2 mile buffer, pooled across up to 10 of the clearest June through August scenes drawn from years 2018 through 2024, one search per year, with reported scene cloud cover under 30 percent",
+        "qa_caveat": "cloud masking is scene level only, using the published eo:cloud_cover metadata field, there is no per-pixel QA_PIXEL cloud or shadow mask applied inside the buffer, a small number of undetected cloud or shadow pixels inside an otherwise clear scene could bias the pooled percentile",
+        "is_proxy": false,
+        "n_scenes_used": 10,
+        "scenes": [
+          {
+            "scene_id": "LC08_L2SP_019036_20180618_02_T1",
+            "date": "2018-06-18",
+            "cloud_cover_pct": 6.92,
+            "n_pixels": 36071
+          },
+          {
+            "scene_id": "LC08_L2SP_019037_20180618_02_T1",
+            "date": "2018-06-18",
+            "cloud_cover_pct": 10.16,
+            "n_pixels": 36071
+          },
+          {
+            "scene_id": "LC08_L2SP_019036_20190621_02_T1",
+            "date": "2019-06-21",
+            "cloud_cover_pct": 3.69,
+            "n_pixels": 36137
+          },
+          {
+            "scene_id": "LC08_L2SP_019037_20190808_02_T1",
+            "date": "2019-08-08",
+            "cloud_cover_pct": 4.21,
+            "n_pixels": 36157
+          },
+          {
+            "scene_id": "LC08_L2SP_019036_20200709_02_T1",
+            "date": "2020-07-09",
+            "cloud_cover_pct": 20.92,
+            "n_pixels": 36150
+          },
+          {
+            "scene_id": "LC08_L2SP_019036_20200607_02_T1",
+            "date": "2020-06-07",
+            "cloud_cover_pct": 23.25,
+            "n_pixels": 36163
+          },
+          {
+            "scene_id": "LC08_L2SP_019036_20210728_02_T1",
+            "date": "2021-07-28",
+            "cloud_cover_pct": 2.92,
+            "n_pixels": 36139
+          },
+          {
+            "scene_id": "LC08_L2SP_019037_20210728_02_T1",
+            "date": "2021-07-28",
+            "cloud_cover_pct": 4.31,
+            "n_pixels": 36139
+          },
+          {
+            "scene_id": "LC09_L2SP_019036_20220621_02_T1",
+            "date": "2022-06-21",
+            "cloud_cover_pct": 0.53,
+            "n_pixels": 36163
+          },
+          {
+            "scene_id": "LC09_L2SP_019037_20220621_02_T1",
+            "date": "2022-06-21",
+            "cloud_cover_pct": 3.74,
+            "n_pixels": 36163
+          }
+        ]
+      },
+      "matches": {
+        "value": 8,
+        "source": "public reporting of the FIFA World Cup 2026 confirmed venue match allocations, announced 2024",
+        "access": "not fetched live in this run, entered from general knowledge, must be verified against FIFA's official published match schedule before this number is presented as authoritative",
+        "is_proxy": true
+      }
+    },
+    "boston": {
+      "venue_coordinates": {
+        "lat": 42.0909,
+        "lon": -71.2643
+      },
+      "venue_coordinates_source": "commonly published venue coordinates, not independently surveyed for this task",
+      "buffer_miles": 2.0,
+      "canopy_pct": {
+        "source": "MRLC NLCD Tree Canopy Cover 2021, CONUS, v2021-4",
+        "access": "MRLC GeoServer WCS 2.0.1, coverage mrlc_download__nlcd_tcc_conus_2021_v2021-4",
+        "url": "https://www.mrlc.gov/geoserver/ows",
+        "measurement": "mean percent tree canopy cover across all raster cells (30 m) inside the 2 mile radius buffer, values 0-100 read directly, no cloud or seasonal masking needed since this is an annual land cover product",
+        "is_proxy": false,
+        "n_pixels": 19881
+      },
+      "lst_p90_c": {
+        "source": "Landsat Collection 2 Level 2, ST_B10 surface temperature band, Landsat 8 and 9",
+        "access": "Microsoft Planetary Computer STAC API, collection landsat-c2-l2, asset lwir11, signed via the public SAS token endpoint, read with rasterio over HTTPS",
+        "measurement": "90th percentile of all valid 30 m surface temperature pixels inside the 2 mile buffer, pooled across up to 10 of the clearest June through August scenes drawn from years 2018 through 2024, one search per year, with reported scene cloud cover under 30 percent",
+        "qa_caveat": "cloud masking is scene level only, using the published eo:cloud_cover metadata field, there is no per-pixel QA_PIXEL cloud or shadow mask applied inside the buffer, a small number of undetected cloud or shadow pixels inside an otherwise clear scene could bias the pooled percentile",
+        "is_proxy": false,
+        "n_scenes_used": 10,
+        "scenes": [
+          {
+            "scene_id": "LC08_L2SP_012031_20180719_02_T1",
+            "date": "2018-07-19",
+            "cloud_cover_pct": 0.44,
+            "n_pixels": 36147
+          },
+          {
+            "scene_id": "LC08_L2SP_012031_20180617_02_T1",
+            "date": "2018-06-17",
+            "cloud_cover_pct": 3.91,
+            "n_pixels": 36147
+          },
+          {
+            "scene_id": "LC08_L2SP_012031_20190604_02_T1",
+            "date": "2019-06-04",
+            "cloud_cover_pct": 18.29,
+            "n_pixels": 36147
+          },
+          {
+            "scene_id": "LC08_L2SP_012031_20200809_02_T1",
+            "date": "2020-08-09",
+            "cloud_cover_pct": 15.77,
+            "n_pixels": 36147
+          },
+          {
+            "scene_id": "LC08_L2SP_012031_20210727_02_T1",
+            "date": "2021-07-27",
+            "cloud_cover_pct": 0.05,
+            "n_pixels": 36147
+          },
+          {
+            "scene_id": "LC08_L2SP_012031_20210812_02_T1",
+            "date": "2021-08-12",
+            "cloud_cover_pct": 21.39,
+            "n_pixels": 36147
+          },
+          {
+            "scene_id": "LC09_L2SP_012031_20220722_02_T1",
+            "date": "2022-07-22",
+            "cloud_cover_pct": 0.81,
+            "n_pixels": 36147
+          },
+          {
+            "scene_id": "LC08_L2SP_012031_20220730_02_T1",
+            "date": "2022-07-30",
+            "cloud_cover_pct": 2.75,
+            "n_pixels": 36147
+          },
+          {
+            "scene_id": "LC08_L2SP_012031_20230717_02_T1",
+            "date": "2023-07-17",
+            "cloud_cover_pct": 4.21,
+            "n_pixels": 36147
+          },
+          {
+            "scene_id": "LC08_L2SP_012031_20230802_02_T1",
+            "date": "2023-08-02",
+            "cloud_cover_pct": 6.49,
+            "n_pixels": 36147
+          }
+        ]
+      },
+      "matches": {
+        "value": 7,
+        "source": "public reporting of the FIFA World Cup 2026 confirmed venue match allocations, announced 2024",
+        "access": "not fetched live in this run, entered from general knowledge, must be verified against FIFA's official published match schedule before this number is presented as authoritative",
+        "is_proxy": true
+      }
+    },
+    "dallas": {
+      "venue_coordinates": {
+        "lat": 32.7473,
+        "lon": -97.0945
+      },
+      "venue_coordinates_source": "commonly published venue coordinates, not independently surveyed for this task",
+      "buffer_miles": 2.0,
+      "canopy_pct": {
+        "source": "MRLC NLCD Tree Canopy Cover 2021, CONUS, v2021-4",
+        "access": "MRLC GeoServer WCS 2.0.1, coverage mrlc_download__nlcd_tcc_conus_2021_v2021-4",
+        "url": "https://www.mrlc.gov/geoserver/ows",
+        "measurement": "mean percent tree canopy cover across all raster cells (30 m) inside the 2 mile radius buffer, values 0-100 read directly, no cloud or seasonal masking needed since this is an annual land cover product",
+        "is_proxy": false,
+        "n_pixels": 9428
+      },
+      "lst_p90_c": {
+        "source": "Landsat Collection 2 Level 2, ST_B10 surface temperature band, Landsat 8 and 9",
+        "access": "Microsoft Planetary Computer STAC API, collection landsat-c2-l2, asset lwir11, signed via the public SAS token endpoint, read with rasterio over HTTPS",
+        "measurement": "90th percentile of all valid 30 m surface temperature pixels inside the 2 mile buffer, pooled across up to 10 of the clearest June through August scenes drawn from years 2018 through 2024, one search per year, with reported scene cloud cover under 30 percent",
+        "qa_caveat": "cloud masking is scene level only, using the published eo:cloud_cover metadata field, there is no per-pixel QA_PIXEL cloud or shadow mask applied inside the buffer, a small number of undetected cloud or shadow pixels inside an otherwise clear scene could bias the pooled percentile",
+        "is_proxy": false,
+        "n_scenes_used": 10,
+        "scenes": [
+          {
+            "scene_id": "LC08_L2SP_027037_20180829_02_T1",
+            "date": "2018-08-29",
+            "cloud_cover_pct": 1.29,
+            "n_pixels": 36141
+          },
+          {
+            "scene_id": "LC08_L2SP_027037_20180813_02_T1",
+            "date": "2018-08-13",
+            "cloud_cover_pct": 8.53,
+            "n_pixels": 8518
+          },
+          {
+            "scene_id": "LC08_L2SP_027037_20190816_02_T1",
+            "date": "2019-08-16",
+            "cloud_cover_pct": 0.36,
+            "n_pixels": 36141
+          },
+          {
+            "scene_id": "LC08_L2SP_027037_20190731_02_T1",
+            "date": "2019-07-31",
+            "cloud_cover_pct": 0.36,
+            "n_pixels": 36141
+          },
+          {
+            "scene_id": "LC08_L2SP_027037_20200818_02_T1",
+            "date": "2020-08-18",
+            "cloud_cover_pct": 0.35,
+            "n_pixels": 36141
+          },
+          {
+            "scene_id": "LC08_L2SP_027037_20200717_02_T1",
+            "date": "2020-07-17",
+            "cloud_cover_pct": 3.88,
+            "n_pixels": 36141
+          },
+          {
+            "scene_id": "LC08_L2SP_027037_20210618_02_T1",
+            "date": "2021-06-18",
+            "cloud_cover_pct": 8.06,
+            "n_pixels": 36141
+          },
+          {
+            "scene_id": "LC08_L2SP_027037_20210821_02_T1",
+            "date": "2021-08-21",
+            "cloud_cover_pct": 9.48,
+            "n_pixels": 36141
+          },
+          {
+            "scene_id": "LC09_L2SP_027037_20220613_02_T1",
+            "date": "2022-06-13",
+            "cloud_cover_pct": 0.15,
+            "n_pixels": 36141
+          },
+          {
+            "scene_id": "LC08_L2SP_027037_20220723_02_T1",
+            "date": "2022-07-23",
+            "cloud_cover_pct": 0.54,
+            "n_pixels": 36141
+          }
+        ]
+      },
+      "matches": {
+        "value": 9,
+        "source": "public reporting of the FIFA World Cup 2026 confirmed venue match allocations, announced 2024",
+        "access": "not fetched live in this run, entered from general knowledge, must be verified against FIFA's official published match schedule before this number is presented as authoritative",
+        "is_proxy": true
+      }
+    },
+    "houston": {
+      "venue_coordinates": {
+        "lat": 29.685,
+        "lon": -95.41
+      },
+      "venue_coordinates_source": "commonly published venue coordinates, not independently surveyed for this task",
+      "buffer_miles": 2.0,
+      "canopy_pct": {
+        "source": "MRLC NLCD Tree Canopy Cover 2021, CONUS, v2021-4",
+        "access": "MRLC GeoServer WCS 2.0.1, coverage mrlc_download__nlcd_tcc_conus_2021_v2021-4",
+        "url": "https://www.mrlc.gov/geoserver/ows",
+        "measurement": "mean percent tree canopy cover across all raster cells (30 m) inside the 2 mile radius buffer, values 0-100 read directly, no cloud or seasonal masking needed since this is an annual land cover product",
+        "is_proxy": false,
+        "n_pixels": 11547
+      },
+      "lst_p90_c": {
+        "source": "Landsat Collection 2 Level 2, ST_B10 surface temperature band, Landsat 8 and 9",
+        "access": "Microsoft Planetary Computer STAC API, collection landsat-c2-l2, asset lwir11, signed via the public SAS token endpoint, read with rasterio over HTTPS",
+        "measurement": "90th percentile of all valid 30 m surface temperature pixels inside the 2 mile buffer, pooled across up to 10 of the clearest June through August scenes drawn from years 2018 through 2024, one search per year, with reported scene cloud cover under 30 percent",
+        "qa_caveat": "cloud masking is scene level only, using the published eo:cloud_cover metadata field, there is no per-pixel QA_PIXEL cloud or shadow mask applied inside the buffer, a small number of undetected cloud or shadow pixels inside an otherwise clear scene could bias the pooled percentile",
+        "is_proxy": false,
+        "n_scenes_used": 10,
+        "scenes": [
+          {
+            "scene_id": "LC08_L2SP_025040_20180815_02_T1",
+            "date": "2018-08-15",
+            "cloud_cover_pct": 18.81,
+            "n_pixels": 36183
+          },
+          {
+            "scene_id": "LC08_L2SP_025040_20180612_02_T1",
+            "date": "2018-06-12",
+            "cloud_cover_pct": 18.07,
+            "n_pixels": 36183
+          },
+          {
+            "scene_id": "LC08_L2SP_025040_20190802_02_T1",
+            "date": "2019-08-02",
+            "cloud_cover_pct": 16.61,
+            "n_pixels": 36183
+          },
+          {
+            "scene_id": "LC08_L2SP_025040_20190717_02_T1",
+            "date": "2019-07-17",
+            "cloud_cover_pct": 16.85,
+            "n_pixels": 36183
+          },
+          {
+            "scene_id": "LC08_L2SP_025039_20200820_02_T1",
+            "date": "2020-08-20",
+            "cloud_cover_pct": 3.05,
+            "n_pixels": 36183
+          },
+          {
+            "scene_id": "LC08_L2SP_025039_20200804_02_T1",
+            "date": "2020-08-04",
+            "cloud_cover_pct": 5.97,
+            "n_pixels": 36093
+          },
+          {
+            "scene_id": "LC08_L2SP_025039_20210823_02_T1",
+            "date": "2021-08-23",
+            "cloud_cover_pct": 3.91,
+            "n_pixels": 36139
+          },
+          {
+            "scene_id": "LC08_L2SP_025040_20210807_02_T1",
+            "date": "2021-08-07",
+            "cloud_cover_pct": 11.91,
+            "n_pixels": 36106
+          },
+          {
+            "scene_id": "LC08_L2SP_025039_20220709_02_T1",
+            "date": "2022-07-09",
+            "cloud_cover_pct": 6.35,
+            "n_pixels": 36116
+          },
+          {
+            "scene_id": "LC08_L2SP_025039_20220623_02_T1",
+            "date": "2022-06-23",
+            "cloud_cover_pct": 6.0,
+            "n_pixels": 36086
+          }
+        ]
+      },
+      "matches": {
+        "value": 7,
+        "source": "public reporting of the FIFA World Cup 2026 confirmed venue match allocations, announced 2024",
+        "access": "not fetched live in this run, entered from general knowledge, must be verified against FIFA's official published match schedule before this number is presented as authoritative",
+        "is_proxy": true
+      }
+    },
+    "kansas_city": {
+      "venue_coordinates": {
+        "lat": 39.0489,
+        "lon": -94.4839
+      },
+      "venue_coordinates_source": "commonly published venue coordinates, not independently surveyed for this task",
+      "buffer_miles": 2.0,
+      "canopy_pct": {
+        "source": "MRLC NLCD Tree Canopy Cover 2021, CONUS, v2021-4",
+        "access": "MRLC GeoServer WCS 2.0.1, coverage mrlc_download__nlcd_tcc_conus_2021_v2021-4",
+        "url": "https://www.mrlc.gov/geoserver/ows",
+        "measurement": "mean percent tree canopy cover across all raster cells (30 m) inside the 2 mile radius buffer, values 0-100 read directly, no cloud or seasonal masking needed since this is an annual land cover product",
+        "is_proxy": false,
+        "n_pixels": 22798
+      },
+      "lst_p90_c": {
+        "source": "Landsat Collection 2 Level 2, ST_B10 surface temperature band, Landsat 8 and 9",
+        "access": "Microsoft Planetary Computer STAC API, collection landsat-c2-l2, asset lwir11, signed via the public SAS token endpoint, read with rasterio over HTTPS",
+        "measurement": "90th percentile of all valid 30 m surface temperature pixels inside the 2 mile buffer, pooled across up to 10 of the clearest June through August scenes drawn from years 2018 through 2024, one search per year, with reported scene cloud cover under 30 percent",
+        "qa_caveat": "cloud masking is scene level only, using the published eo:cloud_cover metadata field, there is no per-pixel QA_PIXEL cloud or shadow mask applied inside the buffer, a small number of undetected cloud or shadow pixels inside an otherwise clear scene could bias the pooled percentile",
+        "is_proxy": false,
+        "n_scenes_used": 10,
+        "scenes": [
+          {
+            "scene_id": "LC08_L2SP_026033_20180721_02_T1",
+            "date": "2018-07-21",
+            "cloud_cover_pct": 0.76,
+            "n_pixels": 36138
+          },
+          {
+            "scene_id": "LC08_L2SP_026033_20180603_02_T1",
+            "date": "2018-06-03",
+            "cloud_cover_pct": 0.08,
+            "n_pixels": 36138
+          },
+          {
+            "scene_id": "LC08_L2SP_027033_20190613_02_T1",
+            "date": "2019-06-13",
+            "cloud_cover_pct": 0.95,
+            "n_pixels": 36138
+          },
+          {
+            "scene_id": "LC08_L2SP_027033_20190629_02_T1",
+            "date": "2019-06-29",
+            "cloud_cover_pct": 2.37,
+            "n_pixels": 36138
+          },
+          {
+            "scene_id": "LC08_L2SP_027033_20200615_02_T1",
+            "date": "2020-06-15",
+            "cloud_cover_pct": 0.67,
+            "n_pixels": 36138
+          },
+          {
+            "scene_id": "LC08_L2SP_026033_20200624_02_T1",
+            "date": "2020-06-24",
+            "cloud_cover_pct": 7.02,
+            "n_pixels": 36138
+          },
+          {
+            "scene_id": "LC08_L2SP_026033_20210814_02_T1",
+            "date": "2021-08-14",
+            "cloud_cover_pct": 1.24,
+            "n_pixels": 36138
+          },
+          {
+            "scene_id": "LC08_L2SP_026033_20210729_02_T1",
+            "date": "2021-07-29",
+            "cloud_cover_pct": 2.53,
+            "n_pixels": 36138
+          },
+          {
+            "scene_id": "LC09_L2SP_027033_20220629_02_T1",
+            "date": "2022-06-29",
+            "cloud_cover_pct": 0.0,
+            "n_pixels": 36138
+          },
+          {
+            "scene_id": "LC08_L2SP_027033_20220723_02_T1",
+            "date": "2022-07-23",
+            "cloud_cover_pct": 0.0,
+            "n_pixels": 36138
+          }
+        ]
+      },
+      "matches": {
+        "value": 6,
+        "source": "public reporting of the FIFA World Cup 2026 confirmed venue match allocations, announced 2024",
+        "access": "not fetched live in this run, entered from general knowledge, must be verified against FIFA's official published match schedule before this number is presented as authoritative",
+        "is_proxy": true
+      }
+    },
+    "los_angeles": {
+      "venue_coordinates": {
+        "lat": 33.9535,
+        "lon": -118.3392
+      },
+      "venue_coordinates_source": "commonly published venue coordinates, not independently surveyed for this task",
+      "buffer_miles": 2.0,
+      "canopy_pct": {
+        "source": "MRLC NLCD Tree Canopy Cover 2021, CONUS, v2021-4",
+        "access": "MRLC GeoServer WCS 2.0.1, coverage mrlc_download__nlcd_tcc_conus_2021_v2021-4",
+        "url": "https://www.mrlc.gov/geoserver/ows",
+        "measurement": "mean percent tree canopy cover across all raster cells (30 m) inside the 2 mile radius buffer, values 0-100 read directly, no cloud or seasonal masking needed since this is an annual land cover product",
+        "is_proxy": false,
+        "n_pixels": 6485
+      },
+      "lst_p90_c": {
+        "source": "Landsat Collection 2 Level 2, ST_B10 surface temperature band, Landsat 8 and 9",
+        "access": "Microsoft Planetary Computer STAC API, collection landsat-c2-l2, asset lwir11, signed via the public SAS token endpoint, read with rasterio over HTTPS",
+        "measurement": "90th percentile of all valid 30 m surface temperature pixels inside the 2 mile buffer, pooled across up to 10 of the clearest June through August scenes drawn from years 2018 through 2024, one search per year, with reported scene cloud cover under 30 percent",
+        "qa_caveat": "cloud masking is scene level only, using the published eo:cloud_cover metadata field, there is no per-pixel QA_PIXEL cloud or shadow mask applied inside the buffer, a small number of undetected cloud or shadow pixels inside an otherwise clear scene could bias the pooled percentile",
+        "is_proxy": false,
+        "n_scenes_used": 10,
+        "scenes": [
+          {
+            "scene_id": "LC08_L2SP_041036_20180714_02_T1",
+            "date": "2018-07-14",
+            "cloud_cover_pct": 1.41,
+            "n_pixels": 36149
+          },
+          {
+            "scene_id": "LC08_L2SP_041036_20180815_02_T1",
+            "date": "2018-08-15",
+            "cloud_cover_pct": 2.51,
+            "n_pixels": 36149
+          },
+          {
+            "scene_id": "LC08_L2SP_041036_20190802_02_T1",
+            "date": "2019-08-02",
+            "cloud_cover_pct": 0.95,
+            "n_pixels": 36149
+          },
+          {
+            "scene_id": "LC08_L2SP_041036_20190701_02_T1",
+            "date": "2019-07-01",
+            "cloud_cover_pct": 0.03,
+            "n_pixels": 36149
+          },
+          {
+            "scene_id": "LC08_L2SP_041036_20200820_02_T1",
+            "date": "2020-08-20",
+            "cloud_cover_pct": 0.19,
+            "n_pixels": 36149
+          },
+          {
+            "scene_id": "LC08_L2SP_041036_20200703_02_T1",
+            "date": "2020-07-03",
+            "cloud_cover_pct": 0.1,
+            "n_pixels": 36149
+          },
+          {
+            "scene_id": "LC08_L2SP_041036_20210807_02_T1",
+            "date": "2021-08-07",
+            "cloud_cover_pct": 7.49,
+            "n_pixels": 36149
+          },
+          {
+            "scene_id": "LC08_L2SP_041036_20210706_02_T1",
+            "date": "2021-07-06",
+            "cloud_cover_pct": 7.31,
+            "n_pixels": 36149
+          },
+          {
+            "scene_id": "LC09_L2SP_041036_20220615_02_T1",
+            "date": "2022-06-15",
+            "cloud_cover_pct": 0.21,
+            "n_pixels": 36149
+          },
+          {
+            "scene_id": "LC08_L2SP_041037_20220810_02_T1",
+            "date": "2022-08-10",
+            "cloud_cover_pct": 0.41,
+            "n_pixels": 36149
+          }
+        ]
+      },
+      "matches": {
+        "value": 8,
+        "source": "public reporting of the FIFA World Cup 2026 confirmed venue match allocations, announced 2024",
+        "access": "not fetched live in this run, entered from general knowledge, must be verified against FIFA's official published match schedule before this number is presented as authoritative",
+        "is_proxy": true
+      }
+    },
+    "miami": {
+      "venue_coordinates": {
+        "lat": 25.958,
+        "lon": -80.2389
+      },
+      "venue_coordinates_source": "commonly published venue coordinates, not independently surveyed for this task",
+      "buffer_miles": 2.0,
+      "canopy_pct": {
+        "source": "MRLC NLCD Tree Canopy Cover 2021, CONUS, v2021-4",
+        "access": "MRLC GeoServer WCS 2.0.1, coverage mrlc_download__nlcd_tcc_conus_2021_v2021-4",
+        "url": "https://www.mrlc.gov/geoserver/ows",
+        "measurement": "mean percent tree canopy cover across all raster cells (30 m) inside the 2 mile radius buffer, values 0-100 read directly, no cloud or seasonal masking needed since this is an annual land cover product",
+        "is_proxy": false,
+        "n_pixels": 14310
+      },
+      "lst_p90_c": {
+        "source": "Landsat Collection 2 Level 2, ST_B10 surface temperature band, Landsat 8 and 9",
+        "access": "Microsoft Planetary Computer STAC API, collection landsat-c2-l2, asset lwir11, signed via the public SAS token endpoint, read with rasterio over HTTPS",
+        "measurement": "90th percentile of all valid 30 m surface temperature pixels inside the 2 mile buffer, pooled across up to 10 of the clearest June through August scenes drawn from years 2018 through 2024, one search per year, with reported scene cloud cover under 30 percent",
+        "qa_caveat": "cloud masking is scene level only, using the published eo:cloud_cover metadata field, there is no per-pixel QA_PIXEL cloud or shadow mask applied inside the buffer, a small number of undetected cloud or shadow pixels inside an otherwise clear scene could bias the pooled percentile",
+        "is_proxy": false,
+        "n_scenes_used": 10,
+        "scenes": [
+          {
+            "scene_id": "LC08_L2SP_015042_20180809_02_T1",
+            "date": "2018-08-09",
+            "cloud_cover_pct": 12.43,
+            "n_pixels": 36133
+          },
+          {
+            "scene_id": "LC08_L2SP_015042_20180606_02_T1",
+            "date": "2018-06-06",
+            "cloud_cover_pct": 15.55,
+            "n_pixels": 36133
+          },
+          {
+            "scene_id": "LC08_L2SP_015042_20190828_02_T1",
+            "date": "2019-08-28",
+            "cloud_cover_pct": 10.27,
+            "n_pixels": 36133
+          },
+          {
+            "scene_id": "LC08_L2SP_015042_20190625_02_T1",
+            "date": "2019-06-25",
+            "cloud_cover_pct": 12.38,
+            "n_pixels": 36133
+          },
+          {
+            "scene_id": "LC08_L2SP_015042_20200627_02_T1",
+            "date": "2020-06-27",
+            "cloud_cover_pct": 16.79,
+            "n_pixels": 36133
+          },
+          {
+            "scene_id": "LC08_L2SP_015042_20200814_02_T1",
+            "date": "2020-08-14",
+            "cloud_cover_pct": 22.76,
+            "n_pixels": 9966
+          },
+          {
+            "scene_id": "LC08_L2SP_015042_20210801_02_T1",
+            "date": "2021-08-01",
+            "cloud_cover_pct": 14.79,
+            "n_pixels": 24
+          },
+          {
+            "scene_id": "LC08_L2SP_015042_20210817_02_T1",
+            "date": "2021-08-17",
+            "cloud_cover_pct": 19.61,
+            "n_pixels": 36133
+          },
+          {
+            "scene_id": "LC09_L2SP_015042_20220711_02_T1",
+            "date": "2022-07-11",
+            "cloud_cover_pct": 16.93,
+            "n_pixels": 36133
+          },
+          {
+            "scene_id": "LC08_L2SP_015042_20220804_02_T1",
+            "date": "2022-08-04",
+            "cloud_cover_pct": 24.59,
+            "n_pixels": 36133
+          }
+        ]
+      },
+      "matches": {
+        "value": 7,
+        "source": "public reporting of the FIFA World Cup 2026 confirmed venue match allocations, announced 2024",
+        "access": "not fetched live in this run, entered from general knowledge, must be verified against FIFA's official published match schedule before this number is presented as authoritative",
+        "is_proxy": true
+      }
+    },
+    "new_york_new_jersey": {
+      "venue_coordinates": {
+        "lat": 40.8135,
+        "lon": -74.0745
+      },
+      "venue_coordinates_source": "commonly published venue coordinates, not independently surveyed for this task",
+      "buffer_miles": 2.0,
+      "canopy_pct": {
+        "source": "MRLC NLCD Tree Canopy Cover 2021, CONUS, v2021-4",
+        "access": "MRLC GeoServer WCS 2.0.1, coverage mrlc_download__nlcd_tcc_conus_2021_v2021-4",
+        "url": "https://www.mrlc.gov/geoserver/ows",
+        "measurement": "mean percent tree canopy cover across all raster cells (30 m) inside the 2 mile radius buffer, values 0-100 read directly, no cloud or seasonal masking needed since this is an annual land cover product",
+        "is_proxy": false,
+        "n_pixels": 5696
+      },
+      "lst_p90_c": {
+        "source": "Landsat Collection 2 Level 2, ST_B10 surface temperature band, Landsat 8 and 9",
+        "access": "Microsoft Planetary Computer STAC API, collection landsat-c2-l2, asset lwir11, signed via the public SAS token endpoint, read with rasterio over HTTPS",
+        "measurement": "90th percentile of all valid 30 m surface temperature pixels inside the 2 mile buffer, pooled across up to 10 of the clearest June through August scenes drawn from years 2018 through 2024, one search per year, with reported scene cloud cover under 30 percent",
+        "qa_caveat": "cloud masking is scene level only, using the published eo:cloud_cover metadata field, there is no per-pixel QA_PIXEL cloud or shadow mask applied inside the buffer, a small number of undetected cloud or shadow pixels inside an otherwise clear scene could bias the pooled percentile",
+        "is_proxy": false,
+        "n_scenes_used": 10,
+        "scenes": [
+          {
+            "scene_id": "LC08_L2SP_013032_20180710_02_T1",
+            "date": "2018-07-10",
+            "cloud_cover_pct": 1.57,
+            "n_pixels": 36124
+          },
+          {
+            "scene_id": "LC08_L2SP_013032_20180827_02_T1",
+            "date": "2018-08-27",
+            "cloud_cover_pct": 18.02,
+            "n_pixels": 36137
+          },
+          {
+            "scene_id": "LC08_L2SP_013032_20190830_02_T1",
+            "date": "2019-08-30",
+            "cloud_cover_pct": 0.09,
+            "n_pixels": 36137
+          },
+          {
+            "scene_id": "LC08_L2SP_013032_20190729_02_T1",
+            "date": "2019-07-29",
+            "cloud_cover_pct": 0.98,
+            "n_pixels": 36072
+          },
+          {
+            "scene_id": "LC08_L2SP_014031_20200706_02_T1",
+            "date": "2020-07-06",
+            "cloud_cover_pct": 1.44,
+            "n_pixels": 35965
+          },
+          {
+            "scene_id": "LC08_L2SP_013032_20200613_02_T1",
+            "date": "2020-06-13",
+            "cloud_cover_pct": 9.34,
+            "n_pixels": 36137
+          },
+          {
+            "scene_id": "LC08_L2SP_014031_20210607_02_T1",
+            "date": "2021-06-07",
+            "cloud_cover_pct": 6.88,
+            "n_pixels": 36137
+          },
+          {
+            "scene_id": "LC08_L2SP_013032_20210616_02_T1",
+            "date": "2021-06-16",
+            "cloud_cover_pct": 7.46,
+            "n_pixels": 36137
+          },
+          {
+            "scene_id": "LC09_L2SP_014031_20220704_02_T1",
+            "date": "2022-07-04",
+            "cloud_cover_pct": 2.02,
+            "n_pixels": 36131
+          },
+          {
+            "scene_id": "LC09_L2SP_014032_20220720_02_T1",
+            "date": "2022-07-20",
+            "cloud_cover_pct": 3.67,
+            "n_pixels": 36132
+          }
+        ]
+      },
+      "matches": {
+        "value": 8,
+        "source": "public reporting of the FIFA World Cup 2026 confirmed venue match allocations, announced 2024",
+        "access": "not fetched live in this run, entered from general knowledge, must be verified against FIFA's official published match schedule before this number is presented as authoritative",
+        "is_proxy": true
+      }
+    },
+    "philadelphia": {
+      "venue_coordinates": {
+        "lat": 39.9008,
+        "lon": -75.1675
+      },
+      "venue_coordinates_source": "commonly published venue coordinates, not independently surveyed for this task",
+      "buffer_miles": 2.0,
+      "canopy_pct": {
+        "source": "MRLC NLCD Tree Canopy Cover 2021, CONUS, v2021-4",
+        "access": "MRLC GeoServer WCS 2.0.1, coverage mrlc_download__nlcd_tcc_conus_2021_v2021-4",
+        "url": "https://www.mrlc.gov/geoserver/ows",
+        "measurement": "mean percent tree canopy cover across all raster cells (30 m) inside the 2 mile radius buffer, values 0-100 read directly, no cloud or seasonal masking needed since this is an annual land cover product",
+        "is_proxy": false,
+        "n_pixels": 4077
+      },
+      "lst_p90_c": {
+        "source": "Landsat Collection 2 Level 2, ST_B10 surface temperature band, Landsat 8 and 9",
+        "access": "Microsoft Planetary Computer STAC API, collection landsat-c2-l2, asset lwir11, signed via the public SAS token endpoint, read with rasterio over HTTPS",
+        "measurement": "90th percentile of all valid 30 m surface temperature pixels inside the 2 mile buffer, pooled across up to 10 of the clearest June through August scenes drawn from years 2018 through 2024, one search per year, with reported scene cloud cover under 30 percent",
+        "qa_caveat": "cloud masking is scene level only, using the published eo:cloud_cover metadata field, there is no per-pixel QA_PIXEL cloud or shadow mask applied inside the buffer, a small number of undetected cloud or shadow pixels inside an otherwise clear scene could bias the pooled percentile",
+        "is_proxy": false,
+        "n_scenes_used": 9,
+        "scenes": [
+          {
+            "scene_id": "LC08_L2SP_014032_20180615_02_T1",
+            "date": "2018-06-15",
+            "cloud_cover_pct": 20.7,
+            "n_pixels": 36125
+          },
+          {
+            "scene_id": "LC08_L2SP_014032_20190704_02_T1",
+            "date": "2019-07-04",
+            "cloud_cover_pct": 19.24,
+            "n_pixels": 36125
+          },
+          {
+            "scene_id": "LC08_L2SP_014032_20200722_02_T1",
+            "date": "2020-07-22",
+            "cloud_cover_pct": 13.59,
+            "n_pixels": 36125
+          },
+          {
+            "scene_id": "LC08_L2SP_014032_20200706_02_T1",
+            "date": "2020-07-06",
+            "cloud_cover_pct": 13.05,
+            "n_pixels": 36119
+          },
+          {
+            "scene_id": "LC08_L2SP_014032_20210826_02_T1",
+            "date": "2021-08-26",
+            "cloud_cover_pct": 8.84,
+            "n_pixels": 36125
+          },
+          {
+            "scene_id": "LC08_L2SP_014032_20210623_02_T1",
+            "date": "2021-06-23",
+            "cloud_cover_pct": 14.26,
+            "n_pixels": 36125
+          },
+          {
+            "scene_id": "LC09_L2SP_014032_20220720_02_T1",
+            "date": "2022-07-20",
+            "cloud_cover_pct": 3.67,
+            "n_pixels": 36125
+          },
+          {
+            "scene_id": "LC09_L2SP_014032_20220704_02_T1",
+            "date": "2022-07-04",
+            "cloud_cover_pct": 3.26,
+            "n_pixels": 36125
+          },
+          {
+            "scene_id": "LC09_L2SP_014032_20230723_02_T1",
+            "date": "2023-07-23",
+            "cloud_cover_pct": 4.81,
+            "n_pixels": 36121
+          }
+        ]
+      },
+      "matches": {
+        "value": 6,
+        "source": "public reporting of the FIFA World Cup 2026 confirmed venue match allocations, announced 2024",
+        "access": "not fetched live in this run, entered from general knowledge, must be verified against FIFA's official published match schedule before this number is presented as authoritative",
+        "is_proxy": true
+      }
+    },
+    "san_francisco_bay_area": {
+      "venue_coordinates": {
+        "lat": 37.4033,
+        "lon": -121.9694
+      },
+      "venue_coordinates_source": "commonly published venue coordinates, not independently surveyed for this task",
+      "buffer_miles": 2.0,
+      "canopy_pct": {
+        "source": "MRLC NLCD Tree Canopy Cover 2021, CONUS, v2021-4",
+        "access": "MRLC GeoServer WCS 2.0.1, coverage mrlc_download__nlcd_tcc_conus_2021_v2021-4",
+        "url": "https://www.mrlc.gov/geoserver/ows",
+        "measurement": "mean percent tree canopy cover across all raster cells (30 m) inside the 2 mile radius buffer, values 0-100 read directly, no cloud or seasonal masking needed since this is an annual land cover product",
+        "is_proxy": false,
+        "n_pixels": 5184
+      },
+      "lst_p90_c": {
+        "source": "Landsat Collection 2 Level 2, ST_B10 surface temperature band, Landsat 8 and 9",
+        "access": "Microsoft Planetary Computer STAC API, collection landsat-c2-l2, asset lwir11, signed via the public SAS token endpoint, read with rasterio over HTTPS",
+        "measurement": "90th percentile of all valid 30 m surface temperature pixels inside the 2 mile buffer, pooled across up to 10 of the clearest June through August scenes drawn from years 2018 through 2024, one search per year, with reported scene cloud cover under 30 percent",
+        "qa_caveat": "cloud masking is scene level only, using the published eo:cloud_cover metadata field, there is no per-pixel QA_PIXEL cloud or shadow mask applied inside the buffer, a small number of undetected cloud or shadow pixels inside an otherwise clear scene could bias the pooled percentile",
+        "is_proxy": false,
+        "n_scenes_used": 10,
+        "scenes": [
+          {
+            "scene_id": "LC08_L2SP_044034_20180601_02_T1",
+            "date": "2018-06-01",
+            "cloud_cover_pct": 0.09,
+            "n_pixels": 36146
+          },
+          {
+            "scene_id": "LC08_L2SP_044034_20180804_02_T1",
+            "date": "2018-08-04",
+            "cloud_cover_pct": 29.31,
+            "n_pixels": 36146
+          },
+          {
+            "scene_id": "LC08_L2SP_044034_20190706_02_T1",
+            "date": "2019-07-06",
+            "cloud_cover_pct": 7.05,
+            "n_pixels": 36146
+          },
+          {
+            "scene_id": "LC08_L2SP_044034_20190604_02_T1",
+            "date": "2019-06-04",
+            "cloud_cover_pct": 12.68,
+            "n_pixels": 36146
+          },
+          {
+            "scene_id": "LC08_L2SP_044034_20200606_02_T1",
+            "date": "2020-06-06",
+            "cloud_cover_pct": 6.58,
+            "n_pixels": 36146
+          },
+          {
+            "scene_id": "LC08_L2SP_044034_20200708_02_T1",
+            "date": "2020-07-08",
+            "cloud_cover_pct": 24.9,
+            "n_pixels": 36146
+          },
+          {
+            "scene_id": "LC08_L2SP_044034_20210828_02_T1",
+            "date": "2021-08-28",
+            "cloud_cover_pct": 1.51,
+            "n_pixels": 36146
+          },
+          {
+            "scene_id": "LC08_L2SP_044034_20210609_02_T1",
+            "date": "2021-06-09",
+            "cloud_cover_pct": 4.27,
+            "n_pixels": 36146
+          },
+          {
+            "scene_id": "LC09_L2SP_044034_20220620_02_T1",
+            "date": "2022-06-20",
+            "cloud_cover_pct": 0.52,
+            "n_pixels": 36146
+          },
+          {
+            "scene_id": "LC09_L2SP_044034_20220807_02_T1",
+            "date": "2022-08-07",
+            "cloud_cover_pct": 28.33,
+            "n_pixels": 36146
+          }
+        ]
+      },
+      "matches": {
+        "value": 6,
+        "source": "public reporting of the FIFA World Cup 2026 confirmed venue match allocations, announced 2024",
+        "access": "not fetched live in this run, entered from general knowledge, must be verified against FIFA's official published match schedule before this number is presented as authoritative",
+        "is_proxy": true
+      }
+    },
+    "seattle": {
+      "venue_coordinates": {
+        "lat": 47.5952,
+        "lon": -122.3316
+      },
+      "venue_coordinates_source": "commonly published venue coordinates, not independently surveyed for this task",
+      "buffer_miles": 2.0,
+      "canopy_pct": {
+        "source": "MRLC NLCD Tree Canopy Cover 2021, CONUS, v2021-4",
+        "access": "MRLC GeoServer WCS 2.0.1, coverage mrlc_download__nlcd_tcc_conus_2021_v2021-4",
+        "url": "https://www.mrlc.gov/geoserver/ows",
+        "measurement": "mean percent tree canopy cover across all raster cells (30 m) inside the 2 mile radius buffer, values 0-100 read directly, no cloud or seasonal masking needed since this is an annual land cover product",
+        "is_proxy": false,
+        "n_pixels": 6927
+      },
+      "lst_p90_c": {
+        "source": "Landsat Collection 2 Level 2, ST_B10 surface temperature band, Landsat 8 and 9",
+        "access": "Microsoft Planetary Computer STAC API, collection landsat-c2-l2, asset lwir11, signed via the public SAS token endpoint, read with rasterio over HTTPS",
+        "measurement": "90th percentile of all valid 30 m surface temperature pixels inside the 2 mile buffer, pooled across up to 10 of the clearest June through August scenes drawn from years 2018 through 2024, one search per year, with reported scene cloud cover under 30 percent",
+        "qa_caveat": "cloud masking is scene level only, using the published eo:cloud_cover metadata field, there is no per-pixel QA_PIXEL cloud or shadow mask applied inside the buffer, a small number of undetected cloud or shadow pixels inside an otherwise clear scene could bias the pooled percentile",
+        "is_proxy": false,
+        "n_scenes_used": 10,
+        "scenes": [
+          {
+            "scene_id": "LC08_L2SP_046027_20180818_02_T1",
+            "date": "2018-08-18",
+            "cloud_cover_pct": 0.88,
+            "n_pixels": 36133
+          },
+          {
+            "scene_id": "LC08_L2SP_046027_20180717_02_T1",
+            "date": "2018-07-17",
+            "cloud_cover_pct": 0.79,
+            "n_pixels": 36133
+          },
+          {
+            "scene_id": "LC08_L2SP_046027_20190805_02_T1",
+            "date": "2019-08-05",
+            "cloud_cover_pct": 0.96,
+            "n_pixels": 36133
+          },
+          {
+            "scene_id": "LC08_L2SP_046027_20190720_02_T1",
+            "date": "2019-07-20",
+            "cloud_cover_pct": 1.89,
+            "n_pixels": 36133
+          },
+          {
+            "scene_id": "LC08_L2SP_046027_20200823_02_T1",
+            "date": "2020-08-23",
+            "cloud_cover_pct": 0.54,
+            "n_pixels": 36133
+          },
+          {
+            "scene_id": "LC08_L2SP_047027_20200830_02_T1",
+            "date": "2020-08-30",
+            "cloud_cover_pct": 1.75,
+            "n_pixels": 36133
+          },
+          {
+            "scene_id": "LC08_L2SP_046027_20210725_02_T1",
+            "date": "2021-07-25",
+            "cloud_cover_pct": 0.38,
+            "n_pixels": 36133
+          },
+          {
+            "scene_id": "LC08_L2SP_046027_20210810_02_T1",
+            "date": "2021-08-10",
+            "cloud_cover_pct": 1.7,
+            "n_pixels": 36133
+          },
+          {
+            "scene_id": "LC09_L2SP_047027_20220711_02_T1",
+            "date": "2022-07-11",
+            "cloud_cover_pct": 0.65,
+            "n_pixels": 36133
+          },
+          {
+            "scene_id": "LC09_L2SP_047027_20220625_02_T1",
+            "date": "2022-06-25",
+            "cloud_cover_pct": 0.89,
+            "n_pixels": 36133
+          }
+        ]
+      },
+      "matches": {
+        "value": 6,
+        "source": "public reporting of the FIFA World Cup 2026 confirmed venue match allocations, announced 2024",
+        "access": "not fetched live in this run, entered from general knowledge, must be verified against FIFA's official published match schedule before this number is presented as authoritative",
+        "is_proxy": true
+      }
+    }
+  },
+  "headline_check": "the eleven city comparison is meant to test whether Houston is an outlier among US host cities for pedestrian heat exposure. This script reports whatever the canopy and surface temperature data actually show, including if Houston ranks high, low, or in the middle. See the run report for where Houston actually lands.",
+  "known_limitations": [
+    "no ray traced shading, no building shadow, no route level shade geometry outside Houston",
+    "canopy is measured as area coverage in a buffer, not coverage specifically along pedestrian routes to each stadium",
+    "surface temperature is not air temperature and is not WBGT, hot pavement and rooftops read much hotter than a person would experience at head height in shade",
+    "match counts are typed from general knowledge in this script and were not fetched from a live FIFA source in this run",
+    "venue coordinates are commonly published approximate points, not surveyed stadium entrance locations",
+    "Landsat overpass time is roughly 10:30 to 11:00 local solar time, well before the actual kickoff hours the full Houston pipeline studies (15, 17, 19, 21). Late morning surface temperature does not capture afternoon and evening peak heating, so lst_p90_c likely understates the true afternoon and evening surface temperature at every city, including Houston, in a similar direction, but the size of that understatement can vary by city depending on local afternoon heating rate and is not corrected for here"
+  ]
+}

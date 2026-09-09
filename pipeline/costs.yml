@@ -82,3 +82,25 @@ constants:
       coefficient are typically in the 0.1 to 0.3 range, 0.2 is used here as a
       representative mid range value.
     citation: "Schwarz, N., Schlink, U., Franck, U., Grossmann, K. 2012. Relationship of land surface and air temperatures and its implications for quantifying urban heat island indicators, an application for the city of Leipzig, Germany. Ecological Indicators 18, 693-704."
+  ground_albedo:
+    value: 0.15
+    note: >
+      shortwave albedo of the sunlit ground surrounding a shaded pedestrian, used to add the
+      ground reflected shortwave load that a person under a shade sail or a tree still receives
+      from adjacent sunlit asphalt and concrete. at the modelled clear sky global horizontal
+      irradiance of about 866 W/m2 this is about 130 W/m2 of reflected shortwave. this is an
+      assumed representative value for aged asphalt with some concrete and paint in the field of
+      view, not a site measurement, and it sits inside the published range rather than at either
+      end of it. the value used at run time is read from pipeline/config.yml under shade.ground_albedo.
+    citation: "Taha, H. 1997. Urban climates and heat islands: albedo, evapotranspiration, and anthropogenic heat. Energy and Buildings 25(2) 99-103. Reports urban surface albedos with asphalt in the 0.05 to 0.20 range, fresh asphalt at the low end and weathered asphalt and mixed paved surfaces toward the upper end. Consistent with the surface albedo tables in Oke, T.R. 1987. Boundary Layer Climates, 2nd edition, Methuen, chapter 1, which give asphalt 0.05 to 0.20 and concrete 0.10 to 0.35."
+  liljegren_surface_albedo:
+    value: 0.45
+    note: >
+      not a free parameter of this project. it is the ALB_SFC constant compiled into the
+      Liljegren reference C code shipped inside pywbgt, where the globe budget carries the
+      shortwave term solar * (1 - ALB_GLOBE) * (fdir * (1/(2 cza) - 1) + 1 + ALB_SFC), so the
+      solver already reflects 45 percent of whatever irradiance is passed in. the shaded case
+      therefore divides the intended total shortwave load by (1 + 0.45) before passing it, so
+      the ground reflected component is added once rather than twice. the value used at run time
+      is read from pipeline/config.yml under shade.liljegren_surface_albedo.
+    citation: "Value read from the source file src/liljegren_c.c distributed with pywbgt, ALB_SFC define, which implements Liljegren, J.C. et al. 2008. Modeling the wet bulb globe temperature using standard meteorological measurements. Journal of Occupational and Environmental Hygiene 5(10) 645-655. No independent publication was located that states this 0.45 figure explicitly, so it is cited as an implementation constant of the model actually being run, not as an observed surface property."

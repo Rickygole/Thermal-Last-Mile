@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-09-09T01:37:58Z",
+  "generated_utc": "2026-09-09T01:57:17Z",
   "model": {
     "wbgt": "Liljegren, J.C. et al. 2008. Modeling the wet bulb globe temperature using standard meteorological measurements. Journal of Occupational and Environmental Hygiene 5(10) 645-655.",
     "implementation": "pywbgt 3.0.7",
@@ -253,30 +253,30 @@
   "wbgt_threshold_c": 28.0,
   "wbgt_spatial_range_by_hour_c": {
     "15": {
-      "min_c": 33.860633850097656,
-      "max_c": 35.52311325073242,
-      "range_c": 1.6624794006347656,
+      "min_c": 33.626708984375,
+      "max_c": 35.288265228271484,
+      "range_c": 1.6615562438964844,
       "tair_min_c": 34.83683395385742,
       "tair_max_c": 38.640480041503906
     },
     "17": {
-      "min_c": 31.241077423095703,
-      "max_c": 32.917686462402344,
-      "range_c": 1.6766090393066406,
+      "min_c": 30.925090789794922,
+      "max_c": 32.605857849121094,
+      "range_c": 1.6807670593261719,
       "tair_min_c": 32.48012924194336,
       "tair_max_c": 36.23685073852539
     },
     "19": {
-      "min_c": 27.96921157836914,
-      "max_c": 29.70578956604004,
-      "range_c": 1.7365779876708984,
+      "min_c": 27.8385066986084,
+      "max_c": 29.57541847229004,
+      "range_c": 1.7369117736816406,
       "tair_min_c": 29.709793090820312,
       "tair_max_c": 33.47732162475586
     },
     "21": {
-      "min_c": 25.29823875427246,
-      "max_c": 27.078704833984375,
-      "range_c": 1.780466079711914,
+      "min_c": 25.31085777282715,
+      "max_c": 27.084829330444336,
+      "range_c": 1.7739715576171875,
       "tair_min_c": 27.55065155029297,
       "tair_max_c": 31.316484451293945
     }

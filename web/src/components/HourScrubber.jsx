@@ -2,7 +2,7 @@ import { useRef } from 'react'
 import { HOURS, setHour, useStore } from '../store.js'
 import { arrowSelect } from '../lib/keys.js'
 import { exposureCss } from '../lib/color.js'
-import { n0, n1, n2, pct } from '../lib/format.js'
+import { n0, n1, n2, pct, tempC } from '../lib/format.js'
 
 export default function HourScrubber ({ totals, stats, walk, threshold }) {
   const hour = useStore(s => s.hour)
@@ -42,7 +42,7 @@ export default function HourScrubber ({ totals, stats, walk, threshold }) {
       <div className="stat">
         <div className="k">Average fan trip at {hour}:00, weighted by approach volume</div>
         <div className="v big">
-          {n2(walk?.[hour] ?? 0)} <span className="label">degree-minutes above WBGT {threshold} C</span>
+          {n2(walk?.[hour] ?? 0)} <span className="label">degree-minutes above WBGT {tempC(threshold)}</span>
         </div>
         <div className="label">
           {stat

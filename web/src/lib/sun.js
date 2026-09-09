@@ -8,9 +8,9 @@ export const SUN_FALLBACK = {
 export function sunFor (hour, heat) {
   const stat = heat && heat.stats ? heat.stats[hour] : null
   if (stat && Number.isFinite(stat.sun_elevation_deg)) {
-    return { elev: stat.sun_elevation_deg, az: stat.sun_azimuth_deg }
+    return { elev: stat.sun_elevation_deg, az: stat.sun_azimuth_deg, stated: true }
   }
-  return SUN_FALLBACK[hour] || SUN_FALLBACK[17]
+  return { ...(SUN_FALLBACK[hour] || SUN_FALLBACK[17]), stated: false }
 }
 
 export function lightDirection (sun) {

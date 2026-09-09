@@ -103,9 +103,39 @@ button {
 }
 
 .chip .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); }
+.chip.observed { color: var(--text); }
 .chip.observed .dot { background: var(--low); }
-.chip.provisional { color: var(--text); }
-.chip.provisional .dot { background: var(--moderate); }
+.chip.provisional,
+.chip.proxy,
+.chip.unverified,
+.chip.illustrative { color: var(--text); }
+.chip.provisional .dot,
+.chip.proxy .dot,
+.chip.unverified .dot { background: var(--moderate); }
+.chip.illustrative .dot { background: transparent; box-shadow: inset 0 0 0 1.5px var(--moderate); }
+.chip.wide { align-self: start; white-space: normal; }
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.tag::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+
+.tag.assumed::before,
+.tag.unstated::before { background: transparent; box-shadow: inset 0 0 0 1px var(--muted); }
+.tag.unstated { font-style: italic; }
 
 .screen { position: relative; overflow: hidden; }
 
@@ -586,3 +616,67 @@ input[type="range"]::-moz-range-thumb { width: 14px; height: 14px; border: 2px s
   .topline { display: none; }
   .budget-rail .br-curve { grid-column: 1 / -1; }
 }
+
+.method-note { margin-bottom: 24px; padding: 16px; display: grid; gap: 12px; }
+.method-note h3 { font-size: 15px; }
+.mn-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--gap); }
+.mn-grid .k { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+.mn-grid p { font-size: 13px; max-width: 46ch; line-height: 1.5; }
+
+.city-methods { margin-top: 24px; padding: 16px; display: grid; gap: 16px; }
+.city-methods .lede { max-width: 72ch; font-size: 13px; color: var(--muted); line-height: 1.55; }
+.city-methods .src { display: grid; gap: 8px; }
+
+.coverage { border-collapse: collapse; width: 100%; max-width: 560px; font-size: 13px; }
+.coverage caption { text-align: left; padding-bottom: 8px; }
+.coverage th, .coverage td { text-align: right; padding: 6px 10px; border-bottom: 0.5px solid var(--border); font-weight: 400; }
+.coverage thead th { font-size: 11px; color: var(--muted); }
+.coverage th[scope="row"] { text-align: left; }
+.coverage .warn { color: var(--text); }
+
+.field-rows { margin: 0; display: grid; gap: 8px; }
+.field-rows dt { font-size: 11px; color: var(--muted); }
+.field-rows dd { margin: 0; font-size: 13px; max-width: 78ch; line-height: 1.5; }
+
+.limits { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+.limits li { font-size: 13px; max-width: 78ch; line-height: 1.5; }
+
+.city-methods-list { display: grid; gap: 6px; }
+
+.city-method {
+  border: 0.5px solid var(--border);
+  border-radius: var(--r-control);
+  padding: 8px 12px;
+}
+
+.city-method > summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 16px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.city-method > summary::-webkit-details-marker { display: none; }
+.city-method > summary::before { content: "+"; color: var(--muted); width: 12px; }
+.city-method[open] > summary::before { content: "\2212"; }
+.city-method[open] > summary { margin-bottom: 12px; }
+.cm-name { min-width: 14ch; }
+.cm-tags { display: flex; flex-wrap: wrap; gap: 6px 14px; }
+.cm-pair { display: inline-flex; align-items: baseline; gap: 5px; font-size: 11px; color: var(--muted); }
+
+.city-method .field { padding-top: 10px; margin-top: 10px; border-top: 0.5px solid var(--border); display: grid; gap: 8px; }
+.city-method .field-head { display: flex; align-items: baseline; gap: 10px; }
+.city-method .field-head h5 { font-size: 12px; font-weight: 400; }
+
+.scenes summary { cursor: pointer; font-size: 11px; color: var(--muted); }
+.scenes ul { margin: 8px 0 0; padding-left: 18px; display: grid; gap: 4px; }
+.scenes li { font-size: 11px; color: var(--muted); }
+
+.methods .src-item + .src-item { margin-top: 10px; }
+.methods .src-item .p { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.methods .src-item.is-unsourced { padding-left: 10px; box-shadow: inset 2px 0 0 var(--border); }
+
+.chain-block { display: grid; gap: 6px; }
+.transfer .side-head .stat .tag { margin-top: 3px; }

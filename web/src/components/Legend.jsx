@@ -1,9 +1,10 @@
 import { HEAT_ANCHORS, exposureCss, heatCss } from '../lib/color.js'
 import { n1, n2 } from '../lib/format.js'
 
-export default function Legend ({ max, hour, heat }) {
+export default function Legend ({ max, hour, heat, threshold }) {
   const anchors = heat?.anchors || HEAT_ANCHORS
   const [LOW_C, MID_C, HIGH_C] = anchors
+  const stated = Number.isFinite(threshold)
   const stops = Array.from({ length: 13 }, (_, i) => {
     const c = LOW_C + ((HIGH_C - LOW_C) * i) / 12
     return `${heatCss(c, anchors)} ${Math.round((i / 12) * 100)}%`
@@ -20,7 +21,7 @@ export default function Legend ({ max, hour, heat }) {
         </div>
         <div className="ramp-scale" aria-hidden="true">
           <span>{n1(LOW_C)} and below</span>
-          <span className="mid">{n1(MID_C)} threshold</span>
+          <span className="mid">{n1(MID_C)} {stated ? 'threshold' : 'ramp midpoint'}</span>
           <span>{n1(HIGH_C)} and above</span>
         </div>
         <p className="label">
@@ -32,7 +33,7 @@ export default function Legend ({ max, hour, heat }) {
       <div className="legend-block">
         <div className="pane-head">
           <h3>Segments, degree-minutes per fan</h3>
-          <span className="label">above WBGT {n1(MID_C)} C</span>
+          <span className="label">{stated ? `above WBGT ${n1(MID_C)} C` : 'threshold not stated in meta.json'}</span>
         </div>
         <div className="ramp" style={{ background: `linear-gradient(90deg, ${exposureCss(0)}, ${exposureCss(0.5)}, ${exposureCss(1)})` }} aria-hidden="true" />
         <div className="ramp-scale" aria-hidden="true">

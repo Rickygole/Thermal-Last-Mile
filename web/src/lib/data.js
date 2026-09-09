@@ -41,6 +41,14 @@ function toSegments (geojson) {
   return segments
 }
 
+function isTrusted (geojson) {
+  if (!geojson) return false
+  const p = geojson.properties || {}
+  if (p.provisional === true) return false
+  if (typeof p.source === 'string' && /placeholder|synthetic|invented|generator/i.test(p.source)) return false
+  return Array.isArray(geojson.features) && geojson.features.length > 0
+}
+
 function toBuildings (geojson) {
   if (!geojson || !Array.isArray(geojson.features)) return []
   return geojson.features
@@ -208,9 +216,13 @@ export function worstApproach (approaches, hour) {
   return best
 }
 
-function surfaceAnchors (raw, threshold) {
+function surfaceAnchors (raw, threshold, domain) {
   const stats = raw && raw.hour_stats ? Object.values(raw.hour_stats) : []
   const tops = stats.map(v => v.max_c).filter(Number.isFinite)
+  if (!Number.isFinite(threshold)) {
+    const [lo, hi] = domain
+    return [lo, (lo + hi) / 2, hi]
+  }
   if (!tops.length) return anchorsFor(threshold)
   const high = Math.max(threshold + 4, Math.ceil(Math.max(...tops) * 2) / 2)
   return [threshold - 4, threshold, high]
@@ -218,11 +230,13 @@ function surfaceAnchors (raw, threshold) {
 
 function heatMeta (raw, fallbackBounds, threshold, rasterPresent) {
   const available = Boolean(raw) || Boolean(rasterPresent)
+  const domain = (raw && raw.domain_c) || HEAT_DOMAIN
   return {
     available,
     bounds: (raw && raw.bounds) || fallbackBounds || null,
-    domain: (raw && raw.domain_c) || HEAT_DOMAIN,
-    anchors: surfaceAnchors(raw, threshold),
+    domain,
+    domainStated: Boolean(raw && raw.domain_c),
+    anchors: surfaceAnchors(raw, threshold, domain),
     provisional: raw ? Boolean(raw.provisional) : true,
     method: (raw && raw.method) || null,
     quantity: (raw && raw.quantity) || 'wet bulb globe temperature',
@@ -254,6 +268,7 @@ export function useData () {
       getJson('la_segments.geojson', false),
       getJson('buildings.geojson', false),
       getJson('expo_meta.json', false),
+      getJson('cities_method.json', false),
       surfacePresent()
     ]).then(results => {
       if (!live) return
@@ -261,14 +276,17 @@ export function useData () {
       const byName = Object.fromEntries(results.slice(0, -1).map(r => [r.name, r]))
       const errors = results.filter(r => r.required && r.error).map(r => `${r.name} (${r.error})`)
       const segments = toSegments(byName['segments.geojson'].value)
-      const laSegments = toSegments(byName['la_segments.geojson'].value)
-      const laProvisional = Boolean(byName['la_segments.geojson'].value?.properties?.provisional)
+      const laRaw = byName['la_segments.geojson'].value
+      const laTrusted = isTrusted(laRaw)
+      const laSegments = laTrusted ? toSegments(laRaw) : []
+      const laSource = laRaw?.properties?.source || null
       const solutions = byName['solutions.json'].value
       const cities = byName['cities.json'].value
       const meta = byName['meta.json'].value
       const buildings = toBuildings(byName['buildings.geojson'].value)
       const segBounds = bounds(segments)
-      const threshold = meta?.wbgt_threshold_c ?? meta?.threshold_wbgt_c ?? 32
+      const rawThreshold = meta?.wbgt_threshold_c ?? meta?.threshold_wbgt_c
+      const threshold = Number.isFinite(rawThreshold) ? rawThreshold : null
       const approaches = approachSummary(segments)
       setState({
         status: 'ready',
@@ -276,10 +294,12 @@ export function useData () {
         data: {
           segments,
           laSegments,
-          laProvisional,
+          laSource,
+          laTrusted,
           buildings,
           solutions,
           cities: Array.isArray(cities) ? cities : [],
+          citiesMethod: byName['cities_method.json'].value || null,
           meta: meta || null,
           threshold,
           heat: heatMeta(byName['expo_meta.json'].value, meta?.raster_bounds || segBounds, threshold, rasterPresent),

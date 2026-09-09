@@ -55,5 +55,9 @@ raster:
   resolution_m: 1.0
   max_march_steps: 400
 
+shade:
+  ground_albedo: 0.15
+  liljegren_surface_albedo: 0.45
+
 uhi:
   beta_lst_to_tair: 0.2

@@ -4,7 +4,8 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "data": "node scripts/make_placeholder_data.js",
+    "data": "node scripts/sync_data.js",
+    "buildings": "node scripts/fetch_buildings.js",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"

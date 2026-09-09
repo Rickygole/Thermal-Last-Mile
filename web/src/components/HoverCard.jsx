@@ -15,7 +15,7 @@ export default function HoverCard ({ hover, hour, max, treated }) {
         </div>
         <div className="hc-row">
           <span>Height source</span>
-          <span>{b.height_source === 'tagged' ? 'measured tag' : b.height_source === 'levels' ? 'storeys times 3.5 m' : 'assumed 3.5 m'}</span>
+          <span>{b.height_source === 'tagged' ? 'tagged height' : b.height_source === 'levels' ? 'from storey count' : 'assumed single storey'}</span>
         </div>
       </div>
     )

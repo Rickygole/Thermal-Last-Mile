@@ -26,6 +26,7 @@ CRS_WGS84 = "EPSG:4326"
 CRS_METRIC = CFG["site"]["crs_metric"]
 LOCAL_TZ = "America/Chicago"
 GLOBE_DIAMETER_M = CFG["walk"].get("globe_diameter_m", 0.15)
+PEDESTRIAN_HEIGHT_M = CFG["walk"].get("wind_pedestrian_height_m", 2.0)
 
 TO_UTM = Transformer.from_crs(CRS_WGS84, CRS_METRIC, always_xy=True)
 TO_WGS84 = Transformer.from_crs(CRS_METRIC, CRS_WGS84, always_xy=True)
@@ -402,6 +403,7 @@ def compute_wbgt_grid(bounds, tair_grid, tdew_grid, wind_grid, pres_grid, ghi_va
         tdew_grid.ravel() * units.degC,
         wind_grid.ravel() * units("m/s"),
         d_globe=GLOBE_DIAMETER_M * units.m,
+        zspeed=PEDESTRIAN_HEIGHT_M * units.m,
     )
     return np.asarray(out["Twbg"], dtype=np.float32).reshape(tair_grid.shape)
 

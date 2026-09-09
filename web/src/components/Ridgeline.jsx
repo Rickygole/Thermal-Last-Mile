@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { HOURS, setHour, useStore } from '../store.js'
 import { exposureCss, heatCss } from '../lib/color.js'
 import { APPROACH_LABEL } from '../lib/venues.js'
-import { n0, n1, n2 } from '../lib/format.js'
+import { n0, n1, n2, tempC } from '../lib/format.js'
 
 const W = 1400
 const LABEL_W = 128
@@ -25,8 +25,8 @@ function pickApproach (segments) {
   return best || { key: 'unknown', segs: [] }
 }
 
-export default function Ridgeline ({ segments, threshold = 32 }) {
-  const THRESHOLD = threshold
+export default function Ridgeline ({ segments, threshold }) {
+  const THRESHOLD = Number.isFinite(threshold) ? threshold : null
   const hour = useStore(s => s.hour)
   const picked = useMemo(() => pickApproach(segments), [segments])
   const width = W - LABEL_W
@@ -118,8 +118,8 @@ export default function Ridgeline ({ segments, threshold = 32 }) {
       </svg>
       <p className="label">
         {inRange
-          ? `Dashed line is WBGT ${THRESHOLD} C, the exposure threshold. Filled area above it is what the degree-minute metric counts. `
-          : `No hour on this approach reaches WBGT ${THRESHOLD} C, so the threshold line sits outside the plotted range. `}
+          ? `Dashed line is WBGT ${tempC(THRESHOLD)}, the exposure threshold. Filled area above it is what the degree-minute metric counts. `
+          : `No hour on this approach reaches WBGT ${tempC(THRESHOLD)}, so the threshold line sits outside the plotted range. `}
         Vertical range is {n1(LO_C)} to {n1(HI_C)} C, shared by all four rows. Click a row to move every view to that kickoff hour.
       </p>
     </div>

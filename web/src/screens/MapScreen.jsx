@@ -117,11 +117,11 @@ export default function MapScreen ({ data }) {
             pitch={pitch}
             label="Segment exposure map over the modelled heat surface"
           >
-            <MapControls buildings={data.buildings.length} sun={sun} hour={hour} />
+            <MapControls buildings={data.buildings} sun={sun} hour={hour} />
             <HoverCard hover={hover} hour={hour} max={data.max.all} treated={treated} anchors={data.heat.anchors} />
           </DeckMap>
         </div>
-        <Legend max={data.max.all} hour={hour} heat={data.heat} />
+        <Legend max={data.max.all} hour={hour} heat={data.heat} threshold={data.threshold} />
         <BudgetBar solution={solution} levels={levels} points={points} />
       </div>
       <div className="col right">

@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-09-09T01:37:58Z",
+  "generated_utc": "2026-09-09T01:57:16Z",
   "provisional": false,
   "quantity": "wet bulb globe temperature",
   "unit": "degrees celsius",
@@ -35,24 +35,24 @@
   "native_resolution_m": 1.0,
   "hour_stats": {
     "15": {
-      "min_c": 29.74,
-      "max_c": 35.4,
-      "mean_c": 33.7
+      "min_c": 30.03,
+      "max_c": 35.16,
+      "mean_c": 33.56
     },
     "17": {
-      "min_c": 28.6,
-      "max_c": 32.79,
-      "mean_c": 31.3
+      "min_c": 28.78,
+      "max_c": 32.48,
+      "mean_c": 31.09
     },
     "19": {
-      "min_c": 26.77,
-      "max_c": 29.58,
-      "mean_c": 28.28
+      "min_c": 26.83,
+      "max_c": 29.45,
+      "mean_c": 28.2
     },
     "21": {
-      "min_c": 25.3,
-      "max_c": 27.06,
-      "mean_c": 25.94
+      "min_c": 25.28,
+      "max_c": 27.05,
+      "mean_c": 25.92
     }
   }
 }

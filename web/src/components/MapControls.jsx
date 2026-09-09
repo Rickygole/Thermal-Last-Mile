@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { PITCH_OBLIQUE, PITCH_PLAN, setHeat, setPitch, useStore } from '../store.js'
 import { arrowSelect } from '../lib/keys.js'
-import { pct } from '../lib/format.js'
+import { n0, pct } from '../lib/format.js'
 
 const VIEWS = [
   { value: PITCH_PLAN, label: 'Plan' },
@@ -9,6 +9,7 @@ const VIEWS = [
 ]
 
 export default function MapControls ({ buildings, sun, hour }) {
+  const measured = buildings.filter(b => b.height_source === 'tagged' || b.height_source === 'levels').length
   const heat = useStore(s => s.heat)
   const pitch = useStore(s => s.pitch)
   const refs = useRef([])
@@ -52,15 +53,17 @@ export default function MapControls ({ buildings, sun, hour }) {
         ))}
       </div>
       <p className="label">
-        {buildings
-          ? `${buildings} footprints extruded from measured height, the physical cause of the shade pattern below.`
+        {buildings.length
+          ? `${n0(buildings.length)} footprints extruded, ${n0(measured)} from a tagged height or storey count, ${n0(buildings.length - measured)} at an assumed single storey. They are the physical cause of the shade pattern below.`
           : 'No building footprints loaded, so extrusion is unavailable.'}
       </p>
       {sun ? (
         <p className="label">
-          {sun.elev > 0
-            ? `Lit for ${hour}:00, sun ${Math.round(sun.az)} degrees azimuth, ${Math.round(sun.elev)} degrees elevation.`
-            : `Sun is below the horizon at ${hour}:00.`}
+          {sun.stated
+            ? sun.elev > 0
+              ? `Lit for ${hour}:00 from the sun position in expo_meta.json, ${Math.round(sun.az)} degrees azimuth, ${Math.round(sun.elev)} degrees elevation.`
+              : `expo_meta.json puts the sun below the horizon at ${hour}:00.`
+            : 'Scene lighting is a fixed display assumption for this hour. No sun position is stated in expo_meta.json, and none is solved in the browser. It affects the look of the extrusions only, never a number.'}
         </p>
       ) : null}
     </section>

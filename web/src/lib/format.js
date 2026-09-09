@@ -14,3 +14,5 @@ export function usd (v) {
 }
 
 export const hourLabel = h => `${h}:00 kickoff`
+
+export const tempC = v => (Number.isFinite(v) ? `${v} C` : 'a threshold meta.json does not state')

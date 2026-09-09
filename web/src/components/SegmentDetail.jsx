@@ -1,7 +1,7 @@
 import HourProfile, { buildSeries } from './HourProfile.jsx'
 import { setSelected } from '../store.js'
 import { exposureBand, exposureCss, BAND_LABEL } from '../lib/color.js'
-import { n0, n1, n2, pct } from '../lib/format.js'
+import { n0, n1, n2, pct, tempC } from '../lib/format.js'
 
 export default function SegmentDetail ({ segment, hour, max, treated, corridor, corridorLabel, anchors, threshold, worst }) {
   if (!segment) {
@@ -55,7 +55,7 @@ export default function SegmentDetail ({ segment, hour, max, treated, corridor, 
       </div>
       <div className="detail">
         <div className="row">
-          <span>Degree-minutes per fan, threshold {threshold} C</span>
+          <span>Degree-minutes per fan, threshold {tempC(threshold)}</span>
           <span>
             {n2(v)} <span className="label">({n2(lo)} to {n2(hi)})</span>
           </span>
