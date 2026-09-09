@@ -8,7 +8,7 @@ const VIEWS = [
   { value: PITCH_OBLIQUE, label: 'Oblique' }
 ]
 
-export default function MapControls ({ buildings }) {
+export default function MapControls ({ buildings, sun, hour }) {
   const heat = useStore(s => s.heat)
   const pitch = useStore(s => s.pitch)
   const refs = useRef([])
@@ -53,9 +53,16 @@ export default function MapControls ({ buildings }) {
       </div>
       <p className="label">
         {buildings
-          ? `${buildings} building footprints extruded from height, the physical cause of the shade pattern below.`
+          ? `${buildings} footprints extruded from measured height, the physical cause of the shade pattern below.`
           : 'No building footprints loaded, so extrusion is unavailable.'}
       </p>
+      {sun ? (
+        <p className="label">
+          {sun.elev > 0
+            ? `Lit for ${hour}:00, sun ${Math.round(sun.az)} degrees azimuth, ${Math.round(sun.elev)} degrees elevation.`
+            : `Sun is below the horizon at ${hour}:00.`}
+        </p>
+      ) : null}
     </section>
   )
 }
