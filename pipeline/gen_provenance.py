@@ -9,6 +9,8 @@ import yaml
 ROOT = Path(__file__).resolve().parent.parent
 META_PATH = ROOT / "data" / "out" / "meta.json"
 COSTS_PATH = ROOT / "pipeline" / "costs.yml"
+CONFIG_PATH = ROOT / "pipeline" / "config.yml"
+RETROSPECTIVE_PATH = ROOT / "data" / "out" / "retrospective.json"
 OUT_PATH = ROOT / "docs" / "provenance.csv"
 
 FIELDNAMES = [
@@ -55,6 +57,18 @@ def load_meta():
 def load_costs():
     with open(COSTS_PATH) as f:
         return yaml.safe_load(f)
+
+
+def load_config():
+    with open(CONFIG_PATH) as f:
+        return yaml.safe_load(f)
+
+
+def load_retrospective():
+    if not RETROSPECTIVE_PATH.exists():
+        return None
+    with open(RETROSPECTIVE_PATH) as f:
+        return json.load(f)
 
 
 def usage_for_layer(layer):
@@ -172,10 +186,75 @@ def rows_from_costs(costs):
     return rows
 
 
+def rows_from_retrospective(retro, meta):
+    rows = []
+    if not retro:
+        return rows
+    resolution_m = meta.get("raster_resolution_m", "n/a")
+    for match in retro.get("matches", []):
+        date = match.get("date", "unknown date")
+        hour = match.get("kickoff_local_hour", "unknown hour")
+        stations = sorted(match.get("stations", {}).keys())
+        weather_status = match.get("weather_status", "unknown")
+        rows.append({
+            "layer": f"retrospective per-match meteorology, {date} kickoff {hour}:00",
+            "product_id": "Iowa Environmental Mesonet ASOS one minute and hourly archive",
+            "provider": "Iowa State University Department of Agronomy",
+            "access_path": "Iowa Environmental Mesonet ASOS archive, stations " + ", ".join(stations),
+            "acquisition_or_vintage_date": date,
+            "resolution": f"point station observation, interpolated onto the {resolution_m} m pipeline grid",
+            "licence": "public, no key required",
+            "status": "measured" if weather_status == "observed" else weather_status,
+            "usage": "this match's own observed air temperature, dew point, wind and pressure, fetched fresh for this match's own date and kickoff hour by pipeline/s12_retrospective.py, feeding the 297,665 fan-degree-hour tournament total this project reports as its headline",
+            "notes": (
+                f"{match.get('label', '')} ({match.get('stage', '')}), weather_status {weather_status}. "
+                "this is the load bearing per-match ASOS pull behind the tournament total, distinct from "
+                "the generalized hour-sweep meteorology rows above, which substitute whichever candidate "
+                "match date was hottest for a given hour rather than fetching each match's own date."
+            ),
+        })
+    return rows
+
+
+def rows_from_fixtures(config):
+    fixtures = config.get("fixtures", {}) if config else {}
+    matches = fixtures.get("matches", [])
+    if not matches:
+        return []
+    source = fixtures.get("source", "n/a")
+    dates = ", ".join(str(m.get("date", "")) for m in matches)
+    return [{
+        "layer": "fixture list, seven NRG Stadium 2026 World Cup matches",
+        "product_id": source,
+        "provider": "FIFA and competition organisers",
+        "access_path": "pipeline/config.yml, fixtures.matches",
+        "acquisition_or_vintage_date": fixtures.get("verified_utc", "n/a"),
+        "resolution": "n/a, schedule data is not spatial",
+        "licence": "n/a",
+        "status": "cross_checked_sources_not_individually_cited",
+        "usage": "binds every per-match date and kickoff hour used throughout this project, including the seven retrospective ASOS pulls above and the fixture-hour illustrative block in data/out/kickoff_clock.json",
+        "notes": (
+            (fixtures.get("note", "") + " | " if fixtures.get("note") else "")
+            + f"this fixture list is described in pipeline/config.yml as \"{source}\", "
+            "but the two independent public listings it was cross checked against are not "
+            "individually named or linked anywhere in this repository. that is a real gap in "
+            "this provenance ledger, stated directly here rather than left implicit. "
+            f"matches covered: {dates}."
+        ),
+    }]
+
+
 def main():
     meta = load_meta()
     costs = load_costs()
-    rows = rows_from_meta(meta) + rows_from_costs(costs)
+    config = load_config()
+    retro = load_retrospective()
+    rows = (
+        rows_from_meta(meta)
+        + rows_from_retrospective(retro, meta)
+        + rows_from_fixtures(config)
+        + rows_from_costs(costs)
+    )
     OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     with open(OUT_PATH, "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=FIELDNAMES)

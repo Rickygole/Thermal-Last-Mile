@@ -6,6 +6,7 @@ import EveningControl from '../components/EveningControl.jsx'
 import FreeVersusCapital from '../components/FreeVersusCapital.jsx'
 import { APPROACH_LABEL } from '../lib/venues.js'
 import { buildRetro, longDate, shortDate } from '../lib/retro.js'
+import { hourDates, shadeFinding } from '../lib/context.js'
 import { setScreen, useStore } from '../store.js'
 import { n0, n1, n2, pct1 } from '../lib/format.js'
 
@@ -44,7 +45,7 @@ function buildRows (clock) {
   }
 }
 
-function MatchDetail ({ match, model }) {
+function MatchDetail ({ match, model, shade }) {
   if (!match) return null
   return (
     <section className="panel pane" aria-label={`Detail for the match on ${longDate(match.date)}`}>
@@ -80,6 +81,18 @@ function MatchDetail ({ match, model }) {
           <span>{pct1((match.shadedRoute ?? 0) * 100)}</span>
         </div>
       </div>
+      {shade?.allZeroAtHour ? (
+        <div className="notice">
+          <strong>There is no shade on this route at noon, and that is a result.</strong> The raymarched shadow model returns
+          exactly zero shaded route fraction at all {n0(shade.atHour)} of the {n0(shade.hour)}:00 kickoffs. The sun is close to
+          overhead, the buildings are low and set back, and nothing along the corridor casts across the walking line. The shade
+          machinery runs and finds nothing to find, so none of the headline exposure is being explained by shade, and none of it can
+          be removed by modelling shade better.
+          {shade.best
+            ? ` The only match with any shaded route at all is the ${shortDate(shade.best.date)} evening kickoff, at ${pct1((shade.best.shaded_fraction_route ?? 0) * 100)}.`
+            : ''}
+        </div>
+      ) : null}
       <p className="label">
         Every figure in this panel comes from that match's own observed weather at {n0(match.stationCount)} airport stations, its
         own date's sun geometry, and a shade mask rebaked for that date and hour rather than reused from another match.
@@ -94,6 +107,9 @@ export default function Clock ({ data }) {
   const model = useMemo(() => (clock ? buildRows(clock) : null), [clock])
   const retro = useMemo(() => buildRetro(data.retrospective), [data.retrospective])
   const [match, setMatch] = useState(null)
+  const dates = useMemo(() => hourDates(data.meta), [data.meta])
+  const shade = useMemo(() => shadeFinding(data.retrospective), [data.retrospective])
+  const thresholdNote = clock?.summary?.threshold_sensitivity_note || null
 
   if ((!clock || !model || !model.rows.length) && !retro) {
     return (
@@ -143,7 +159,7 @@ export default function Clock ({ data }) {
           <div className="clock-top">
             <MatchTable model={retro} selected={selectedMatch?.date ?? null} onSelect={setMatch} />
             <div className="clock-side">
-              <MatchDetail match={selectedMatch} model={retro} />
+              <MatchDetail match={selectedMatch} model={retro} shade={shade} />
               <div className="controls-row">
                 <button type="button" className="ghost" onClick={() => setScreen('walk')}>
                   See the walk itself
@@ -155,7 +171,7 @@ export default function Clock ({ data }) {
             </div>
           </div>
 
-          <EveningControl model={retro} rmse={rmse} />
+          <EveningControl model={retro} rmse={rmse} thresholdNote={thresholdNote} />
 
           <section className="panel method-note" aria-label="How the seven matches were measured">
             <h3>What the measurement is, and what it approximates.</h3>
@@ -215,6 +231,8 @@ export default function Clock ({ data }) {
               max={model.max}
               threshold={clock.wbgt_threshold_c}
               extreme={clock.wbgt_extreme_c}
+              dates={dates}
+              note={thresholdNote}
             />
             <div className="clock-side">
               <FreeVersusCapital

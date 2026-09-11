@@ -14,7 +14,8 @@ import Ledger from './screens/Ledger.jsx'
 import Transfer from './screens/Transfer.jsx'
 import { provenanceFor } from './lib/provenance.js'
 import { n0, tempC } from './lib/format.js'
-import { buildRetro, longDate } from './lib/retro.js'
+import { buildRetro, longDate, shortDate } from './lib/retro.js'
+import { hourContext } from './lib/context.js'
 
 export default function App () {
   const { status, data, errors } = useData()
@@ -57,9 +58,17 @@ export default function App () {
   const topline = () => {
     if (!ready) return null
     if (houstonScreen) {
+      const ctx = hourContext(data.meta, data.retrospective, hour)
       return (
         <div className="topline" aria-label="Current view">
-          <span>{hour}:00 kickoff</span>
+          <span>
+            {hour}:00 modelled
+            {ctx.date ? `, ${shortDate(ctx.date)}` : ''}
+          </span>
+          <span className="sep" aria-hidden="true" />
+          <span>
+            {ctx.played > 0 ? `${n0(ctx.played)} of ${n0(ctx.total)} matches at this hour` : 'no match kicked off at this hour'}
+          </span>
           <span className="sep" aria-hidden="true" />
           <span>WBGT {tempC(data.threshold)} threshold</span>
           <span className="sep" aria-hidden="true" />

@@ -20,6 +20,7 @@ import { HOURS, setScreen, setSelected, useStore, useThemeName } from '../store.
 import { tokens } from '../lib/theme.js'
 import { VENUE_VIEWS } from '../lib/venues.js'
 import { lightDirection, sunFor } from '../lib/sun.js'
+import { shadeFinding } from '../lib/context.js'
 import { n0, pct1 } from '../lib/format.js'
 
 export default function MapScreen ({ data }) {
@@ -50,6 +51,7 @@ export default function MapScreen ({ data }) {
   const rasterBounds = data.heat.bounds || data.meta?.raster_bounds || data.bounds
   const segment = useMemo(() => data.segments.find(s => s.id === selected) || null, [data.segments, selected])
   const onHover = useCallback(info => setHover(info), [])
+  const shade = useMemo(() => shadeFinding(data.retrospective), [data.retrospective])
   const sun = useMemo(() => sunFor(hour, data.heat), [hour, data.heat])
   const effects = useMemo(() => {
     const light = tokens().map
@@ -117,8 +119,22 @@ export default function MapScreen ({ data }) {
   return (
     <div className="map-screen">
       <div className="col">
-        <HourScrubber totals={data.totals} stats={data.stats} walk={data.walk} threshold={data.threshold} clock={data.clock} />
-        <RankedList segments={data.segments} hour={hour} max={data.max.all} treated={treated} solution={solution} />
+        <HourScrubber
+          totals={data.totals}
+          stats={data.stats}
+          walk={data.walk}
+          threshold={data.threshold}
+          clock={data.clock}
+          shade={shade}
+        />
+        <RankedList
+          segments={data.segments}
+          hour={hour}
+          max={data.max.all}
+          treated={treated}
+          solution={solution}
+          shade={shade}
+        />
         <button type="button" className="continue" onClick={exportCsv}>
           Download ranked segments CSV
         </button>

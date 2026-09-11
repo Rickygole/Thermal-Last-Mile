@@ -99,9 +99,10 @@ narrative cites. Nothing in the browser recomputes a model at view time.
 
 4. **Land surface temperature coupling and the exposure raster
    (`pipeline/lst_houston.py`, `pipeline/s4_surface.py`).** Ten cloud-screened Landsat
-   Collection 2 Level 2 ST_B10 scenes from 2018 through 2024 (`data/out/meta.json`,
-   `sources[].scenes`), pulled via the Microsoft Planetary Computer STAC API, are pooled
-   and reprojected onto the same 1 m grid. The resulting land surface temperature anomaly
+   Collection 2 Level 2 ST_B10 scenes across eight independent capture dates, 2020-08-04
+   to 2024-08-07 (searched across 2018 through 2024 for the clearest available scenes,
+   `data/out/meta.json`, `sources[].scenes`), pulled via the Microsoft Planetary Computer
+   STAC API, are pooled and reprojected onto the same 1 m grid. The resulting land surface temperature anomaly
    is added to the interpolated station air temperature as
    `tair_cell = tair_station_interpolated + beta * (lst_cell - lst_area_mean)`, with
    `beta = 0.2` (Schwarz, N. et al. 2012, Ecological Indicators 18, 693-704), so that the
@@ -139,8 +140,13 @@ narrative cites. Nothing in the browser recomputes a model at view time.
    shaded-area specification in `pipeline/costs.yml`, are candidates for every segment
    they apply to. The optimizer is a cost-effectiveness greedy heuristic: at each step it
    buys whichever remaining (segment, intervention) pair removes the most degree-minutes
-   per dollar, repeating across 81 budget levels from 0 to a $2,000,000 cap in $25,000
-   steps (`pipeline/config.yml`, `optimizer`). It is explicitly a heuristic; ratio-greedy
+   per dollar, repeating across 81 budget levels from 0 to a $200,000 cap in $2,500
+   steps (`pipeline/config.yml`, `optimizer`). The axis is capped there rather than at some
+   far larger figure because every one of the 172 segments already carries at least one
+   funded intervention by roughly $52,500 spent (`data/out/equity.json`,
+   `optimizer_equity.saturation_budget_usd`); a wider axis would spend most of its range
+   pricing a segment-level decision that no longer exists once every segment is already
+   funded. It is explicitly a heuristic; ratio-greedy
    under a budget constraint, unlike greedy under a simple cardinality constraint, carries
    no formal approximation guarantee, and this project does not claim one. Two coverage
    horizons are computed from the same greedy logic: a near-term 2026 horizon, which
@@ -190,6 +196,29 @@ narrative cites. Nothing in the browser recomputes a model at view time.
     configuration and run artefacts, so neither can silently drift from what the code
     actually did.
 
+## Two structural findings, before the numbers
+
+Two results shape everything that follows, and both are reported as findings rather than
+treated as gaps to fill in later.
+
+**The corridor is close to uniformly hot, not hotspot-driven.** At the 12:00 kickoff hour,
+modelled WBGT across all 172 segments spans only 0.95 C, from 32.38 C to 33.33 C
+(`data/out/segments.geojson`, `wbgt.12` across every segment). There is no short stretch
+that is dramatically worse than the rest; the four approaches carry close to the same
+intensity end to end. That is also why ranking segments by exposure discriminates so
+little, and it is part of why the schedule finding below matters so much: shade cannot be
+targeted at a hotspot when there is no hotspot to target.
+
+**There is no shade on these routes for the model to find.** The raymarched building
+shadow mask returns a shaded route fraction of exactly 0.0 for every one of the 172
+segments at every noon kickoff (`data/out/segments.geojson`, `shade_frac.12`;
+`data/out/retrospective.json`, `matches[].shaded_fraction_route` for all six noon
+matches). The four approaches cross open surface parking and wide rights-of-way with
+essentially no canopy or shade structure along the walked path itself. Building a 1 m
+raymarch and finding nothing along the route for it to hit at noon is itself a result: it
+means every dollar priced in the shade budget below buys relief against a genuinely bare
+baseline, not against gaps in existing cover.
+
 ## Results, with uncertainty on every headline number
 
 Across the four approaches, 172 segments carry a total walked distance whose traversal
@@ -199,29 +228,34 @@ dividing by 1.3 m/s and 3600, multiplied by each approach's `fans` field; this q
 a function of geometry and the mode-share assumption, not of weather, and is constant
 across kickoff hours).
 
-At the 15:00 baseline kickoff hour, those fans accumulate **72,123 fan-degree-hours**
+At the 15:00 baseline kickoff hour, those fans accumulate **75,476 fan-degree-hours**
 above the 28 C WBGT threshold on the last mile to NRG Stadium
 (`data/out/kickoff_clock.json`, `hours.15.fan_hours_above_threshold`). Substituting each
 segment's `degmin_lo` and `degmin_hi` for `degmin` in that same fans-weighted sum gives an
-honest band of roughly **50,000 to 93,000 fan-degree-hours** around that central figure,
+honest band of roughly **53,000 to 97,000 fan-degree-hours** around that central figure,
 recomputable directly from `data/out/segments.geojson`. The hottest of the ten modelled
-hours is 14:00, at 88,378 fan-degree-hours (band roughly 64,000 to 102,000); the coolest
+hours is 14:00, at 89,609 fan-degree-hours (band roughly 65,600 to 102,100); the coolest
 modelled hours, 20:00 and 21:00, both reach 0.
 
 A shade budget targeted at the 15:00 baseline shows steep early returns. At $25,000 spent
 ($24,900 actually committed, 83 segment-intervention pairs funded, almost entirely $300
-street trees), the optimizer averts 3,540,003 degree-minutes summed across all ten
+street trees), the optimizer averts 3,707,063 degree-minutes summed across all ten
 modelled hours, at a marginal cost of $0.007 per degree-minute averted
 (`data/out/solutions.json`, `path."25000"`). At $50,000 spent, 166 pairs are funded and
-4,543,771 degree-minutes are averted at $0.011 per degree-minute. At the full $2,000,000
-cap ($1,989,100 actually spent, 297 pairs funded), 16,436,667 degree-minutes are averted
-at $0.121 per degree-minute, and the two most exposed approaches, Lot C and the Kirby
-Drive rideshare zone, together representing 43,332 of the 57,776 modelled fans, no longer
-have any segment whose peak WBGT crosses the 32 C extreme tier at all
-(`data/out/solutions.json`, `path."2000000"`, `fans_clear_of_extreme`). These optimizer
-figures use each hour's central meteorological estimate and do not themselves carry a
-Monte Carlo band; that is a limitation of the optimizer stage relative to the segment-level
-exposure figures above, and it is stated here rather than implied away.
+4,759,310 degree-minutes are averted at $0.011 per degree-minute. At the full $200,000 cap
+($191,100 actually spent, 181 pairs funded), 6,393,969 degree-minutes are averted at
+$0.030 per degree-minute (`data/out/solutions.json`, `path."200000"`). At this realistic
+cap, no segment on any approach drops its peak WBGT below the 32 C extreme tier for any of
+its fans; `fans_clear_of_extreme` is 0 at every one of the 81 budget levels modelled, not
+only at the cap. Treating nearly every segment removes a large share of degree-minutes
+without ever pushing a segment's peak reading under the extreme threshold. An earlier
+version of this narrative, built against a budget axis extended a full order of magnitude
+past the point every segment was already funded, reported two approaches fully cleared of
+the extreme tier at that inflated cap; that finding does not survive under the corrected,
+realistic budget range and is retracted here rather than left standing. These optimizer figures use
+each hour's central meteorological estimate and do not themselves carry a Monte Carlo
+band; that is a limitation of the optimizer stage relative to the segment-level exposure
+figures above, and it is stated here rather than implied away.
 
 ## The schedule analysis, read retrospectively
 
@@ -243,7 +277,7 @@ kicked off at 19:00 (`pipeline/config.yml`, `fixtures.matches`). Measured from e
 match's own observed weather, the seven matches accumulated **297,665 fan-degree-hours**
 above the 28 C WBGT threshold on the last mile to NRG Stadium across the tournament
 (`data/out/retrospective.json`, `tournament_total.tournament_total_fan_degree_hours_above_threshold`),
-ranging match to match from 20,066 fan-degree-hours (20 June) to 87,061 (4 July), with the
+ranging match to match from 23,136 fan-degree-hours (20 June) to 87,061 (4 July), with the
 one evening kickoff, 26 June, at 0 (`data/out/retrospective.json`, `matches[].fan_degree_hours_above_threshold`).
 This measured total differs from a naive same-hour design-condition estimate, and that
 difference is itself informative: it shows how much day-to-day weather variation matters
@@ -253,8 +287,8 @@ even at a fixed kickoff hour, which a generalized sweep by construction cannot s
 matches, it recomputes that same date's exposure at 19:00 instead, the hour the one
 already-evening match actually used, holding that date's own observed weather fixed and
 changing only the clock hour and the resulting sun geometry and shade. Across the six noon
-matches, this counterfactual removes 273,066 of the 297,665 tournament-wide fan-degree-hours,
-**91.7 percent**, at zero capital cost, purely from moving kickoff to an hour NRG had
+matches, this counterfactual removes 273,445 of the 297,665 tournament-wide fan-degree-hours,
+**91.9 percent**, at zero capital cost, purely from moving kickoff to an hour NRG had
 already used once during this same tournament
 (`data/out/retrospective.json`, `counterfactual_evening_kickoff.totals`). This is not a
 forecast or a recommendation to reschedule matches that have already been played; it is a
@@ -269,9 +303,9 @@ single hottest candidate match date, not a specific match's own weather) rather 
 seven actually-played dates. That sweep is explicit that it is "appropriate to
 forecasting, not to measuring a past event," and is the tool this project actually
 recommends for a venue where the kickoff decision has not yet been made: at the 15:00
-design condition it finds 72,123 fan-degree-hours (band roughly 50,000 to 93,000, derived
-above), falling to 0 at 20:00 and 21:00 and peaking at 88,378 at 14:00 (band roughly
-64,000 to 102,000). Both files agree on the same underlying conclusion by different, and
+design condition it finds 75,476 fan-degree-hours (band roughly 53,000 to 97,000, derived
+above), falling to 0 at 20:00 and 21:00 and peaking at 89,609 at 14:00 (band roughly
+65,600 to 102,100). Both files agree on the same underlying conclusion by different, and
 appropriately different, methods: for this walk, in this climate, kickoff hour is worth
 an order of magnitude more than any capital shade spend modelled in this project, and it
 costs nothing to choose.
@@ -284,11 +318,11 @@ important limitation of this analysis is stated plainly in that file and repeate
 of 16 census tracts returned for the study area's bounding box, only **3 distinct tracts**
 actually contain a segment midpoint (`data/out/equity.json`,
 `svi_source.join_diagnostics.n_tracts_matched_to_a_segment`). A segment-level correlation
-between exposure and SVI across all 172 segments (Pearson r = 0.207, p = 0.0065; Spearman
-r = 0.254, p = 0.0008) looks statistically confident, but it pseudo-replicates: every
+between exposure and SVI across all 172 segments (Pearson r = 0.1996, p = 0.0087; Spearman
+r = 0.2411, p = 0.0014) looks statistically confident, but it pseudo-replicates: every
 segment inside the same tract shares one identical SVI value, so the true independent
 sample size is 3, not 172. Collapsed honestly to the tract level, the same relationship is
-Pearson r = 0.50 on n = 3, p = 0.667, not distinguishable from no relationship at all
+Pearson r = 0.5032 on n = 3, p = 0.6643, not distinguishable from no relationship at all
 (`data/out/equity.json`, `correlation_exposure_vs_svi_tract_level`). Neither version
 should be read as a finding about heat and social vulnerability in Houston generally; the
 study area is one stadium's four approach corridors, which is simply too small a sample
@@ -296,8 +330,8 @@ of tracts to say anything general.
 
 What can be said with more confidence is about the optimizer's behaviour, not about the
 underlying geography: the shade budget optimizer contains no SVI term anywhere in its
-objective, yet at the full $2,000,000 cap the dollar-weighted mean SVI of the funded set
-is 0.4538, above the simple mean SVI of 0.4075 across all 172 segments
+objective, yet at the full $200,000 cap the dollar-weighted mean SVI of the funded set
+is 0.662, above the simple mean SVI of 0.4075 across all 172 segments
 (`data/out/equity.json`, `optimizer_equity.dollar_weighted_mean_svi_at_full_cap` and
 `baseline_mean_svi_all_172_segments`). A purely cost-effectiveness-driven allocation
 happens to be mildly progressive here, meaning it directs a disproportionate share of
@@ -353,8 +387,13 @@ run.
 - **Validation covers the spatial interpolation of station observations, not the
   Liljegren WBGT model itself.** No instrumented WBGT record exists for this site and
   these dates. See `docs/validation.md` for the full account, including the leave-one-out
-  cross validation result of RMSE 1.05 C, bias 0.03 C, n = 30 (`data/out/meta.json`,
-  `validation`).
+  cross validation result of RMSE 1.05 C, bias 0.03 C, n = 30, computed across the
+  ten-hour design-condition sweep (`data/out/meta.json`, `validation`). The figure that
+  actually applies to this project's headline is larger: RMSE 1.55 C, bias 0.06 C, largest
+  single error 3.89 C, n = 21, computed on the seven real match hours that produce the
+  retrospective tournament total (`data/out/retrospective.json`, `match_hour_validation`).
+  That is the number the headline should be read against, and it is stated here rather
+  than left for a reader to infer.
 - **Building heights come from OpenStreetMap tags, not LiDAR.** Missing or under-tagged
   buildings cast less shadow than they should, which biases modelled exposure high
   specifically where OSM coverage is weak; there is no equivalent mechanism that would

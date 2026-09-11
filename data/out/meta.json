@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-09-09T18:00:13Z",
+  "generated_utc": "2026-09-11T02:16:57Z",
   "model": {
     "wbgt": "Liljegren, J.C. et al. 2008. Modeling the wet bulb globe temperature using standard meteorological measurements. Journal of Occupational and Environmental Hygiene 5(10) 645-655.",
     "implementation": "pywbgt 3.0.7",
@@ -334,22 +334,22 @@
     },
     {
       "layer": "urban heat island corroboration using the organizers' sample data",
-      "product": "hackathon organiser urban-heat-index sample dataset, Houston market",
+      "product": "hackathon organizer supplied urban-heat-index sample dataset, Houston market",
       "n_points_inside_study_bbox": 210,
       "spearman_r": 0.147,
       "pearson_r": 0.193,
       "verdict": "weak rank agreement between the organizers' sample UHI index and this pipeline's Landsat derived heat anomaly at the sampled points. given the small sample size inside such a small study area, the additive noise the organizers disclose, and the coarse 1 to 11 ordinal scale of their index, this test has very little statistical power in either direction. it neither corroborates nor contradicts the Landsat field, and it should not be presented as support for it",
-      "organizer_data_limitation": "these datasets are hackathon organiser sample data, transformed from the real underlying sources with multiplicative noise added to counts and visitation, additive noise added to temperatures and other bounded environmental values, and spatial jittering applied to coordinates. the organizers state that findings from this data should not be used to make valid, reliable, or actionable assessments of any city, district, venue, or geographic area. every number in this file is used only for corroboration, relative weighting, or workflow demonstration, never as a measurement of real Houston conditions",
-      "provider": "hackathon organiser organizers via Box",
+      "organizer_data_limitation": "these datasets are hackathon organizer supplied sample data, transformed from the real underlying sources with multiplicative noise added to counts and visitation, additive noise added to temperatures and other bounded environmental values, and spatial jittering applied to coordinates. the organizers state that findings from this data should not be used to make valid, reliable, or actionable assessments of any city, district, venue, or geographic area. every number in this file is used only for corroboration, relative weighting, or workflow demonstration, never as a measurement of real Houston conditions",
+      "provider": "hackathon organizers via Box",
       "licence": "hackathon sample data, confidential, see data/out/uhi_validation.json"
     },
     {
       "layer": "organizer weather sample data cross check",
-      "product": "hackathon organiser daily-weather sample dataset, station KDWH",
+      "product": "hackathon organizer supplied daily-weather sample dataset, station KDWH",
       "weather_station_note": "the organizers' daily-weather sample carries 401 US station identifiers and no city or market column, and none of those identifiers are KHOU, KIAH, or KSGR, the three ASOS stations this pipeline already uses for Houston meteorology. KDWH, David Wayne Hooks Memorial Airport in Spring, Texas on the north side of the Houston metro, is the one identifier in the organizers' list recognizable as a real Houston area station, so it is used here",
       "method": "the organizers' daily-weather sample only covers 2020-01-01 through 2024-12-31, so it has no rows for the actual 2026 match dates in config.yml. for each match date this file instead averages the organizers' KDWH observations across every available year on that same month and day, and reports it next to this pipeline's own real ASOS observations for the actual 2026 match date at KHOU, KIAH and KSGR, already fetched by pipeline/common.py and pipeline/s2_wbgt.py. this is a same season sanity check, not a same day comparison, and the organizer side additionally carries the additive temperature noise and jittered station identity the organizers disclose. ASOS observations are not replaced or blended with this organizer data anywhere in the physics pipeline, they are shown side by side here only",
-      "organizer_data_limitation": "these datasets are hackathon organiser sample data, transformed from the real underlying sources with multiplicative noise added to counts and visitation, additive noise added to temperatures and other bounded environmental values, and spatial jittering applied to coordinates. the organizers state that findings from this data should not be used to make valid, reliable, or actionable assessments of any city, district, venue, or geographic area. every number in this file is used only for corroboration, relative weighting, or workflow demonstration, never as a measurement of real Houston conditions",
-      "provider": "hackathon organiser organizers via Box",
+      "organizer_data_limitation": "these datasets are hackathon organizer supplied sample data, transformed from the real underlying sources with multiplicative noise added to counts and visitation, additive noise added to temperatures and other bounded environmental values, and spatial jittering applied to coordinates. the organizers state that findings from this data should not be used to make valid, reliable, or actionable assessments of any city, district, venue, or geographic area. every number in this file is used only for corroboration, relative weighting, or workflow demonstration, never as a measurement of real Houston conditions",
+      "provider": "hackathon organizers via Box",
       "licence": "hackathon sample data, confidential, see data/out/organizer_weather.json"
     }
   ],
@@ -421,8 +421,8 @@
       "rideshare_kirby": 0.15,
       "fan_fest": 0.1
     },
-    "svi_note": "svi and canopy_pct populated from data/out/vulnerability_by_segment.json, produced by pipeline/s11_vulnerability.py, see data/out/equity.json for the CDC/ATSDR SVI vintage and field, the NLCD canopy source, and the per segment join method",
-    "canopy_pct_note": "svi and canopy_pct populated from data/out/vulnerability_by_segment.json, produced by pipeline/s11_vulnerability.py, see data/out/equity.json for the CDC/ATSDR SVI vintage and field, the NLCD canopy source, and the per segment join method"
+    "svi_note": "pipeline/s11_vulnerability.py has run, svi is populated from the CDC/ATSDR Social Vulnerability Index and patched into data/out/segments.geojson and data/out/vulnerability_by_segment.json, see data/out/equity.json for the vintage, field, and join method",
+    "canopy_pct_note": "pipeline/s11_vulnerability.py has run, canopy_pct is populated from the MRLC NLCD tree canopy cover raster and patched into data/out/segments.geojson and data/out/vulnerability_by_segment.json, see data/out/equity.json for the join method"
   },
   "walk_speed_ms": 1.3,
   "walk_segment_length_m": 20.0,
@@ -433,6 +433,14 @@
     "lot_c": "NRG Lot C",
     "rideshare_kirby": "Kirby Drive rideshare zone",
     "fan_fest": "Fan Fest site"
+  },
+  "derived_figures": {
+    "walk_graph_nodes": 12121,
+    "walk_graph_edges": 32397,
+    "sweep_at_fixture_hours_central": 352554.2,
+    "sweep_at_fixture_hours_low": 224056.8,
+    "sweep_at_fixture_hours_high": 493735.5,
+    "sweep_at_fixture_hours_note": "the hour sweep evaluated at the seven real kickoff hours, with its uncertainty band. this is a design condition figure and is larger than the measured tournament total in retrospective.json, which uses each match's own observed weather"
   },
   "n_segments": 172,
   "wbgt_threshold_c": 28.0,
@@ -445,16 +453,16 @@
       "tair_max_c": 36.29901123046875
     },
     "13": {
-      "min_c": 35.263023376464844,
-      "max_c": 36.84476852416992,
-      "range_c": 1.5817451477050781,
+      "min_c": 35.02386474609375,
+      "max_c": 36.645591735839844,
+      "range_c": 1.6217269897460938,
       "tair_min_c": 34.21267318725586,
       "tair_max_c": 38.01831817626953
     },
     "14": {
-      "min_c": 35.330997467041016,
-      "max_c": 36.91701889038086,
-      "range_c": 1.5860214233398438,
+      "min_c": 35.08100128173828,
+      "max_c": 36.70947265625,
+      "range_c": 1.6284713745117188,
       "tair_min_c": 34.47655487060547,
       "tair_max_c": 38.325157165527344
     },

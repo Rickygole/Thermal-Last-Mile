@@ -8,6 +8,8 @@ import { useLoopClock } from '../lib/useClock.js'
 import { setScreen, useStore, useThemeName } from '../store.js'
 import { VENUE_VIEWS } from '../lib/venues.js'
 import { n0, n1, n2, pct, tempC } from '../lib/format.js'
+import { hourContext, shadeFinding } from '../lib/context.js'
+import { longDate } from '../lib/retro.js'
 
 export default function Walk ({ data }) {
   const hour = useStore(s => s.hour)
@@ -18,6 +20,8 @@ export default function Walk ({ data }) {
   const mountedHours = useRasterWindow(hour)
   const bounds = data.heat.bounds || data.meta?.raster_bounds || data.bounds
   const stat = data.stats[hour]
+  const ctx = useMemo(() => hourContext(data.meta, data.retrospective, hour), [data.meta, data.retrospective, hour])
+  const shade = useMemo(() => shadeFinding(data.retrospective), [data.retrospective])
 
   const layers = useMemo(() => {
     const surface = data.heat.available
@@ -50,10 +54,13 @@ export default function Walk ({ data }) {
           <h2>
             One fan, one walk, {n2(data.walk[hour])} degree-minutes above WBGT {tempC(data.threshold)} at {hour}:00.
           </h2>
-          <p>
-            The average across {data.approaches.length} approaches, weighted by how many fans use each. The surface is modelled wet
-            bulb globe temperature across the whole catchment, the lines are the walking segments coloured by what one fan
-            accumulates on them.
+          <p className="walk-when">
+            {ctx.date ? `Modelled on ${longDate(ctx.date)}, the hottest of the ${n0(ctx.total)} match dates at this hour. ` : ''}
+            {ctx.played > 0
+              ? `${n0(ctx.played)} of the ${n0(ctx.total)} matches here kicked off at ${hour}:00.`
+              : `No match here kicked off at ${hour}:00${
+                  ctx.busiest ? `, ${n0(ctx.busiest.played)} of the ${n0(ctx.total)} kicked off at ${ctx.busiest.hour}:00` : ''
+                }. A design condition, not a fixture.`}
           </p>
           <div className="stat-grid">
             <div className="stat">
@@ -73,6 +80,17 @@ export default function Walk ({ data }) {
               <div className="v">{pct(stat.shade_mean * 100)}</div>
             </div>
           </div>
+          {shade?.allZeroAtHour && Number(hour) === shade.hour ? (
+            <p className="label walk-shade">
+              Zero shade is the measured answer. The raymarched shadow model returns exactly zero shaded route fraction at all{' '}
+              {n0(shade.atHour)} measured {n0(shade.hour)}:00 kickoffs, so none of the figure above is explained by shade.
+            </p>
+          ) : null}
+          <p>
+            The average across {data.approaches.length} approaches, weighted by how many fans use each. The surface is modelled wet
+            bulb globe temperature across the whole catchment, the lines are the walking segments coloured by what one fan
+            accumulates on them.
+          </p>
         </div>
       </div>
       <div className="walk-foot">

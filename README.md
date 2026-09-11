@@ -8,12 +8,43 @@ measures it. This project measures it, ranks every sidewalk segment by how much
 dangerous heat a fan actually absorbs crossing it, and reports where a fixed shade
 budget removes the most exposure per dollar.
 
-The measured result: **297,665 fan-degree-hours above the heat stress limit accumulated on the last mile across the seven NRG matches of 14 June to 4 July 2026, measured against each match's own observed weather. Six of the seven kicked off at noon, and 91.7 percent of the total traces to that. The one match played at 19:00 stayed below the threshold.**
+The measured result: **297,665 fan-degree-hours above the heat stress limit accumulated on the last mile across the seven NRG matches of 14 June to 4 July 2026, measured against each match's own observed weather. Six of the seven kicked off at noon, and 91.9 percent of the total traces to that. The one match played at 19:00 stayed below the threshold.**
 
 The unit is degree-hours, not hours. It is the accumulated excess of wet bulb globe
 temperature above the threshold, integrated over the time each person spends walking.
 Reporting it as fan-hours would inflate the quantity by a factor of six and it is not
 what the model computes.
+
+## What the metric does and does not cover
+
+Exposure is evaluated **one way, at the kickoff hour**. It does not model the arrival
+window before kickoff, and it does not model egress afterwards. Both omissions push the
+same direction: a noon kickoff empties into the early afternoon, which the hour sweep
+shows is hotter still, so the figures here understate what a noon match actually cost
+rather than overstating it. The quantity is therefore an exposure index for the inbound
+walk at one instant, not a trip total.
+
+Meteorology comes from the routine observation within the kickoff hour, while solar
+geometry and the shade bake are evaluated at the top of that hour. The two are up to
+about fifty minutes apart.
+
+## Two findings that shape everything else
+
+**The corridor is uniformly dangerous, not hotspot driven.** Across all 172 segments the
+modelled wet bulb globe temperature at noon spans 0.95 C, and per trip exposure varies by
+well under ten percent once segment length is accounted for. There is no hot block to
+find. That is why ranking segments discriminates so little, and it is also why the
+schedule matters so much: shade cannot be targeted when everything is equally exposed.
+
+**There is no shade to model.** The raymarched building shadow model returns a shaded
+route fraction of exactly zero at every noon kickoff. The approaches to NRG cross open
+surface parking with almost no canopy and no shading structures. Building a 1 m shadow
+model and finding nothing to cast a shadow is a result, and it is reported as one rather
+than presented as a working input.
+
+Together these say the same thing. The last mile is not a map with a problem on it. The
+whole of it is the problem, which leaves the hour on the clock as the only lever that
+moves at scale.
 
 ## Scope and disclaimer
 
@@ -93,16 +124,24 @@ The physics runs offline and the browser only draws.
 ```
                     OFFLINE                          STATIC              BROWSER
 
-  ASOS  NSRDB  Landsat  LiDAR  OSM  GTFS
+  ASOS  NSRDB  Landsat  LiDAR  OSM  GTFS  organiser sample data (optional, s9 only)
         |
-   s1 network      OSM pedestrian graph
-   s2 wbgt         Liljegren WBGT per cell per hour
-   s3 shadow       vectorised raymarch, boolean shade mask   -->  shade_{hh}.png
-   s4 surface      exposure raster per kickoff hour
-   s5 routes       route, split, integrate along path        -->  segments.geojson
-   s6 optimize     cost effectiveness greedy, 81 levels      -->  solutions.json
-   s7 cities       eleven city comparison                    -->  cities.json
-   meta            provenance generated, never typed         -->  meta.json
+   s1  network       OSM pedestrian graph
+   s2  wbgt          Liljegren WBGT per cell per hour
+   s3  shadow        vectorised raymarch, boolean shade mask     -->  shade_{hh}.png
+   s4  surface       exposure raster per kickoff hour
+   s5  routes        route, split, integrate along path          -->  segments.geojson
+   s6  optimize      cost effectiveness greedy, 81 levels        -->  solutions.json
+   s7  cities        eleven city comparison                      -->  cities.json
+   s9  organizer     excluded from the default run, confidential -->  uhi_validation.json,
+                     inputs, run manually if you have access          fan_volumes.json,
+                                                                       organizer_weather.json
+   s10 kickoff       generalized ten-hour design-condition sweep -->  kickoff_clock.json
+   s11 vulnerability SVI and tree canopy joined per segment      -->  vulnerability_by_segment.json,
+                                                                       equity.json
+   s12 retrospective each match's own observed weather,          -->  retrospective.json
+                     rebaked shade, real kickoff date and hour        (the headline number)
+   meta              provenance generated, never typed           -->  meta.json
                                                                         |
                                                                    renderer
 ```
@@ -149,7 +188,13 @@ output is a list a public works department can act on.
 
 The table separates what actually produces the Houston number from what the comparative
 screen uses and what remains planned. Every claim on screen is traceable to a row marked
-IN USE, and `meta.json` is generated by the pipeline so this cannot drift.
+IN USE. `meta.json` and `docs/provenance.csv` are generated directly from the pipeline's
+own configuration and run artefacts rather than typed by hand, which keeps the ledger
+honest about what the code actually did, but generation alone does not stop prose written
+on top of those files from going stale once an upstream figure changes. `pipeline/check_figures.py`
+is the mechanism that actually enforces that every comma-grouped figure quoted in this
+project's prose still traces to a value in `data/out`; it should be run after every
+pipeline rerun, and it is what caught the drift this pass corrected.
 
 | Layer | Product | Provider | Status |
 | --- | --- | --- | --- |
@@ -158,8 +203,8 @@ IN USE, and `meta.json` is generated by the pipeline so this cannot drift.
 | Pedestrian network | OSM walk graph, 12,121 nodes and 32,397 edges | OpenStreetMap | IN USE, Houston model |
 | Venue footprint and gates | OSM building=stadium way | OpenStreetMap | IN USE, gates approximated |
 | Solar irradiance | pvlib clearsky Ineichen | pvlib | IN USE, substituted for NSRDB which needs a key |
-| Organiser heat index | organiser Box urban heat index, 765,609 points | hackathon organisers | IN USE, corroboration only, agreement was weak and is reported |
-| Organiser visits and POI | organiser Box, 137M visit rows | hackathon organisers | ATTEMPTED, derived fan volumes failed a plausibility gate and were rejected |
+| Organiser heat index | hackathon organiser urban heat index sample dataset (via Box), 80,959 Houston market points, 210 inside the study area | hackathon organisers | IN USE, corroboration only, agreement was weak and is reported |
+| Organiser visits and POI | hackathon organiser POI and store-visit sample dataset (via Box), 28.9M visit rows used for category rates | hackathon organisers | ATTEMPTED, derived fan volumes failed a plausibility gate and were rejected |
 | Canopy | NLCD Tree Canopy Cover 2021 | MRLC | IN USE, city ledger and per segment canopy |
 | Surface temperature | Landsat C2 L2 ST_B10, 10 pooled clear warm season scenes over 8 independent dates, 2020 to 2024 | USGS via Planetary Computer | IN USE, Houston heat field and city ledger |
 | LiDAR derived DSM | TNRIS and USGS 3DEP | TNRIS, USGS | NOT USED, OSM footprints substituted |
@@ -184,10 +229,11 @@ anyway and the discipline is worth more than the appearance of completeness.
   ranking is weighted by it.
 - Validation covers the spatial interpolation of station observations, not the WBGT model
   itself, because no instrumented WBGT record exists for this site and these dates.
-  Leave one out cross validation across 3 stations and 30 samples gives
-  RMSE 1.05 C and bias 0.03 C. These figures are generated into `meta.json` by the
-  pipeline and rendered in the methods panel; that file is authoritative if this prose
-  ever lags behind it.
+  Leave one out cross validation of the station interpolation gives RMSE 1.05 C across the
+  hour sweep. On the seven real match hours that produce the headline it is RMSE 1.55 C,
+  bias 0.06 C, largest single error 3.89 C, n 21. The second figure is the one that applies to
+  the tournament total, and it is the larger of the two, so it is the one to quote.
+  These are generated into `meta.json` and `retrospective.json` by the pipeline.
 
 The organiser sources are named on screen in the methods panel and the curated catalog is
 vendored at `data/raw/organizers/`.

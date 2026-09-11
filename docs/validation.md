@@ -45,13 +45,41 @@ Carlo air temperature perturbation used for `degmin_lo` and `degmin_hi` on every
 RMSE, and is explicitly described there as covering ASOS sensor accuracy of about 0.6 C
 plus this same representativeness error.
 
+## The headline retrospective figure needs its own, larger validation number
+
+The 1.05 C figure above is computed across the ten-hour design-condition sweep in
+`pipeline/s10_kickoff.py`, on whichever candidate match date each hour selected as
+hottest. It is not computed on the seven real match dates and hours that actually produce
+this project's headline, the 297,665 fan-degree-hour tournament total in
+`data/out/retrospective.json`. `pipeline/s12_retrospective.py` runs the identical
+leave-one-out interpolation check on exactly those seven real match hours and reports a
+separate, larger figure:
+
+- RMSE: 1.55 C
+- Bias: 0.06 C
+- Largest single error: 3.89 C
+- Stations held out: 3
+- Samples: 21 (3 stations times 7 match hours)
+- Quantity validated: air temperature, same method as above
+
+Source: `data/out/retrospective.json`, `match_hour_validation`. The file states this
+directly: "the wider figure reported in meta.json validation covers the hour sweep across
+its selected dates, not these match hours. this figure is the one that applies to the
+retrospective, and it is the larger of the two, so it is reported here rather than left to
+be inferred." Every reader of this project should treat 1.55 C, not 1.05 C, as the
+validation number standing behind the tournament headline; the 1.05 C figure remains the
+correct number for the generalized hour-sweep tool in `data/out/kickoff_clock.json`, a
+different quantity computed on a different set of dates.
+
 ## What was not validated: the WBGT model, and the resulting degree minute figures
 
 There is no field WBGT instrument at NRG Stadium's approaches for the 2026 match dates,
 so the Liljegren model's output cannot be checked against an observation at any point in
 this pipeline. Every degree-minute, fan-hour, and dollar-per-degree-minute figure in this
-project inherits the interpolation's honest 1.05 C RMSE, plus whatever additional error
-the WBGT physics itself carries, which is unmeasured here. Readers should treat the
+project inherits the interpolation's honest error, plus whatever additional error the
+WBGT physics itself carries, which is unmeasured here: 1.05 C RMSE for the hour-sweep
+figures in `data/out/kickoff_clock.json`, and the larger 1.55 C RMSE for the measured
+tournament headline in `data/out/retrospective.json`. Readers should treat the
 absolute magnitude of every headline number as a model estimate under stated assumptions,
 not as a measurement with an instrument behind it. The ranking of segments relative to one
 another, which is what the shade budget optimizer actually uses, is far more robust to
@@ -87,7 +115,7 @@ kickoff hour is computed as the sum, over every segment, of that segment's fan c
 its `degmin` for that hour, divided by 60 (`pipeline/s10_kickoff.py`,
 `fan_hours_above_threshold`). Substituting `degmin_lo` and `degmin_hi` for `degmin` in that
 same formula gives an honest low and high aggregate. Doing this for the 15:00 baseline
-kickoff gives approximately 50,000 to 93,000 fan-degree-hours around the central estimate
+kickoff gives approximately 53,000 to 97,000 fan-degree-hours around the central estimate
 reported in `data/out/kickoff_clock.json` (`hours.15.fan_hours_above_threshold`).
 
 Evaluating that same hour sweep at the seven real kickoff hours gives a central 352,554
@@ -174,7 +202,8 @@ the evidence did not hold up.
 
 | Check | What it validates | Result | Honest scope |
 | --- | --- | --- | --- |
-| ASOS leave-one-out cross validation | spatial interpolation of station air temperature | RMSE 1.05 C, bias 0.03 C, n=30 | not a validation of WBGT or of degree-minute output |
+| ASOS leave-one-out cross validation, hour sweep | spatial interpolation of station air temperature, ten-hour design-condition sweep | RMSE 1.05 C, bias 0.03 C, n=30 | applies to `data/out/kickoff_clock.json`, not the tournament headline |
+| ASOS leave-one-out cross validation, real match hours | spatial interpolation of station air temperature, the seven real match hours | RMSE 1.55 C, bias 0.06 C, largest error 3.89 C, n=21 | this is the figure that applies to the 297,665 fan-degree-hour headline |
 | Organiser urban heat index | rank agreement with the Landsat heat anomaly | Spearman 0.147, Pearson 0.193, n=210 | underpowered, inconclusive in either direction |
 | Organiser fan volumes | evidence-based approach mode share | rejected, 6.29x disagreement, structural blind spot on parking lots | fell back to a stated invented assumption |
 

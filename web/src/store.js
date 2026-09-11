@@ -11,11 +11,14 @@ const fromHash = () => {
 
 const bootTheme = applyTheme(resolveInitialTheme())
 
+export const DEFAULT_HOUR = '12'
+export const DEFAULT_BUDGET = 50000
+
 export const useStore = create(() => ({
   theme: bootTheme,
   screen: fromHash(),
-  hour: '17',
-  budget: 750000,
+  hour: DEFAULT_HOUR,
+  budget: DEFAULT_BUDGET,
   selected: null,
   heat: 0.45,
   pitch: 0,
@@ -48,7 +51,5 @@ export const useThemeRepaint = () => useStore(s => s.theme)
 export const HOURS = ['12', '13', '14', '15', '16', '17', '18', '19', '20', '21']
 export const BASELINE_HOUR = '15'
 export const HORIZONS = ['near', 'mature']
-export const BUDGET_STEP = 25000
-export const BUDGET_CAP = 2000000
 export const PITCH_PLAN = 0
 export const PITCH_OBLIQUE = 52

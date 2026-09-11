@@ -75,7 +75,7 @@ WEATHER_CANONICAL_COLUMNS = [
 ]
 
 ORGANIZER_DATA_LIMITATION = (
-    "these datasets are hackathon organiser sample data, transformed from the "
+    "these datasets are hackathon organizer supplied sample data, transformed from the "
     "real underlying sources with multiplicative noise added to counts and "
     "visitation, additive noise added to temperatures and other bounded "
     "environmental values, and spatial jittering applied to coordinates. the "

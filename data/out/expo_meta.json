@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-09-09T18:05:01Z",
+  "generated_utc": "2026-09-11T01:58:37Z",
   "provisional": false,
   "quantity": "wet bulb globe temperature",
   "unit": "degrees celsius",
@@ -55,16 +55,16 @@
       "sun_azimuth_deg": 103.78
     },
     "13": {
-      "min_c": 30.56,
-      "max_c": 36.72,
-      "mean_c": 35.4,
+      "min_c": 30.47,
+      "max_c": 36.52,
+      "mean_c": 35.19,
       "sun_elevation_deg": 80.98,
       "sun_azimuth_deg": 138.01
     },
     "14": {
-      "min_c": 30.57,
-      "max_c": 36.79,
-      "mean_c": 35.46,
+      "min_c": 30.47,
+      "max_c": 36.59,
+      "mean_c": 35.24,
       "sun_elevation_deg": 79.77,
       "sun_azimuth_deg": 229.83
     },

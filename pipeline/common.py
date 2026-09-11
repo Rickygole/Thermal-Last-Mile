@@ -150,15 +150,26 @@ def asos_day(station, date_str):
     return df
 
 
+ASOS_CALM_CEILING_MS = 1.5433
+ASOS_CALM_IMPUTED_MS = ASOS_CALM_CEILING_MS / 2.0
+PYWBGT_MIN_SPEED_MS = 1.0289
+
+
 def pedestrian_wind(wind_ms):
     walk = CFG["walk"]
     z_ref = walk.get("wind_measurement_height_m", 10.0)
     z_ped = walk.get("wind_pedestrian_height_m", 2.0)
     z0 = walk.get("surface_roughness_m", 0.03)
-    if wind_ms <= 0 or z_ped <= z0:
-        return max(wind_ms, 0.0)
+    reported = max(float(wind_ms), 0.0)
+    effective_10m = ASOS_CALM_IMPUTED_MS if reported <= 0.0 else reported
+    if z_ped <= z0:
+        return max(effective_10m, 0.5)
     factor = math.log(z_ped / z0) / math.log(z_ref / z0)
-    return max(wind_ms * factor, 0.5)
+    return max(effective_10m * factor, 0.5)
+
+
+def wind_used_by_model(pedestrian_ms):
+    return max(float(pedestrian_ms), PYWBGT_MIN_SPEED_MS)
 
 
 def station_hour_obs(station, date_str, hour):
@@ -181,6 +192,8 @@ def station_hour_obs(station, date_str, hour):
         "tdew_c": float(row["dwpc"]),
         "wind_ms": pedestrian_wind(wind_10m),
         "wind_ms_10m": wind_10m,
+        "wind_ms_used_by_model": wind_used_by_model(pedestrian_wind(wind_10m)),
+        "wind_reported_calm": wind_10m <= 0.0,
         "pres_hpa": pres_hpa,
         "valid": str(row["valid"]),
     }

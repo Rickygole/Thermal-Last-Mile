@@ -1,6 +1,6 @@
 {
   "purpose": "answers whether heat exposure and the current cost effectiveness optimizer's spending are distributed regressively with respect to social vulnerability around the four NRG Stadium pedestrian approaches, using the CDC/ATSDR Social Vulnerability Index and NLCD tree canopy joined onto the 172 walk segments produced by pipeline/s5_routes.py",
-  "generated_utc": "2026-09-09T18:05:02Z",
+  "generated_utc": "2026-09-11T02:07:25Z",
   "svi_source": {
     "status": "real",
     "vintage": "2022",
@@ -115,18 +115,18 @@
   "exposure_definition": "exposure_degmin_per_trip is the mean of a segment's degmin field across every modeled kickoff hour in pipeline/config.yml, degmin itself is degree-minutes of WBGT above the 28 C threshold integrated along that segment for one pedestrian trip, this averages across hours rather than summing them because the modeled hours are alternative candidate kickoff times, not stages of a single trip",
   "correlation_exposure_vs_svi_segment_level": {
     "n": 172,
-    "pearson_r": 0.2028,
-    "pearson_p": 0.0076,
-    "spearman_r": 0.2493,
-    "spearman_p": 0.001,
+    "pearson_r": 0.1996,
+    "pearson_p": 0.0087,
+    "spearman_r": 0.2411,
+    "spearman_p": 0.0014,
     "x": "exposure_degmin_per_trip",
     "y": "svi"
   },
   "correlation_exposure_vs_svi_segment_level_caveat": "this correlation pseudo-replicates SVI, every segment inside the same census tract carries an identical SVI value, so the true independent sample size is the number of distinct tracts, not 172 segments, see correlation_exposure_vs_svi_tract_level below for the honest low powered version",
   "correlation_exposure_vs_svi_tract_level": {
     "n": 3,
-    "pearson_r": 0.5154,
-    "pearson_p": 0.6553,
+    "pearson_r": 0.5032,
+    "pearson_p": 0.6643,
     "spearman_r": 0.5,
     "spearman_p": 0.6667,
     "x": "mean_exposure_degmin_per_trip",
@@ -134,9 +134,9 @@
   },
   "correlation_exposure_vs_canopy_pct": {
     "n": 172,
-    "pearson_r": -0.1345,
-    "pearson_p": 0.0786,
-    "spearman_r": -0.2776,
+    "pearson_r": -0.1354,
+    "pearson_p": 0.0767,
+    "spearman_r": -0.2777,
     "spearman_p": 0.0002,
     "x": "exposure_degmin_per_trip",
     "y": "canopy_pct"
@@ -151,14 +151,14 @@
         "n_segments": 137,
         "svi_min": 0.2809,
         "svi_max": 0.6481,
-        "mean_exposure_degmin_per_trip": 0.968
+        "mean_exposure_degmin_per_trip": 0.957
       },
       {
         "bin": 2,
         "n_segments": 35,
         "svi_min": 0.7561,
         "svi_max": 0.7561,
-        "mean_exposure_degmin_per_trip": 1.037
+        "mean_exposure_degmin_per_trip": 1.025
       }
     ]
   },
@@ -172,17 +172,92 @@
         "n_segments": 172,
         "canopy_pct_min": 0.0,
         "canopy_pct_max": 19.0,
-        "mean_exposure_degmin_per_trip": 0.982
+        "mean_exposure_degmin_per_trip": 0.971
       }
     ]
   },
   "optimizer_equity": {
-    "method": "the optimizer in pipeline/s6_optimize.py selects segment and intervention pairs by cost effectiveness only, averted degree-minutes per dollar, with no SVI term anywhere in its objective or constraints, this analysis maps the funded set at each reported budget back to segment SVI to see what the blind objective happens to produce, two views are reported, set membership at successive budgets, which saturates almost immediately because the cheapest intervention is cost effective nearly everywhere, and a dollar weighted mean SVI at the full cap, which is the more informative number because it accounts for the fact that some interventions cost 50 to 60 times more than others per segment",
+    "method": "the optimizer in pipeline/s6_optimize.py selects segment and intervention pairs by cost effectiveness only, averted degree-minutes per dollar, with no SVI term anywhere in its objective or constraints, this analysis maps the funded set at each budget level in data/out/solutions.json back to segment SVI to see what the blind objective happens to produce, three views are reported, set membership at successive budgets, which saturates almost immediately because the cheapest intervention is cost effective nearly everywhere, a dollar weighted mean SVI curve across every budget level, which accounts for the fact that some interventions cost 50 to 60 times more than others per segment, and an explicit statement of how much that curve moves, because a single point on it is not a reportable effect size",
     "baseline_mean_svi_all_172_segments": 0.4075,
     "baseline_median_svi_all_172_segments": 0.2809,
-    "saturation_budget_usd": 75000,
-    "saturation_note": "budget level, if any, at which every one of the 172 segments already has at least one funded intervention, past this point membership based equity comparisons are meaningless because everyone is already funded, this happens quickly because a single street tree is only 300 USD",
+    "n_distinct_svi_tract_values": 3,
+    "saturation_budget_usd": 52500,
+    "saturation_note": "budget level, if any, at which every one of the 172 segments already has at least one funded intervention, this happens quickly because a single street tree is only 300 USD. below this budget, comparing which segments are funded against the full segment set is a meaningful membership based equity check. at or above it, every segment is already funded, so a membership based comparison is vacuous, everyone is in the funded set regardless of SVI, only the dollar weighted curve remains informative above saturation, and even that keeps moving because additional spend concentrates on pricier interventions on a subset of the already-funded segments",
     "by_budget_usd": {
+      "2500": {
+        "spent": 2400.0,
+        "n_unique_segments_funded": 8,
+        "n_total_segments": 172,
+        "mean_svi_funded": 0.7561,
+        "median_svi_funded": 0.7561,
+        "mean_canopy_pct_funded": 1.1,
+        "funded_segments_by_approach": {
+          "lot_c": 8
+        },
+        "averted_degmin": 503563.2
+      },
+      "7500": {
+        "spent": 7500.0,
+        "n_unique_segments_funded": 25,
+        "n_total_segments": 172,
+        "mean_svi_funded": 0.6991,
+        "median_svi_funded": 0.7561,
+        "mean_canopy_pct_funded": 0.35,
+        "funded_segments_by_approach": {
+          "lot_c": 25
+        },
+        "averted_degmin": 1516287.7
+      },
+      "10000": {
+        "spent": 9900.0,
+        "n_unique_segments_funded": 33,
+        "n_total_segments": 172,
+        "mean_svi_funded": 0.6553,
+        "median_svi_funded": 0.7561,
+        "mean_canopy_pct_funded": 0.27,
+        "funded_segments_by_approach": {
+          "lot_c": 33
+        },
+        "averted_degmin": 1982866.2
+      },
+      "12500": {
+        "spent": 12300.0,
+        "n_unique_segments_funded": 41,
+        "n_total_segments": 172,
+        "mean_svi_funded": 0.675,
+        "median_svi_funded": 0.7561,
+        "mean_canopy_pct_funded": 0.96,
+        "funded_segments_by_approach": {
+          "lot_c": 41
+        },
+        "averted_degmin": 2444712.4
+      },
+      "17500": {
+        "spent": 17400.0,
+        "n_unique_segments_funded": 58,
+        "n_total_segments": 172,
+        "mean_svi_funded": 0.5803,
+        "median_svi_funded": 0.7561,
+        "mean_canopy_pct_funded": 2.36,
+        "funded_segments_by_approach": {
+          "lot_c": 56,
+          "rideshare_kirby": 2
+        },
+        "averted_degmin": 3275270.3
+      },
+      "22500": {
+        "spent": 22500.0,
+        "n_unique_segments_funded": 75,
+        "n_total_segments": 172,
+        "mean_svi_funded": 0.5712,
+        "median_svi_funded": 0.6481,
+        "mean_canopy_pct_funded": 2.01,
+        "funded_segments_by_approach": {
+          "lot_c": 56,
+          "rideshare_kirby": 19
+        },
+        "averted_degmin": 3577412.1
+      },
       "25000": {
         "spent": 24900.0,
         "n_unique_segments_funded": 83,
@@ -195,56 +270,705 @@
           "rideshare_kirby": 25,
           "metrorail_stadium_park": 2
         },
-        "averted_degmin": 3751140.5
+        "averted_degmin": 3707063.1
+      },
+      "27500": {
+        "spent": 27300.0,
+        "n_unique_segments_funded": 91,
+        "n_total_segments": 172,
+        "mean_svi_funded": 0.5202,
+        "median_svi_funded": 0.6481,
+        "mean_canopy_pct_funded": 2.11,
+        "funded_segments_by_approach": {
+          "lot_c": 56,
+          "rideshare_kirby": 25,
+          "metrorail_stadium_park": 10
+        },
+        "averted_degmin": 3815862.8
+      },
+      "32500": {
+        "spent": 32400.0,
+        "n_unique_segments_funded": 108,
+        "n_total_segments": 172,
+        "mean_svi_funded": 0.4825,
+        "median_svi_funded": 0.2809,
+        "mean_canopy_pct_funded": 1.78,
+        "funded_segments_by_approach": {
+          "fan_fest": 9,
+          "lot_c": 56,
+          "rideshare_kirby": 25,
+          "metrorail_stadium_park": 18
+        },
+        "averted_degmin": 4040030.8
+      },
+      "37500": {
+        "spent": 37500.0,
+        "n_unique_segments_funded": 125,
+        "n_total_segments": 172,
+        "mean_svi_funded": 0.4551,
+        "median_svi_funded": 0.2809,
+        "mean_canopy_pct_funded": 1.53,
+        "funded_segments_by_approach": {
+          "fan_fest": 23,
+          "lot_c": 56,
+          "rideshare_kirby": 25,
+          "metrorail_stadium_park": 21
+        },
+        "averted_degmin": 4257232.5
+      },
+      "40000": {
+        "spent": 39900.0,
+        "n_unique_segments_funded": 133,
+        "n_total_segments": 172,
+        "mean_svi_funded": 0.4446,
+        "median_svi_funded": 0.2809,
+        "mean_canopy_pct_funded": 1.56,
+        "funded_segments_by_approach": {
+          "fan_fest": 28,
+          "lot_c": 56,
+          "rideshare_kirby": 25,
+          "metrorail_stadium_park": 24
+        },
+        "averted_degmin": 4358139.1
+      },
+      "42500": {
+        "spent": 42300.0,
+        "n_unique_segments_funded": 141,
+        "n_total_segments": 172,
+        "mean_svi_funded": 0.4353,
+        "median_svi_funded": 0.2809,
+        "mean_canopy_pct_funded": 1.78,
+        "funded_segments_by_approach": {
+          "fan_fest": 35,
+          "lot_c": 56,
+          "rideshare_kirby": 25,
+          "metrorail_stadium_park": 25
+        },
+        "averted_degmin": 4457670.2
+      },
+      "47500": {
+        "spent": 47400.0,
+        "n_unique_segments_funded": 158,
+        "n_total_segments": 172,
+        "mean_svi_funded": 0.4187,
+        "median_svi_funded": 0.2809,
+        "mean_canopy_pct_funded": 1.85,
+        "funded_segments_by_approach": {
+          "fan_fest": 50,
+          "lot_c": 56,
+          "rideshare_kirby": 25,
+          "metrorail_stadium_park": 27
+        },
+        "averted_degmin": 4666408.3
+      },
+      "52500": {
+        "spent": 51600.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "mean_svi_funded": 0.4075,
+        "median_svi_funded": 0.2809,
+        "mean_canopy_pct_funded": 1.7,
+        "funded_segments_by_approach": {
+          "fan_fest": 53,
+          "lot_c": 56,
+          "rideshare_kirby": 25,
+          "metrorail_stadium_park": 38
+        },
+        "averted_degmin": 4793929.5
+      },
+      "200000": {
+        "spent": 191100.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "mean_svi_funded": 0.4075,
+        "median_svi_funded": 0.2809,
+        "mean_canopy_pct_funded": 1.7,
+        "funded_segments_by_approach": {
+          "fan_fest": 53,
+          "lot_c": 56,
+          "rideshare_kirby": 25,
+          "metrorail_stadium_park": 38
+        },
+        "averted_degmin": 6393969.3
+      }
+    },
+    "dollar_weighted_mean_svi_curve": {
+      "2500": {
+        "spent": 2400.0,
+        "n_unique_segments_funded": 8,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.7561,
+        "below_saturation": true
+      },
+      "5000": {
+        "spent": 4800.0,
+        "n_unique_segments_funded": 16,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.7561,
+        "below_saturation": true
+      },
+      "7500": {
+        "spent": 7500.0,
+        "n_unique_segments_funded": 25,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.6991,
+        "below_saturation": true
+      },
+      "10000": {
+        "spent": 9900.0,
+        "n_unique_segments_funded": 33,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.6553,
+        "below_saturation": true
+      },
+      "12500": {
+        "spent": 12300.0,
+        "n_unique_segments_funded": 41,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.675,
+        "below_saturation": true
+      },
+      "15000": {
+        "spent": 15000.0,
+        "n_unique_segments_funded": 50,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.6135,
+        "below_saturation": true
+      },
+      "17500": {
+        "spent": 17400.0,
+        "n_unique_segments_funded": 58,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.5803,
+        "below_saturation": true
+      },
+      "20000": {
+        "spent": 19800.0,
+        "n_unique_segments_funded": 66,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.5774,
+        "below_saturation": true
+      },
+      "22500": {
+        "spent": 22500.0,
+        "n_unique_segments_funded": 75,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.5712,
+        "below_saturation": true
+      },
+      "25000": {
+        "spent": 24900.0,
+        "n_unique_segments_funded": 83,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.5432,
+        "below_saturation": true
+      },
+      "27500": {
+        "spent": 27300.0,
+        "n_unique_segments_funded": 91,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.5202,
+        "below_saturation": true
+      },
+      "30000": {
+        "spent": 30000.0,
+        "n_unique_segments_funded": 100,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.4986,
+        "below_saturation": true
+      },
+      "32500": {
+        "spent": 32400.0,
+        "n_unique_segments_funded": 108,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.4825,
+        "below_saturation": true
+      },
+      "35000": {
+        "spent": 34800.0,
+        "n_unique_segments_funded": 116,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.4686,
+        "below_saturation": true
+      },
+      "37500": {
+        "spent": 37500.0,
+        "n_unique_segments_funded": 125,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.4551,
+        "below_saturation": true
+      },
+      "40000": {
+        "spent": 39900.0,
+        "n_unique_segments_funded": 133,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.4446,
+        "below_saturation": true
+      },
+      "42500": {
+        "spent": 42300.0,
+        "n_unique_segments_funded": 141,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.4353,
+        "below_saturation": true
+      },
+      "45000": {
+        "spent": 45000.0,
+        "n_unique_segments_funded": 150,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.4261,
+        "below_saturation": true
+      },
+      "47500": {
+        "spent": 47400.0,
+        "n_unique_segments_funded": 158,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.4187,
+        "below_saturation": true
       },
       "50000": {
         "spent": 49800.0,
         "n_unique_segments_funded": 166,
         "n_total_segments": 172,
-        "mean_svi_funded": 0.4121,
-        "median_svi_funded": 0.2809,
-        "mean_canopy_pct_funded": 1.76,
-        "funded_segments_by_approach": {
-          "fan_fest": 53,
-          "lot_c": 56,
-          "rideshare_kirby": 25,
-          "metrorail_stadium_park": 32
-        },
-        "averted_degmin": 4814951.1
+        "dollar_weighted_mean_svi": 0.4121,
+        "below_saturation": true
+      },
+      "52500": {
+        "spent": 51600.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.4075,
+        "below_saturation": false
+      },
+      "55000": {
+        "spent": 51600.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.4075,
+        "below_saturation": false
+      },
+      "57500": {
+        "spent": 51600.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.4075,
+        "below_saturation": false
+      },
+      "60000": {
+        "spent": 51600.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.4075,
+        "below_saturation": false
+      },
+      "62500": {
+        "spent": 51600.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.4075,
+        "below_saturation": false
+      },
+      "65000": {
+        "spent": 51600.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.4075,
+        "below_saturation": false
+      },
+      "67500": {
+        "spent": 67100.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.488,
+        "below_saturation": false
+      },
+      "70000": {
+        "spent": 67100.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.488,
+        "below_saturation": false
+      },
+      "72500": {
+        "spent": 67100.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.488,
+        "below_saturation": false
       },
       "75000": {
         "spent": 67100.0,
         "n_unique_segments_funded": 172,
         "n_total_segments": 172,
-        "mean_svi_funded": 0.4075,
-        "median_svi_funded": 0.2809,
-        "mean_canopy_pct_funded": 1.7,
-        "funded_segments_by_approach": {
-          "fan_fest": 53,
-          "lot_c": 56,
-          "rideshare_kirby": 25,
-          "metrorail_stadium_park": 38
-        },
-        "averted_degmin": 5032362.6
+        "dollar_weighted_mean_svi": 0.488,
+        "below_saturation": false
       },
-      "2000000": {
-        "spent": 1989100.0,
+      "77500": {
+        "spent": 67100.0,
         "n_unique_segments_funded": 172,
         "n_total_segments": 172,
-        "mean_svi_funded": 0.4075,
-        "median_svi_funded": 0.2809,
-        "mean_canopy_pct_funded": 1.7,
-        "funded_segments_by_approach": {
-          "fan_fest": 53,
-          "lot_c": 56,
-          "rideshare_kirby": 25,
-          "metrorail_stadium_park": 38
-        },
-        "averted_degmin": 17351097.7
+        "dollar_weighted_mean_svi": 0.488,
+        "below_saturation": false
+      },
+      "80000": {
+        "spent": 67100.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.488,
+        "below_saturation": false
+      },
+      "82500": {
+        "spent": 67100.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.488,
+        "below_saturation": false
+      },
+      "85000": {
+        "spent": 82600.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.5383,
+        "below_saturation": false
+      },
+      "87500": {
+        "spent": 82600.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.5383,
+        "below_saturation": false
+      },
+      "90000": {
+        "spent": 82600.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.5383,
+        "below_saturation": false
+      },
+      "92500": {
+        "spent": 82600.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.5383,
+        "below_saturation": false
+      },
+      "95000": {
+        "spent": 82600.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.5383,
+        "below_saturation": false
+      },
+      "97500": {
+        "spent": 82600.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.5383,
+        "below_saturation": false
+      },
+      "100000": {
+        "spent": 98100.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.5727,
+        "below_saturation": false
+      },
+      "102500": {
+        "spent": 98100.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.5727,
+        "below_saturation": false
+      },
+      "105000": {
+        "spent": 98100.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.5727,
+        "below_saturation": false
+      },
+      "107500": {
+        "spent": 98100.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.5727,
+        "below_saturation": false
+      },
+      "110000": {
+        "spent": 98100.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.5727,
+        "below_saturation": false
+      },
+      "112500": {
+        "spent": 98100.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.5727,
+        "below_saturation": false
+      },
+      "115000": {
+        "spent": 113600.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.5978,
+        "below_saturation": false
+      },
+      "117500": {
+        "spent": 113600.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.5978,
+        "below_saturation": false
+      },
+      "120000": {
+        "spent": 113600.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.5978,
+        "below_saturation": false
+      },
+      "122500": {
+        "spent": 113600.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.5978,
+        "below_saturation": false
+      },
+      "125000": {
+        "spent": 113600.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.5978,
+        "below_saturation": false
+      },
+      "127500": {
+        "spent": 113600.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.5978,
+        "below_saturation": false
+      },
+      "130000": {
+        "spent": 129100.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.6168,
+        "below_saturation": false
+      },
+      "132500": {
+        "spent": 129100.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.6168,
+        "below_saturation": false
+      },
+      "135000": {
+        "spent": 129100.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.6168,
+        "below_saturation": false
+      },
+      "137500": {
+        "spent": 129100.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.6168,
+        "below_saturation": false
+      },
+      "140000": {
+        "spent": 129100.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.6168,
+        "below_saturation": false
+      },
+      "142500": {
+        "spent": 129100.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.6168,
+        "below_saturation": false
+      },
+      "145000": {
+        "spent": 144600.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.6317,
+        "below_saturation": false
+      },
+      "147500": {
+        "spent": 144600.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.6317,
+        "below_saturation": false
+      },
+      "150000": {
+        "spent": 144600.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.6317,
+        "below_saturation": false
+      },
+      "152500": {
+        "spent": 144600.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.6317,
+        "below_saturation": false
+      },
+      "155000": {
+        "spent": 144600.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.6317,
+        "below_saturation": false
+      },
+      "157500": {
+        "spent": 144600.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.6317,
+        "below_saturation": false
+      },
+      "160000": {
+        "spent": 144600.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.6317,
+        "below_saturation": false
+      },
+      "162500": {
+        "spent": 160100.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.6437,
+        "below_saturation": false
+      },
+      "165000": {
+        "spent": 160100.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.6437,
+        "below_saturation": false
+      },
+      "167500": {
+        "spent": 160100.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.6437,
+        "below_saturation": false
+      },
+      "170000": {
+        "spent": 160100.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.6437,
+        "below_saturation": false
+      },
+      "172500": {
+        "spent": 160100.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.6437,
+        "below_saturation": false
+      },
+      "175000": {
+        "spent": 160100.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.6437,
+        "below_saturation": false
+      },
+      "177500": {
+        "spent": 175600.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.6537,
+        "below_saturation": false
+      },
+      "180000": {
+        "spent": 175600.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.6537,
+        "below_saturation": false
+      },
+      "182500": {
+        "spent": 175600.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.6537,
+        "below_saturation": false
+      },
+      "185000": {
+        "spent": 175600.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.6537,
+        "below_saturation": false
+      },
+      "187500": {
+        "spent": 175600.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.6537,
+        "below_saturation": false
+      },
+      "190000": {
+        "spent": 175600.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.6537,
+        "below_saturation": false
+      },
+      "192500": {
+        "spent": 191100.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.662,
+        "below_saturation": false
+      },
+      "195000": {
+        "spent": 191100.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.662,
+        "below_saturation": false
+      },
+      "197500": {
+        "spent": 191100.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.662,
+        "below_saturation": false
+      },
+      "200000": {
+        "spent": 191100.0,
+        "n_unique_segments_funded": 172,
+        "n_total_segments": 172,
+        "dollar_weighted_mean_svi": 0.662,
+        "below_saturation": false
       }
     },
-    "dollar_weighted_mean_svi_at_full_cap": 0.4538,
-    "dollar_weighted_minus_baseline_mean_svi": 0.0463,
+    "dollar_weighted_mean_svi_curve_summary": {
+      "n_budget_levels_reported": 80,
+      "min_dollar_weighted_mean_svi": 0.4075,
+      "min_at_budget_usd": 52500,
+      "max_dollar_weighted_mean_svi": 0.7561,
+      "max_at_budget_usd": 2500,
+      "range": 0.3486,
+      "monotonicity": "not monotone, it falls and then rises as the budget axis moves",
+      "value_at_configured_cap_usd": 200000,
+      "value_at_configured_cap": 0.662
+    },
+    "cap_dependence_warning": "the dollar weighted mean SVI of the funded set is not a fixed property of this corridor or of the optimizer, it is a function of where the budget axis happens to stop. across the 80 reported budget levels between 0 and the currently configured cap of 200000 USD alone it ranges from 0.4075 to 0.7561, not monotone, it falls and then rises as the budget axis moves, an external review additionally showed that raising the cap further, to 2,000,000 USD, moves the same statistic to roughly 0.4538 against the same 0.4075 baseline, a swing of about 5.5x in effect size versus the 0.662 read at the 200,000 USD cap used elsewhere in this repository. a single number quoted at one arbitrary cap is not defensible and should not be reported or interpreted as an equity finding on its own, only the curve above, together with its range, should be quoted",
+    "three_distinct_tract_value_caveat": "only 3 distinct census tracts overlap the 172 walk segments in this study area, so svi takes only that many distinct values across the whole corridor. every number in this section, the curve, its range, and the verdict below, is therefore effectively a statement about which of those few tracts happens to contain the cheapest cost effective segments at a given budget level, not a fine grained equity signal. the curve should not be read as implying more precision than a 3-value statistic can support",
+    "dollar_weighted_mean_svi_at_full_cap": 0.662,
+    "dollar_weighted_minus_baseline_mean_svi": 0.2545,
     "by_intervention_at_full_cap": {
       "tree": {
         "n_pairs_funded": 172,
@@ -252,19 +976,19 @@
         "mean_svi_of_funded_segments": 0.4075
       },
       "sail": {
-        "n_pairs_funded": 125,
-        "total_cost_usd": 1937500.0,
-        "mean_svi_of_funded_segments": 0.4551
+        "n_pairs_funded": 9,
+        "total_cost_usd": 139500.0,
+        "mean_svi_of_funded_segments": 0.7561
       }
     },
-    "verdict": "mildly progressive with respect to social vulnerability, the dollar weighted mean SVI of the funded set is higher than the simple mean SVI across all segments, meaning a disproportionate share of the money lands on higher vulnerability ground, purely as a byproduct of where those segments happen to be cost effective, not because the optimizer has any SVI aware logic"
+    "verdict": "the sign and size of any gap between the dollar weighted mean SVI of the funded set and the simple baseline mean depends on where the budget axis stops, see dollar_weighted_mean_svi_curve and cap_dependence_warning above. at the currently configured cap of 200000 USD the gap reads as 0.2545 (funded set above baseline), but this is one point on a curve that already ranges from 0.4075 to 0.7561 inside this repository's own solutions.json, and moves further outside that range if the cap changes, the greedy cost effectiveness objective has no SVI term anywhere in it, so any pattern here is a byproduct of which segments happen to be cost effective at a given spend level, not evidence of SVI aware behavior in either direction"
   },
   "unmodeled_repeat_worker_population": {
     "population_not_modeled": "stadium staff, concession and merchandise vendors, parking lot attendants and event security who walk an approach corridor repeatedly across a season rather than once as a ticketed fan does, this population is invisible to every number elsewhere in this pipeline, which is built around a single fan trip",
     "why_it_matters_for_equity": "service and gig staff at large Gulf Coast stadium events are disproportionately drawn from lower income, higher SVI neighborhoods relative to ticket buyers, this is a plausible equity concern based on general labor market patterns for stadium service work, it is not measured in this pipeline, no worker home address or wage data was fetched or is available here",
     "assumption_stated": "illustrative only, assumes a worker walks the full lot_c approach corridor (56 segments) once inbound and once outbound for every one of the 7 Houston NRG World Cup matches listed in pipeline/s7_cities.py, that match count itself is typed from general knowledge in this repository and is flagged there as unverified against FIFA's official schedule, giving 14 total one-way walks across the tournament, and further assumes every walk occurs under the same modeled kickoff-hour heat conditions used for the fan model, which ignores that a worker's actual shift start and end times, breaks, and indoor time differ from a fan's single walk to their seat",
-    "one_way_trip_degmin_this_approach_measured": 56.4,
-    "illustrative_cumulative_degmin_across_shifts": 790.1,
+    "one_way_trip_degmin_this_approach_measured": 55.8,
+    "illustrative_cumulative_degmin_across_shifts": 780.7,
     "ratio_to_a_single_fan_trip": 14.0,
     "mean_svi_along_this_approach": 0.5779,
     "caveat": "the degmin figures used here are real model output for the lot_c approach segments, the multiplication by a shift count is an illustrative what-if scaling, not a measurement of any actual worker's exposure, and no field data on stadium worker schedules, routes, or home tract exists in this repository"
