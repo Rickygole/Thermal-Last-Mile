@@ -8,7 +8,7 @@ measures it. This project measures it, ranks every sidewalk segment by how much
 dangerous heat a fan actually absorbs crossing it, and reports where a fixed shade
 budget removes the most exposure per dollar.
 
-The measured result: **297,665 fan-degree-hours above the heat stress limit accumulated on the last mile across the seven NRG matches of 14 June to 4 July 2026, measured against each match's own observed weather. Six of the seven kicked off at noon, and 91.9 percent of the total traces to that. The one match played at 19:00 stayed below the threshold.**
+The measured result: **463,703 fan-degree-hours above the heat stress limit accumulated on the last mile across the six NRG matches with a fully observed trip, counting the walk in and the walk back out, measured against each match's own observed weather. Six of the seven matches kicked off at noon, and 69.2 percent of that total would not have occurred had they kicked off in the evening instead.**
 
 The unit is degree-hours, not hours. It is the accumulated excess of wet bulb globe
 temperature above the threshold, integrated over the time each person spends walking.
@@ -17,12 +17,17 @@ what the model computes.
 
 ## What the metric does and does not cover
 
-Exposure is evaluated **one way, at the kickoff hour**. It does not model the arrival
-window before kickoff, and it does not model egress afterwards. Both omissions push the
-same direction: a noon kickoff empties into the early afternoon, which the hour sweep
-shows is hotter still, so the figures here understate what a noon match actually cost
-rather than overstating it. The quantity is therefore an exposure index for the inbound
-walk at one instant, not a trip total.
+Two quantities are reported and they answer different questions. The **kickoff instant**
+figure evaluates the inbound walk at the kickoff hour only, and gives 91.9 percent for the
+schedule share. The **trip total** counts the arrival window and the egress pulse as well,
+and gives 69.2 percent. The trip total is the headline, because it is the quantity the
+phrase "what the walk cost" actually describes.
+
+The two differ for a reason worth stating: egress lands in the hottest part of the
+afternoon, which makes every noon match worse, while the evening alternative is not free
+either, because a 19:00 kickoff draws its crowd across a hot 17:00 to 19:00 arrival window.
+Those effects run against each other, which is why the honest figure is lower than the
+instant figure rather than higher.
 
 Meteorology comes from the routine observation within the kickoff hour, while solar
 geometry and the shade bake are evaluated at the top of that hour. The two are up to
