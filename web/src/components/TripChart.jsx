@@ -2,14 +2,21 @@ import { DAY_END, DAY_START, actualCurve, alternateBand, clockLabel, valueAt } f
 import { n0 } from '../lib/format.js'
 
 const W = 1000
-const H = 320
+const H = 352
 const L = 66
 const R = 14
-const T = 18
+const T = 52
 const B = 46
+const CHAR = 2.9
 
 const x = t => L + ((t - DAY_START) / (DAY_END - DAY_START)) * (W - L - R)
 const yFor = max => v => H - B - (max > 0 ? v / max : 0) * (H - T - B)
+
+const centre = (from, to, text) => {
+  const half = text.length * CHAR
+  const mid = (x(from) + x(to)) / 2
+  return Math.min(Math.max(mid, L + half), W - R - half)
+}
 
 const line = (pts, y) => pts.map((p, i) => `${i ? 'L' : 'M'}${x(p.t).toFixed(1)} ${y(p.v).toFixed(1)}`).join(' ')
 
@@ -20,16 +27,16 @@ const area = (upper, lower, y) =>
     .map(p => `L${x(p.t).toFixed(1)} ${y(p.v).toFixed(1)}`)
     .join(' ')} Z`
 
-function Bands ({ clock, y, kind, window, delay, pulse, shape, labelled }) {
+function Bands ({ clock, window, delay, pulse }) {
   const top = T
   const bottom = H - B
   const cells = [
-    { from: clock.start, to: clock.kickoff, label: `arrival ${n0(window)} min, ${shape}`, fill: 'tc-band-in', show: true },
-    { from: clock.kickoff, to: clock.whistle, label: `in stadium ${n0(delay)} min assumed`, fill: 'tc-band-hold', show: labelled },
-    { from: clock.whistle, to: clock.end, label: `egress ${n0(pulse)} min, ${shape}`, fill: 'tc-band-out', show: labelled }
+    { from: clock.start, to: clock.kickoff, label: `walking in, ${n0(window)} min`, fill: 'tc-band-in', row: 0 },
+    { from: clock.kickoff, to: clock.whistle, label: `in the stadium, ${n0(delay)} min`, fill: 'tc-band-hold', row: 0 },
+    { from: clock.whistle, to: clock.end, label: `walking out, ${n0(pulse)} min`, fill: 'tc-band-out', row: 1 }
   ]
   return (
-    <g className={`tc-bands ${kind}`} aria-hidden="true">
+    <g className="tc-bands" aria-hidden="true">
       {cells.map(c => (
         <rect key={c.label} className={c.fill} x={x(c.from)} y={top} width={Math.max(1, x(c.to) - x(c.from))} height={bottom - top} />
       ))}
@@ -37,13 +44,11 @@ function Bands ({ clock, y, kind, window, delay, pulse, shape, labelled }) {
         <line key={`${c.label}-edge`} className="tc-band-edge" x1={x(c.from)} x2={x(c.from)} y1={top} y2={bottom} />
       ))}
       <line className="tc-band-edge" x1={x(clock.end)} x2={x(clock.end)} y1={top} y2={bottom} />
-      {cells
-        .filter(c => c.show)
-        .map(c => (
-          <text key={`${c.label}-text`} className="tc-band-label" transform={`translate(${x(c.from) + 12} ${bottom - 8}) rotate(-90)`}>
-            {c.label}
-          </text>
-        ))}
+      {cells.map(c => (
+        <text key={`${c.label}-text`} className="tc-band-label" x={centre(c.from, c.to, c.label)} y={top + 14 + c.row * 15}>
+          {c.label}
+        </text>
+      ))}
     </g>
   )
 }
@@ -52,7 +57,6 @@ export default function TripChart ({ model, match, minute }) {
   const curve = actualCurve(match)
   const band = alternateBand(match)
   if (!curve) return null
-  const shape = model.arrivalShape === model.egressShape ? `assumed ${model.arrivalShape}` : 'assumed shape'
   const peak = Math.max(curve[curve.length - 1].v, band ? band.total : 0, match.instant ?? 0)
   const max = peak > 0 ? peak * 1.12 : 1
   const y = yFor(max)
@@ -60,7 +64,6 @@ export default function TripChart ({ model, match, minute }) {
   const ticks = []
   for (let t = DAY_START; t <= DAY_END; t += 120) ticks.push(t)
 
-  const alt = band ? band.clock : null
   const summary = `Cumulative fan degree-hours across the match day. The trip as played reaches ${n0(
     curve[curve.length - 1].v
   )} by ${clockLabel(curve[curve.length - 1].t)}, against a kickoff instant figure of ${n0(match.instant)}.${
@@ -77,25 +80,32 @@ export default function TripChart ({ model, match, minute }) {
           <line className="tc-axis" x1={L} x2={W - R} y1={H - B} y2={H - B} />
         </g>
 
-        {alt ? (
-          <Bands clock={alt} y={y} kind="is-alt" window={model.window} delay={model.delay} pulse={model.pulse} shape={shape} labelled={false} />
-        ) : null}
-        <Bands
-          clock={match.clock}
-          y={y}
-          kind="is-actual"
-          window={model.window}
-          delay={model.delay}
-          pulse={model.pulse}
-          shape={shape}
-          labelled
-        />
+        <g className="tc-legend" aria-hidden="true">
+          <line className="tc-key-line" x1={L} x2={L + 20} y1={13} y2={13} />
+          <text x={L + 28} y={17}>
+            solid line, the trip as played at {match.hour}:00, ending at {n0(curve[curve.length - 1].v)}
+          </text>
+          {band ? (
+            <>
+              <rect className="tc-key-band" x={L} y={30} width={20} height={10} />
+              <text x={L + 28} y={39}>
+                shaded band, the same date moved to {model.alternateHour}:00, ending at {n0(band.total)} and not at zero
+              </text>
+            </>
+          ) : (
+            <text x={L} y={39}>
+              this match was already played at {model.alternateHour}:00, so there is no alternative to draw against it
+            </text>
+          )}
+        </g>
+
+        <Bands clock={match.clock} window={model.window} delay={model.delay} pulse={model.pulse} />
 
         {Number.isFinite(match.instant) ? (
           <g className="tc-instant">
             <line x1={L} x2={W - R} y1={y(match.instant)} y2={y(match.instant)} />
             <text x={W - R - 4} y={y(match.instant) - 7}>
-              kickoff instant figure, {n0(match.instant)}
+              kickoff instant basis, {n0(match.instant)}
             </text>
           </g>
         ) : null}
@@ -130,29 +140,13 @@ export default function TripChart ({ model, match, minute }) {
             {n0(max)}
           </text>
         </g>
-
-        <g className="tc-notes" aria-hidden="true">
-          <text x={x(match.clock.start) + 5} y={T + 14}>
-            trip as played, {match.hour}:00 kickoff
-          </text>
-          {alt ? (
-            <text x={x(alt.start) + 5} y={T + 14}>
-              same date at {model.alternateHour}:00, total published, leg split not
-            </text>
-          ) : null}
-          {!alt && match.evening ? (
-            <text x={L + 6} y={T + 14}>
-              no counterfactual, this match was already played at {model.alternateHour}:00
-            </text>
-          ) : null}
-        </g>
       </svg>
       <figcaption className="label">
-        Cumulative fan degree-hours above WBGT {n0(model.threshold)} C, clock time on the horizontal axis. The three bands are the
-        modelled trip structure and their durations are assumptions read from the shipped payload, not observations.{' '}
+        Cumulative fan degree-hours above WBGT {n0(model.threshold)} C, clock time across the bottom. The three shaded columns are
+        the modelled trip structure, and their durations are assumptions read from the shipped payload rather than observations.{' '}
         {band
-          ? `The shaded wedge is every cumulative path consistent with the published ${model.alternateHour}:00 counterfactual total for this same date, because that block publishes the total and not its split between the two legs. Its lowest possible path still ends far above zero.`
-          : `This match was already played at ${model.alternateHour}:00, so the counterfactual leaves it unchanged and there is no second curve to draw.`}
+          ? `The alternative is drawn as a band and not as a line because the payload publishes one number for the ${model.alternateHour}:00 counterfactual on this date, ${n0(band.total)}, and does not publish how it splits between walking in and walking out. Every path inside the band ends at that number: the upper edge puts all of it on the way in, the lower edge puts all of it on the way out, and the truth is somewhere between. What the band cannot do is reach zero. A ${model.alternateHour}:00 kickoff still has an arrival window, and it falls in the late afternoon.`
+          : `This match was already played at ${model.alternateHour}:00, so the counterfactual leaves it unchanged and there is no second path to draw.`}
       </figcaption>
     </figure>
   )
