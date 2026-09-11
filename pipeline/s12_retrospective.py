@@ -156,6 +156,12 @@ def station_mean(station_stats):
         "wind_ms": round(float(np.mean([v["wind_ms"] for v in station_stats.values()])), 2),
         "wind_ms_10m": round(float(np.mean([v["wind_ms_10m"] for v in station_stats.values()])), 2),
         "pres_hpa": round(float(np.mean([v["pres_hpa"] for v in station_stats.values()])), 2),
+        "wind_ms_used_by_model": round(
+            float(np.mean([v.get("wind_ms_used_by_model", v["wind_ms"]) for v in station_stats.values()])), 3
+        ),
+        "n_stations_reporting_calm": int(
+            sum(1 for v in station_stats.values() if v.get("wind_reported_calm"))
+        ),
     }
 
 
@@ -417,6 +423,46 @@ def build_counterfactual(fixtures, bounds, lst_field, lst_area_mean, dsm, pad_ce
     }
 
 
+
+def match_hour_validation():
+    rows = []
+    for m in c.CFG["fixtures"]["matches"]:
+        date_str, hour = str(m["date"]), int(m["kickoff_local_hour"])
+        obs = {}
+        for st in c.ASOS_STATIONS:
+            o = c.station_hour_obs(st, date_str, hour)
+            if o:
+                obs[st] = o
+        if len(obs) < 3:
+            continue
+        for target in obs:
+            others = {k: v for k, v in obs.items() if k != target}
+            tl = c.ASOS_STATIONS[target]
+            num = den = 0.0
+            for k, v in others.items():
+                s2 = c.ASOS_STATIONS[k]
+                dist = np.hypot(
+                    (s2["lat"] - tl["lat"]) * 111320.0,
+                    (s2["lon"] - tl["lon"]) * 111320.0 * np.cos(np.radians(tl["lat"])),
+                )
+                w = 1.0 / max(dist, 1.0) ** 2
+                num += w * v["tair_c"]
+                den += w
+            rows.append(num / den - obs[target]["tair_c"])
+    if not rows:
+        return None
+    e = np.array(rows)
+    return {
+        "quantity_validated": "air temperature",
+        "rmse_c": round(float(np.sqrt((e ** 2).mean())), 2),
+        "bias_c": round(float(e.mean()), 2),
+        "max_abs_error_c": round(float(np.abs(e).max()), 2),
+        "n_samples": int(e.size),
+        "n_stations": 3,
+        "scope": "the seven real match kickoff hours that produce the tournament total, which is the validation that applies to the headline",
+        "note": "the wider figure reported in meta.json validation covers the hour sweep across its selected dates, not these match hours. this figure is the one that applies to the retrospective, and it is the larger of the two, so it is reported here rather than left to be inferred",
+    }
+
 def main():
     c.ensure_dirs()
     fixtures_cfg = c.CFG.get("fixtures")
@@ -467,6 +513,7 @@ def main():
         "lst_proxy_note": LST_PROXY_NOTE,
         "weather_unavailable_note": WEATHER_UNAVAILABLE_NOTE,
         "matches": matches,
+        "match_hour_validation": match_hour_validation(),
         "tournament_total": tournament_total,
         "counterfactual_evening_kickoff": counterfactual,
     }
