@@ -5,15 +5,15 @@ import { ProvenanceChip } from '../components/Chips.jsx'
 import { exposureLayer, pathCasingLayer } from '../lib/layers.js'
 import { heatLayers, useRasterWindow } from '../lib/heat.js'
 import { expoUrl, matchedBounds } from '../lib/data.js'
-import { useStore, useThemeName } from '../store.js'
+import { setScreen, useStore, useThemeName } from '../store.js'
 import { LA_CONTEXT, VENUE_VIEWS } from '../lib/venues.js'
-import { n0, n1, n2, tempC } from '../lib/format.js'
+import { n0, n1, tempC } from '../lib/format.js'
 
 const CHAIN = ['Segment the walk', 'Bake shade masks', 'Solve WBGT per hour', 'Accumulate degree-minutes', 'Greedy shade allocation']
 
 const SCALE_NOTE = 'Both panels are drawn at the same ground scale so the two corridors could be compared by eye once both exist.'
 
-function Side ({ title, subtitle, view, bounds, layers, stats, chain, chainLabel, note, label, provenance, scaleNote }) {
+function Side ({ title, subtitle, view, bounds, layers, stats, chain, chainLabel, note, label, provenance, scaleNote, footer }) {
   return (
     <div className="side">
       <div className="panel side-head">
@@ -45,6 +45,7 @@ function Side ({ title, subtitle, view, bounds, layers, stats, chain, chainLabel
           </div>
         </div>
         {scaleNote ? <p className="label">{scaleNote}</p> : null}
+        {footer || null}
       </div>
       <div className="map-hold">
         {layers ? (
@@ -122,7 +123,7 @@ export default function Transfer ({ data }) {
         stats={[
           { k: 'Segments modelled', v: n0(data.segments.length) },
           { k: 'Approaches', v: n0(data.approaches.length) },
-          { k: `Fan trip at ${hour}:00`, v: `${n2(data.walk[hour] ?? 0)} degmin` },
+          { k: `Fan trip at ${hour}:00`, v: `${n0(data.walk[hour] ?? 0)} degmin` },
           { k: 'Threshold', v: `WBGT ${tempC(data.threshold)}` }
         ]}
       />
@@ -142,6 +143,11 @@ export default function Transfer ({ data }) {
           { k: 'Ledger proxy per trip', v: `${n1(laCity?.degmin_per_trip)} degmin`, note: 'Proxy, not a modelled walk', tone: 'assumed' },
           { k: 'Ledger canopy', v: `${n1(laCity?.canopy_pct)}%`, note: 'Venue radius, not the route', tone: 'measured' }
         ]}
+        footer={
+          <button type="button" className="ghost" onClick={() => setScreen('ledger')}>
+            Open the {n0(data.cities.length)} city proxy ledger
+          </button>
+        }
       />
     </div>
   )

@@ -77,9 +77,11 @@ export default function Ledger ({ data }) {
               : ''}
           </p>
           <p>
-            The scatter asks the obvious follow up and answers it with a flat line. Canopy percent across a whole city does not
-            predict what a fan carries on the last mile. Latitude, humidity, kickoff time and the geometry of the specific walk
-            do. That is the argument for modelling the walk itself rather than ranking cities by a canopy statistic.
+            The scatter beside this text does show a downward fit, and it is the wrong thing to act on. It is eleven points of
+            city wide canopy against a city wide proxy, so it cannot say that planting a tree on a walking route lowers what a fan
+            carries on it. Latitude, humidity, kickoff time and the geometry of the specific walk move together with canopy across
+            these eleven cities and none of them is held fixed here. That is the argument for modelling the walk itself rather
+            than ranking cities by a canopy statistic.
           </p>
         </div>
         <CityScatter cities={cities} focus={FOCUS} />

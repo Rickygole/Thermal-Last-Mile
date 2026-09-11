@@ -2,6 +2,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { AmbientLight, DirectionalLight, LightingEffect } from '@deck.gl/core'
 import DeckMap from '../components/DeckMap.jsx'
 import RankedList from '../components/RankedList.jsx'
+import CorridorUniformity from '../components/CorridorUniformity.jsx'
+import ScrollHint from '../components/ScrollHint.jsx'
+import { useOverflow } from '../lib/overflow.js'
 import BudgetBar from '../components/BudgetBar.jsx'
 import HourScrubber from '../components/HourScrubber.jsx'
 import MethodsPanel from '../components/MethodsPanel.jsx'
@@ -32,6 +35,9 @@ export default function MapScreen ({ data }) {
   const horizon = useStore(s => s.horizon)
   const theme = useThemeName()
   const [hover, setHover] = useState(null)
+  const [rightRef, rightMore] = useOverflow()
+  const [leftRef, leftMore] = useOverflow()
+  const [centreRef, centreMore] = useOverflow()
   const mountedHours = useRasterWindow(hour)
 
   const levels = useMemo(() => budgetLevels(data.solutions, horizon), [data.solutions, horizon])
@@ -52,6 +58,25 @@ export default function MapScreen ({ data }) {
   const segment = useMemo(() => data.segments.find(s => s.id === selected) || null, [data.segments, selected])
   const onHover = useCallback(info => setHover(info), [])
   const shade = useMemo(() => shadeFinding(data.retrospective), [data.retrospective])
+  const lever = useMemo(() => {
+    const totals = data.trip?.counterfactual?.totals || null
+    const ceiling = data.clock?.summary?.tree_only_ceiling_at_1500 || null
+    const ratio = data.trip?.tournament?.ratio_trip_to_kickoff_instant_tournament
+    if (!totals || !ceiling || !Number.isFinite(ratio)) return null
+    const ceilingValue = ceiling.max_fan_hours_removable_at_15_00 ?? 0
+    const scaled = ceilingValue * ratio
+    const removed = totals.removed_trip_fan_degree_hours ?? 0
+    if (!(scaled > 0)) return null
+    return {
+      removed,
+      ceiling: ceilingValue,
+      scaled,
+      ratio,
+      spend: ceiling.max_tree_only_spend_usd ?? 0,
+      alternateHour: data.trip.alternateHour,
+      multiple: removed / scaled
+    }
+  }, [data.trip, data.clock])
   const sun = useMemo(() => sunFor(hour, data.heat), [hour, data.heat])
   const effects = useMemo(() => {
     const light = tokens().map
@@ -118,7 +143,8 @@ export default function MapScreen ({ data }) {
 
   return (
     <div className="map-screen">
-      <div className="col">
+      <CorridorUniformity segments={data.segments} hour={hour} shade={shade} lever={lever} />
+      <div className="col left" ref={leftRef}>
         <HourScrubber
           totals={data.totals}
           stats={data.stats}
@@ -127,19 +153,13 @@ export default function MapScreen ({ data }) {
           clock={data.clock}
           shade={shade}
         />
-        <RankedList
-          segments={data.segments}
-          hour={hour}
-          max={data.max.all}
-          treated={treated}
-          solution={solution}
-          shade={shade}
-        />
+        <RankedList segments={data.segments} hour={hour} max={data.max.all} treated={treated} solution={solution} />
         <button type="button" className="continue" onClick={exportCsv}>
           Download ranked segments CSV
         </button>
+        <ScrollHint show={leftMore} />
       </div>
-      <div className="col center">
+      <div className="col center" ref={centreRef}>
         <div className="map-hold">
           <DeckMap
             view={VENUE_VIEWS.houston}
@@ -165,8 +185,9 @@ export default function MapScreen ({ data }) {
           threshold={data.threshold}
           note={horizonNote}
         />
+        <ScrollHint show={centreMore} />
       </div>
-      <div className="col right">
+      <div className="col right" ref={rightRef}>
         <SegmentDetail
           segment={segment}
           hour={hour}
@@ -184,6 +205,7 @@ export default function MapScreen ({ data }) {
         <button type="button" className="ghost" onClick={() => setScreen('ledger')}>
           Compare host cities
         </button>
+        <ScrollHint show={rightMore} />
       </div>
     </div>
   )

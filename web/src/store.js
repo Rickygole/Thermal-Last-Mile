@@ -2,7 +2,8 @@ import { create } from 'zustand'
 import { applyTheme, resolveInitialTheme, writeStoredTheme } from './lib/theme.js'
 import { RASTER_HOURS } from './lib/hours.js'
 
-export const SCREENS = ['walk', 'clock', 'map', 'ledger', 'transfer']
+export const NAV_SCREENS = ['walk', 'clock', 'map', 'transfer']
+export const SCREENS = [...NAV_SCREENS, 'ledger']
 
 const fromHash = () => {
   if (typeof window === 'undefined') return 'walk'
