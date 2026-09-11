@@ -1,5 +1,6 @@
 import { useMemo, useRef } from 'react'
 import { HOURS, setSelected, useStore, useThemeRepaint } from '../store.js'
+import CorridorUniformity from './CorridorUniformity.jsx'
 import { exposureCss } from '../lib/color.js'
 import { n0, n1, n2, usd } from '../lib/format.js'
 
@@ -24,7 +25,7 @@ function MicroHours ({ segment, max }) {
   )
 }
 
-export default function RankedList ({ segments, hour, max, treated, solution }) {
+export default function RankedList ({ segments, hour, max, treated, solution, shade }) {
   useThemeRepaint()
   const selected = useStore(s => s.selected)
   const listRef = useRef(null)
@@ -82,6 +83,7 @@ export default function RankedList ({ segments, hour, max, treated, solution }) 
         <p className="label">
           Worst three at {hour}:00: {worstThree.map(s => `${s.name}${s.of > 1 ? ` ${s.seq} of ${s.of}` : ''}`).join(', ')}.
         </p>
+        <CorridorUniformity segments={segments} hour={hour} shade={shade} />
       </div>
       {exceeded ? null : (
         <p className="notice">

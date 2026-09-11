@@ -1,7 +1,7 @@
 import { n0, n1, n2, pct1 } from '../lib/format.js'
 import { shortDate } from '../lib/retro.js'
 
-export default function EveningControl ({ model, rmse }) {
+export default function EveningControl ({ model, rmse, thresholdNote }) {
   const control = model.control
   const cf = model.counterfactual
   const margin = control && Number.isFinite(model.threshold) ? model.threshold - control.peak : null
@@ -93,6 +93,11 @@ export default function EveningControl ({ model, rmse }) {
           )}
         </div>
       </div>
+      {thresholdNote ? (
+        <div className="notice ev-threshold">
+          <strong>The share removed is conditional on where the threshold is drawn.</strong> {thresholdNote}
+        </div>
+      ) : null}
       {cf?.note ? <p className="label ev-note">{cf.note}</p> : null}
     </section>
   )

@@ -1,5 +1,7 @@
 import { ProvenanceChip } from './Chips.jsx'
-import { n0, n1, n2, pct1 } from '../lib/format.js'
+import EquityCurve from './EquityCurve.jsx'
+import { equitySeries } from '../lib/equity.js'
+import { n0, n1, n2, pct1, usd } from '../lib/format.js'
 
 function Corr ({ title, c, weak, caveat }) {
   if (!c) return null
@@ -30,7 +32,7 @@ export default function EquityPanel ({ equity }) {
       </section>
     )
   }
-  const opt = equity.optimizer_equity || {}
+  const series = equitySeries(equity)
   const tract = equity.correlation_exposure_vs_svi_tract_level
   const seg = equity.correlation_exposure_vs_svi_segment_level
   const canopy = equity.correlation_exposure_vs_canopy_pct
@@ -54,15 +56,56 @@ export default function EquityPanel ({ equity }) {
       </div>
       <ProvenanceChip state={state} className="wide" quiet />
       <div className="stat">
-        <div className="k">Is the allocation regressive</div>
-        <div className="v">{opt.verdict ? 'No, mildly progressive' : 'not stated'}</div>
+        <div className="k">Where the money lands, against vulnerability</div>
+        <div className="v">
+          {series && series.rows.length
+            ? `${n2(series.min)} to ${n2(series.max)} across ${series.scopedBelow ? 'the levels below saturation' : 'the budget axis'}`
+            : Number.isFinite(series?.point)
+              ? n2(series.point)
+              : 'not stated'}
+        </div>
         <div className="label">
-          Dollar weighted mean SVI of the funded set is {n2(opt.dollar_weighted_mean_svi_at_full_cap)} against{' '}
-          {n2(opt.baseline_mean_svi_all_172_segments)} across every segment, a gap of{' '}
-          {n2(opt.dollar_weighted_minus_baseline_mean_svi)}. The optimizer has no vulnerability term anywhere in its objective, so
-          this is a byproduct of where cost effectiveness happens to land, not a policy.
+          {series && series.rows.length
+            ? `${series.weighted ? 'Dollar weighted' : 'Set membership'} mean SVI of the funded set, read across ${
+                series.scopedBelow
+                  ? `the ${n0(series.below.length)} of ${n0(series.rows.length)} budget levels at or below saturation`
+                  : `all ${n0(series.rows.length)} budget levels`
+              } rather than at one. ${
+                Number.isFinite(series.baseline)
+                  ? `The corridor baseline is ${n2(series.baseline)}.`
+                  : 'equity.json states no corridor baseline to compare against.'
+              }`
+            : 'equity.json carries no budget series for the funded set, so only the single reported figure is available and it should be read as one point on a curve this file does not publish.'}
         </div>
       </div>
+      {series && series.rows.length ? <EquityCurve series={series} /> : null}
+      {series && series.rows.length ? (
+        <div className="notice">
+          <strong>Read the curve, not the endpoint.</strong> The answer to whether this allocation is progressive depends entirely
+          on where the budget axis stops.{' '}
+          {series.first && series.last
+            ? `At ${usd(series.first.budget)} the funded set sits at ${n2(series.first.value)}, at ${usd(
+                series.last.budget
+              )} it sits at ${n2(series.last.value)}.`
+            : ''}
+          {Number.isFinite(series.gapLo) && Number.isFinite(series.gapHi)
+            ? ` Measured as a gap over the baseline that is ${n2(series.gapHi)} at its widest and ${n2(series.gapLo)} at its narrowest${
+                Number.isFinite(series.gapFactor) ? `, a factor of ${n1(series.gapFactor)}` : ''
+              }${series.crossesBaseline ? ', and it changes sign, so the direction of the finding is not stable either' : ''}.`
+            : ''}
+          {series.note ? ` ${series.note}` : ''}
+        </div>
+      ) : null}
+      {series?.verdict ? (
+        <details className="scenes">
+          <summary>The verdict this file states</summary>
+          <p className="label">{series.verdict}</p>
+        </details>
+      ) : null}
+      <p className="label">
+        The optimizer has no vulnerability term anywhere in its objective, so whatever this curve does is a byproduct of where cost
+        effectiveness happens to land, not a policy.
+      </p>
       <div className="detail">
         <div className="row">
           <span>Segment SVI, {n0(distinct)} distinct values</span>

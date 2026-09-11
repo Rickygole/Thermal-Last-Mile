@@ -4,7 +4,7 @@ import { arrowSelect } from '../lib/keys.js'
 import { exposureCss } from '../lib/color.js'
 import { n0, n1, n2, pct, tempC } from '../lib/format.js'
 
-export default function HourScrubber ({ totals, stats, walk, threshold, clock }) {
+export default function HourScrubber ({ totals, stats, walk, threshold, clock, shade }) {
   useThemeRepaint()
   const hour = useStore(s => s.hour)
   const refs = useRef([])
@@ -88,6 +88,9 @@ export default function HourScrubber ({ totals, stats, walk, threshold, clock })
           <span>{pct((stat?.shade_mean ?? 0) * 100)}</span>
         </div>
       </div>
+      {shade?.allZeroAtHour && Number(hour) === shade.hour ? (
+        <p className="label">Zero is the measured answer, not a missing input. See the note above the ranked list.</p>
+      ) : null}
     </section>
   )
 }
