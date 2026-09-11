@@ -27,6 +27,8 @@ SCRIPTS = {
     "meta": "meta.py",
 }
 
+ORGANIZER_OPTIONAL = [c.OUT_DIR / "uhi_validation.json", c.OUT_DIR / "fan_volumes.json"]
+
 OUTPUT_FILES = {
     "final": [
         c.OUT_DIR / "segments.geojson",
@@ -43,8 +45,6 @@ OUTPUT_FILES = {
         c.OUT_DIR / "cities_method.json",
         c.OUT_DIR / "kickoff_clock.json",
         c.OUT_DIR / "equity.json",
-        c.OUT_DIR / "uhi_validation.json",
-        c.OUT_DIR / "fan_volumes.json",
     ],
 }
 
@@ -62,6 +62,14 @@ def stage_done(stage):
         return (c.OUT_DIR / "segments.geojson").exists()
     if stage == "s6":
         return (c.OUT_DIR / "solutions.json").exists()
+    if stage == "s7":
+        return (c.OUT_DIR / "cities.json").exists() and (c.OUT_DIR / "cities_method.json").exists()
+    if stage == "s8":
+        return (c.OUT_DIR / "expo_meta.json").exists() and all(
+            (c.OUT_DIR / f"expo_{h:02d}.png").exists() for h in HOURS
+        )
+    if stage == "s11":
+        return (c.OUT_DIR / "equity.json").exists() and (c.OUT_DIR / "vulnerability_by_segment.json").exists()
     if stage == "s10":
         return (c.OUT_DIR / "kickoff_clock.json").exists()
     if stage == "s12":
@@ -88,6 +96,12 @@ def copy_to_web():
             print(f"copied {path.name} to web/public/data/")
         else:
             print(f"warning: expected output {path} was not produced")
+    for path in ORGANIZER_OPTIONAL:
+        if path.exists():
+            shutil.copy2(path, dest_dir / path.name)
+            print(f"copied {path.name} to web/public/data/")
+        else:
+            print(f"note: {path.name} absent, s9_organizer requires ORGANIZER_SHARE and is not part of the default chain")
 
 
 def main():
