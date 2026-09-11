@@ -210,3 +210,18 @@ the evidence did not hold up.
 Nothing in this project has been checked against an instrumented WBGT record, because
 none exists for this site and these dates. That is the honest limit of this submission's
 validation, and every downstream number should be read with that limit in mind.
+
+## Compliance on the provided datasets
+
+The organisers confirmed before submission that publishing aggregate derived results from
+the provided datasets is consistent with the confidentiality undertaking. Raw records are
+not published: they remain in a gitignored local directory, and only correlation
+coefficients, record counts and summary statistics appear in the repository, each carrying
+the organisers' sample data limitation statement.
+
+A defect in the provided data was reported back to the organisers. In the daily weather
+dataset the column named `AVERAGE_DEW_POINT_F` carries values in Celsius rather than
+Fahrenheit: the documented maximum of 36.81 is not physically plausible for a dew point in
+Fahrenheit, and the values align with independent station observations once read as
+Celsius. This pipeline treats that column as Celsius.
+

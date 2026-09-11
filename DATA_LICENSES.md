@@ -33,6 +33,14 @@ exported from it are ODbL 1.0, not MIT.
 
 ## Organiser data note
 
+Publication of the aggregate derived results in `data/out/uhi_validation.json`,
+`fan_volumes.json` and `organizer_weather.json` was raised with the hackathon organisers
+before submission and confirmed as consistent with the confidentiality undertaking. No raw
+record is published anywhere; the downloaded datasets remain in a gitignored local
+directory and only correlation coefficients, record counts and summary statistics appear
+in this repository, each carrying the organisers' own sample data limitation statement.
+
+
 The organisers state their datasets are transformed sample data with noise added
 to magnitudes and temperatures and jittered coordinates, and that conclusions
 drawn from them must not be treated as assessments of any real city, venue or
