@@ -1,0 +1,578 @@
+{
+  "generated_utc": "2026-09-11T14:19:20Z",
+  "model": {
+    "wbgt": "Liljegren, J.C. et al. 2008. Modeling the wet bulb globe temperature using standard meteorological measurements. Journal of Occupational and Environmental Hygiene 5(10) 645-655.",
+    "implementation": "pywbgt 3.0.7",
+    "pvlib_version": "0.15.2"
+  },
+  "sources": [
+    {
+      "layer": "meteorology hour 10",
+      "product": "Iowa Environmental Mesonet ASOS one minute and hourly archive",
+      "stations": [
+        "KHOU",
+        "KIAH",
+        "KSGR"
+      ],
+      "date_used": "2026-06-29",
+      "match_dates_considered": [
+        "2026-06-14",
+        "2026-06-17",
+        "2026-06-20",
+        "2026-06-23",
+        "2026-06-26",
+        "2026-06-29",
+        "2026-07-04"
+      ],
+      "date_selection_note": "of the three match dates in config.yml, the hour uses whichever single date had the hottest mean observed air temperature across the three ASOS stations, rather than averaging conditions across dates, so a real hot day is not smoothed away by cooler sampled days",
+      "provider": "Iowa State University Department of Agronomy",
+      "licence": "public, no key required"
+    },
+    {
+      "layer": "meteorology hour 11",
+      "product": "Iowa Environmental Mesonet ASOS one minute and hourly archive",
+      "stations": [
+        "KHOU",
+        "KIAH",
+        "KSGR"
+      ],
+      "date_used": "2026-06-29",
+      "match_dates_considered": [
+        "2026-06-14",
+        "2026-06-17",
+        "2026-06-20",
+        "2026-06-23",
+        "2026-06-26",
+        "2026-06-29",
+        "2026-07-04"
+      ],
+      "date_selection_note": "of the three match dates in config.yml, the hour uses whichever single date had the hottest mean observed air temperature across the three ASOS stations, rather than averaging conditions across dates, so a real hot day is not smoothed away by cooler sampled days",
+      "provider": "Iowa State University Department of Agronomy",
+      "licence": "public, no key required"
+    },
+    {
+      "layer": "meteorology hour 12",
+      "product": "Iowa Environmental Mesonet ASOS one minute and hourly archive",
+      "stations": [
+        "KHOU",
+        "KIAH",
+        "KSGR"
+      ],
+      "date_used": "2026-06-29",
+      "match_dates_considered": [
+        "2026-06-14",
+        "2026-06-17",
+        "2026-06-20",
+        "2026-06-23",
+        "2026-06-26",
+        "2026-06-29",
+        "2026-07-04"
+      ],
+      "date_selection_note": "of the three match dates in config.yml, the hour uses whichever single date had the hottest mean observed air temperature across the three ASOS stations, rather than averaging conditions across dates, so a real hot day is not smoothed away by cooler sampled days",
+      "provider": "Iowa State University Department of Agronomy",
+      "licence": "public, no key required"
+    },
+    {
+      "layer": "meteorology hour 13",
+      "product": "Iowa Environmental Mesonet ASOS one minute and hourly archive",
+      "stations": [
+        "KHOU",
+        "KIAH",
+        "KSGR"
+      ],
+      "date_used": "2026-07-04",
+      "match_dates_considered": [
+        "2026-06-14",
+        "2026-06-17",
+        "2026-06-20",
+        "2026-06-23",
+        "2026-06-26",
+        "2026-06-29",
+        "2026-07-04"
+      ],
+      "date_selection_note": "of the three match dates in config.yml, the hour uses whichever single date had the hottest mean observed air temperature across the three ASOS stations, rather than averaging conditions across dates, so a real hot day is not smoothed away by cooler sampled days",
+      "provider": "Iowa State University Department of Agronomy",
+      "licence": "public, no key required"
+    },
+    {
+      "layer": "meteorology hour 14",
+      "product": "Iowa Environmental Mesonet ASOS one minute and hourly archive",
+      "stations": [
+        "KHOU",
+        "KIAH",
+        "KSGR"
+      ],
+      "date_used": "2026-07-04",
+      "match_dates_considered": [
+        "2026-06-14",
+        "2026-06-17",
+        "2026-06-20",
+        "2026-06-23",
+        "2026-06-26",
+        "2026-06-29",
+        "2026-07-04"
+      ],
+      "date_selection_note": "of the three match dates in config.yml, the hour uses whichever single date had the hottest mean observed air temperature across the three ASOS stations, rather than averaging conditions across dates, so a real hot day is not smoothed away by cooler sampled days",
+      "provider": "Iowa State University Department of Agronomy",
+      "licence": "public, no key required"
+    },
+    {
+      "layer": "meteorology hour 15",
+      "product": "Iowa Environmental Mesonet ASOS one minute and hourly archive",
+      "stations": [
+        "KHOU",
+        "KIAH",
+        "KSGR"
+      ],
+      "date_used": "2026-07-04",
+      "match_dates_considered": [
+        "2026-06-14",
+        "2026-06-17",
+        "2026-06-20",
+        "2026-06-23",
+        "2026-06-26",
+        "2026-06-29",
+        "2026-07-04"
+      ],
+      "date_selection_note": "of the three match dates in config.yml, the hour uses whichever single date had the hottest mean observed air temperature across the three ASOS stations, rather than averaging conditions across dates, so a real hot day is not smoothed away by cooler sampled days",
+      "provider": "Iowa State University Department of Agronomy",
+      "licence": "public, no key required"
+    },
+    {
+      "layer": "meteorology hour 16",
+      "product": "Iowa Environmental Mesonet ASOS one minute and hourly archive",
+      "stations": [
+        "KHOU",
+        "KIAH",
+        "KSGR"
+      ],
+      "date_used": "2026-07-04",
+      "match_dates_considered": [
+        "2026-06-14",
+        "2026-06-17",
+        "2026-06-20",
+        "2026-06-23",
+        "2026-06-26",
+        "2026-06-29",
+        "2026-07-04"
+      ],
+      "date_selection_note": "of the three match dates in config.yml, the hour uses whichever single date had the hottest mean observed air temperature across the three ASOS stations, rather than averaging conditions across dates, so a real hot day is not smoothed away by cooler sampled days",
+      "provider": "Iowa State University Department of Agronomy",
+      "licence": "public, no key required"
+    },
+    {
+      "layer": "meteorology hour 17",
+      "product": "Iowa Environmental Mesonet ASOS one minute and hourly archive",
+      "stations": [
+        "KHOU",
+        "KIAH",
+        "KSGR"
+      ],
+      "date_used": "2026-07-04",
+      "match_dates_considered": [
+        "2026-06-14",
+        "2026-06-17",
+        "2026-06-20",
+        "2026-06-23",
+        "2026-06-26",
+        "2026-06-29",
+        "2026-07-04"
+      ],
+      "date_selection_note": "of the three match dates in config.yml, the hour uses whichever single date had the hottest mean observed air temperature across the three ASOS stations, rather than averaging conditions across dates, so a real hot day is not smoothed away by cooler sampled days",
+      "provider": "Iowa State University Department of Agronomy",
+      "licence": "public, no key required"
+    },
+    {
+      "layer": "meteorology hour 18",
+      "product": "Iowa Environmental Mesonet ASOS one minute and hourly archive",
+      "stations": [
+        "KHOU",
+        "KIAH",
+        "KSGR"
+      ],
+      "date_used": "2026-07-04",
+      "match_dates_considered": [
+        "2026-06-14",
+        "2026-06-17",
+        "2026-06-20",
+        "2026-06-23",
+        "2026-06-26",
+        "2026-06-29",
+        "2026-07-04"
+      ],
+      "date_selection_note": "of the three match dates in config.yml, the hour uses whichever single date had the hottest mean observed air temperature across the three ASOS stations, rather than averaging conditions across dates, so a real hot day is not smoothed away by cooler sampled days",
+      "provider": "Iowa State University Department of Agronomy",
+      "licence": "public, no key required"
+    },
+    {
+      "layer": "meteorology hour 19",
+      "product": "Iowa Environmental Mesonet ASOS one minute and hourly archive",
+      "stations": [
+        "KHOU",
+        "KIAH",
+        "KSGR"
+      ],
+      "date_used": "2026-07-04",
+      "match_dates_considered": [
+        "2026-06-14",
+        "2026-06-17",
+        "2026-06-20",
+        "2026-06-23",
+        "2026-06-26",
+        "2026-06-29",
+        "2026-07-04"
+      ],
+      "date_selection_note": "of the three match dates in config.yml, the hour uses whichever single date had the hottest mean observed air temperature across the three ASOS stations, rather than averaging conditions across dates, so a real hot day is not smoothed away by cooler sampled days",
+      "provider": "Iowa State University Department of Agronomy",
+      "licence": "public, no key required"
+    },
+    {
+      "layer": "meteorology hour 20",
+      "product": "Iowa Environmental Mesonet ASOS one minute and hourly archive",
+      "stations": [
+        "KHOU",
+        "KIAH",
+        "KSGR"
+      ],
+      "date_used": "2026-07-04",
+      "match_dates_considered": [
+        "2026-06-14",
+        "2026-06-17",
+        "2026-06-20",
+        "2026-06-23",
+        "2026-06-26",
+        "2026-06-29",
+        "2026-07-04"
+      ],
+      "date_selection_note": "of the three match dates in config.yml, the hour uses whichever single date had the hottest mean observed air temperature across the three ASOS stations, rather than averaging conditions across dates, so a real hot day is not smoothed away by cooler sampled days",
+      "provider": "Iowa State University Department of Agronomy",
+      "licence": "public, no key required"
+    },
+    {
+      "layer": "meteorology hour 21",
+      "product": "Iowa Environmental Mesonet ASOS one minute and hourly archive",
+      "stations": [
+        "KHOU",
+        "KIAH",
+        "KSGR"
+      ],
+      "date_used": "2026-07-04",
+      "match_dates_considered": [
+        "2026-06-14",
+        "2026-06-17",
+        "2026-06-20",
+        "2026-06-23",
+        "2026-06-26",
+        "2026-06-29",
+        "2026-07-04"
+      ],
+      "date_selection_note": "of the three match dates in config.yml, the hour uses whichever single date had the hottest mean observed air temperature across the three ASOS stations, rather than averaging conditions across dates, so a real hot day is not smoothed away by cooler sampled days",
+      "provider": "Iowa State University Department of Agronomy",
+      "licence": "public, no key required"
+    },
+    {
+      "layer": "land surface temperature for spatial urban heat island coupling",
+      "product": "Landsat Collection 2 Level 2, ST_B10 surface temperature band, Landsat 8 and 9",
+      "access": "Microsoft Planetary Computer STAC API, collection landsat-c2-l2, asset lwir11, signed via the public SAS token endpoint, read with rasterio over HTTPS, reprojected with bilinear resampling directly onto the same 1 m pipeline raster grid used by every other layer",
+      "n_scenes_used": 10,
+      "scenes": [
+        {
+          "scene_id": "LC08_L2SP_025039_20200820_02_T1",
+          "date": "2020-08-20",
+          "cloud_cover_pct": 3.05,
+          "valid_fraction_on_grid": 1.0
+        },
+        {
+          "scene_id": "LC08_L2SP_025039_20230813_02_T1",
+          "date": "2023-08-13",
+          "cloud_cover_pct": 3.38,
+          "valid_fraction_on_grid": 0.9921037317646745
+        },
+        {
+          "scene_id": "LC08_L2SP_025039_20210823_02_T1",
+          "date": "2021-08-23",
+          "cloud_cover_pct": 3.91,
+          "valid_fraction_on_grid": 0.9850420986501828
+        },
+        {
+          "scene_id": "LC08_L2SP_025039_20200804_02_T1",
+          "date": "2020-08-04",
+          "cloud_cover_pct": 5.97,
+          "valid_fraction_on_grid": 0.9680346913125354
+        },
+        {
+          "scene_id": "LC08_L2SP_025039_20220623_02_T1",
+          "date": "2022-06-23",
+          "cloud_cover_pct": 6.0,
+          "valid_fraction_on_grid": 0.966012260935113
+        },
+        {
+          "scene_id": "LC09_L2SP_025039_20240807_02_T1",
+          "date": "2024-08-07",
+          "cloud_cover_pct": 6.13,
+          "valid_fraction_on_grid": 0.9803415372432869
+        },
+        {
+          "scene_id": "LC08_L2SP_025039_20220709_02_T1",
+          "date": "2022-07-09",
+          "cloud_cover_pct": 6.35,
+          "valid_fraction_on_grid": 0.9763869285231354
+        },
+        {
+          "scene_id": "LC08_L2SP_025040_20230813_02_T1",
+          "date": "2023-08-13",
+          "cloud_cover_pct": 6.51,
+          "valid_fraction_on_grid": 0.9920743017533616
+        },
+        {
+          "scene_id": "LC09_L2SP_025040_20240807_02_T1",
+          "date": "2024-08-07",
+          "cloud_cover_pct": 11.04,
+          "valid_fraction_on_grid": 0.980025262721711
+        },
+        {
+          "scene_id": "LC08_L2SP_025040_20210807_02_T1",
+          "date": "2021-08-07",
+          "cloud_cover_pct": 11.91,
+          "valid_fraction_on_grid": 0.9737103670942651
+        }
+      ],
+      "years_searched": [
+        2018,
+        2019,
+        2020,
+        2021,
+        2022,
+        2023,
+        2024
+      ],
+      "max_cloud_cover_pct": 30,
+      "beta_lst_to_tair": 0.2,
+      "beta_note": "daytime coupling coefficient between land surface temperature anomaly and near surface air temperature anomaly, applied as tair_cell = tair_station_interpolated + beta * (lst_cell - lst_area_mean), where lst_cell and lst_area_mean come from pooled Landsat Collection 2 Level 2 ST_B10 surface temperature. Published daytime values for this coefficient are typically in the 0.1 to 0.3 range, 0.2 is used here as a representative mid range value.\n",
+      "beta_citation": "Schwarz, N., Schlink, U., Franck, U., Grossmann, K. 2012. Relationship of land surface and air temperatures and its implications for quantifying urban heat island indicators, an application for the city of Leipzig, Germany. Ecological Indicators 18, 693-704.",
+      "overpass_time_note": "Landsat 8 and 9 cross the Houston area near 10:30 to 11:00 local solar time, well before the 15:00 to 21:00 local kickoff hours this pipeline studies. The land surface temperature field pulled here is used only for its spatial pattern of hotter and cooler surfaces across the study area, applied as an anomaly on top of the afternoon and evening ASOS station observations that already set the absolute air temperature level for each kickoff hour. Using a late morning surface pattern as a proxy for the afternoon and evening spatial pattern is a defensible modeling choice, since the built environment and vegetation that create the pattern do not move, but it is also a real limitation, this is a morning spatial proxy stacked on afternoon and evening absolute values, not a same time observation of either quantity.",
+      "provider": "Microsoft Planetary Computer, USGS Landsat Collection 2 Level 2",
+      "licence": "public domain USGS Landsat data, Planetary Computer terms of use"
+    },
+    {
+      "layer": "solar irradiance",
+      "product": "pvlib clearsky ineichen model",
+      "substitution_note": "NREL NSRDB requires an API key and the developer.nrel.gov host was not reachable from this environment, so clear sky GHI from pvlib was used instead of NSRDB observed or modeled irradiance",
+      "provider": "pvlib python"
+    },
+    {
+      "layer": "digital surface model for shading",
+      "product": "OpenStreetMap building footprints rasterized at 1 m",
+      "substitution_note": "Real Houston LiDAR DSM was not fetched. A DSM was built from OSM building footprints instead.",
+      "height_source_note": "OSM height tag used where present, else building:levels times 3.5 m per storey, else a flat 3.5 m single storey default when neither tag exists. 3.5 m per storey follows common urban canopy model practice.",
+      "n_buildings_rasterized": 783,
+      "provider": "OpenStreetMap via Overpass API, osmnx",
+      "licence": "ODbL"
+    },
+    {
+      "layer": "NRG Stadium footprint and gates",
+      "product": "OpenStreetMap building=stadium way",
+      "substitution_note": "no entrance nodes tagged on this way, gates approximated as 8 evenly spaced perimeter points",
+      "provider": "OpenStreetMap via Overpass API, osmnx",
+      "licence": "ODbL"
+    },
+    {
+      "layer": "urban heat island corroboration using the organizers' sample data",
+      "product": "hackathon organizer supplied urban-heat-index sample dataset, Houston market",
+      "n_points_inside_study_bbox": 210,
+      "spearman_r": 0.147,
+      "pearson_r": 0.193,
+      "verdict": "weak rank agreement between the organizers' sample UHI index and this pipeline's Landsat derived heat anomaly at the sampled points. given the small sample size inside such a small study area, the additive noise the organizers disclose, and the coarse 1 to 11 ordinal scale of their index, this test has very little statistical power in either direction. it neither corroborates nor contradicts the Landsat field, and it should not be presented as support for it",
+      "organizer_data_limitation": "these datasets are hackathon organizer supplied sample data, transformed from the real underlying sources with multiplicative noise added to counts and visitation, additive noise added to temperatures and other bounded environmental values, and spatial jittering applied to coordinates. the organizers state that findings from this data should not be used to make valid, reliable, or actionable assessments of any city, district, venue, or geographic area. every number in this file is used only for corroboration, relative weighting, or workflow demonstration, never as a measurement of real Houston conditions",
+      "provider": "hackathon organizers via Box",
+      "licence": "hackathon sample data, confidential, see data/out/uhi_validation.json"
+    },
+    {
+      "layer": "organizer weather sample data cross check",
+      "product": "hackathon organizer supplied daily-weather sample dataset, station KDWH",
+      "weather_station_note": "the organizers' daily-weather sample carries 401 US station identifiers and no city or market column, and none of those identifiers are KHOU, KIAH, or KSGR, the three ASOS stations this pipeline already uses for Houston meteorology. KDWH, David Wayne Hooks Memorial Airport in Spring, Texas on the north side of the Houston metro, is the one identifier in the organizers' list recognizable as a real Houston area station, so it is used here",
+      "method": "the organizers' daily-weather sample only covers 2020-01-01 through 2024-12-31, so it has no rows for the actual 2026 match dates in config.yml. for each match date this file instead averages the organizers' KDWH observations across every available year on that same month and day, and reports it next to this pipeline's own real ASOS observations for the actual 2026 match date at KHOU, KIAH and KSGR, already fetched by pipeline/common.py and pipeline/s2_wbgt.py. this is a same season sanity check, not a same day comparison, and the organizer side additionally carries the additive temperature noise and jittered station identity the organizers disclose. ASOS observations are not replaced or blended with this organizer data anywhere in the physics pipeline, they are shown side by side here only",
+      "organizer_data_limitation": "these datasets are hackathon organizer supplied sample data, transformed from the real underlying sources with multiplicative noise added to counts and visitation, additive noise added to temperatures and other bounded environmental values, and spatial jittering applied to coordinates. the organizers state that findings from this data should not be used to make valid, reliable, or actionable assessments of any city, district, venue, or geographic area. every number in this file is used only for corroboration, relative weighting, or workflow demonstration, never as a measurement of real Houston conditions",
+      "provider": "hackathon organizers via Box",
+      "licence": "hackathon sample data, confidential, see data/out/organizer_weather.json"
+    }
+  ],
+  "validation": {
+    "rmse_c": 1.01,
+    "bias_c": 0.04,
+    "n_stations": 3,
+    "n_samples": 36,
+    "quantity_validated": "air temperature",
+    "method": "leave one out cross validation of the inverse distance weighted station interpolation used for the meteorological input grid, predicting each ASOS station from the other two and comparing to its own observation, across all kickoff hours and the match date selected for each hour. This validates the spatial interpolation of real observations, not the Liljegren WBGT model itself, since no wet bulb globe temperature instrument record exists for this site and these dates"
+  },
+  "costs": [
+    {
+      "item": "sail",
+      "unit_cost_usd": 15500,
+      "citation": "Recreational Industries. 2025. How Much Does a Shade Canopy Cost? A Practical Guide for Schools, Parks, and Cities, 7 April 2025. Itemised 20 x 20 ft (37 m2) municipal shade structure: structure and fabric 9500 USD, freight 1200 USD, installation 3500 USD, permits and site prep 800 USD, total 15000 to 16000 USD installed. https://recreationalindustries.com/2025/04/07/how-much-does-a-shade-canopy-cost-a-practical-guide-for-schools-parks-and-cities/ . This is a commercial shade contractor cost guide, not a municipal bid tabulation. For scale, the Shade Phoenix Plan (City of Phoenix Office of Heat Response and Mitigation, approved November 2024) budgets about 3 million USD for roughly 20 architectural pedestrian shade structures at signalised intersections, which are far larger engineered canopies."
+    },
+    {
+      "item": "tree",
+      "unit_cost_usd": 300,
+      "citation": "Trees For Houston, Street Trees programme price list, accessed 2026: 30 gallon tree, 8 to 10 ft tall, 2 inch caliper, 300 USD, price includes planting, initial mulching, staking, fertilizing and one time watering at planting; 15 gallon, 1.5 inch caliper, 160 USD. https://www.treesforhouston.org/streettrees . For comparison the City of Houston Landscape Analysis Form sets the in lieu deposit to the Houston Parks and Recreation Department at 155 USD per tree, https://www.houstontx.gov/planning/Forms/devregs/tree&shrub1.pdf . This price covers planting only and does not include multi year establishment irrigation, which is why it sits well below big city figures such as the roughly 3300 USD per street tree reported for New York City."
+    },
+    {
+      "item": "awning",
+      "unit_cost_usd": 18700,
+      "citation": "Capital Metro (Austin, Texas) board approved shelter contract, reported in Bernier, N. 2023. Do Austin's new bus shelters cut it in the Texas heat? KUT News, 19 July 2023: up to 10.5 million USD for 562 shelters from Tolar Manufacturing over five years, which is 18683 USD per shelter. https://www.kut.org/transportation/2023-07-19/capmetro-new-bus-shelters-heat . Consistent with the Houston region, where Harris County Precinct 4 and METRO committed 6 million USD to bus stop improvements in Gulfton and Sharpstown. Jenkins, C. 2024. 20 infrastructure projects across Harris County to receive 49M in funding. Community Impact, 9 December 2024. https://communityimpact.com/houston/bellaire-meyerland-west-university/government/2024/12/09/20-infrastructure-projects-across-harris-county-to-receive-49m-in-funding/"
+    },
+    {
+      "item": "misting",
+      "unit_cost_usd": 6500,
+      "citation": "No public unit cost located for a municipal right of way misting station, figure is an order of magnitude estimate pending sourcing. The only published cost data found covers residential and light commercial systems: Angi, How Much Does an Outdoor Misting System Cost, 2026 data, average 2747 USD, typical range 1957 to 3584 USD, professional grade systems above 5000 USD, https://www.angi.com/articles/how-much-does-outdoor-misting-system-cost.htm . A public installation additionally carries a potable water connection, backflow prevention, metering and vandal resistant hardware, none of which is captured in that range."
+    },
+    {
+      "item": "albedo",
+      "unit_cost_usd": 10.65,
+      "citation": "City of Los Angeles cool pavement programme, applied cost of 0.99 USD per square foot, which is 10.65 USD per m2, stated by Councilmember Bob Blumenfield, down from 2.50 USD per square foot at the Canoga Park pilot. Carpenter, S. 2021. North Hollywood kicks off next phase of LA cool pavement projects. Spectrum News 1, 4 October 2021. https://spectrumnews1.com/ca/la-west/environment/2021/10/04/north-hollywood-kicks-off-next-phase-of-la-cool-pavement-projects . Corroborated by the City of Phoenix Cool Pavement Program, where Street Transportation Department engineering manager Ryan Stevens gave CoolSeal at 5 USD per square yard of material and up to 14 USD per square yard applied, which is 5.98 to 16.75 USD per m2. Dalal, P. 2022. Phoenix Cool Pavement Program in phase two of finding solution to hot roads. Downtown Devil, 4 October 2022. https://downtowndevil.com/cool-pavement/"
+    },
+    {
+      "item": "cooling_bus",
+      "unit_cost_usd": 2700,
+      "citation": "Houston charter motorcoach day rate, midpoint of the published 1600 to 3800 USD per day range for a 54 to 56 passenger full size motorcoach. Metropolitan Shuttle, Houston Charter Bus Rental Cost, 2026 rate sheet and invoice data. https://www.metropolitanshuttle.com/charter-bus-rental-cost-houston/ . This is vendor pricing, not a municipal contract rate. No published City of Houston or METRO per day rate for heat emergency cooling buses was located; the City of Houston Heat Emergency Plan describes free rides to cooling centres but publishes no unit cost, https://www.houstontx.gov/citizensnet/2023/HeatEmergencyPlan20230614.html . Excludes staffing, water and site setup."
+    }
+  ],
+  "raster_bounds": [
+    -95.41785467271838,
+    29.67645755100104,
+    -95.40377872116676,
+    29.693122911337934
+  ],
+  "raster_resolution_m": 1.0,
+  "assumptions": {
+    "tair_tolerance_c": 1.0,
+    "tair_tolerance_note": "ASOS air temperature sensor accuracy is approximately 0.6 C per NWS ASOS technical spec, widened to 1.0 C to also cover representativeness error from interpolating three stations 10 to 40 km from the site",
+    "path_width_assumption_m": 2.0,
+    "path_width_note": "walking path width assumed 2.0 m, a typical clear pedestrian zone width, used only to convert an intervention shaded_area_m2 into a coverage fraction of a segment for the optimizer, not an observed measurement",
+    "nrg_capacity": 72220,
+    "nrg_capacity_note": "Houston Texans official NRG Stadium seating capacity",
+    "approach_mode_share": {
+      "metrorail_stadium_park": 0.1,
+      "lot_c": 0.45,
+      "rideshare_kirby": 0.15,
+      "fan_fest": 0.1
+    },
+    "mode_share_note": "data/out/fan_volumes.json exists but was marked implausible or carried no usable share, see its plausibility_notes. fell back to the invented constants below. approach mode shares are a modeled assumption, not an observed survey, reflecting a Sunbelt surface lot dominant stadium like NRG where most fans park and walk, with smaller transit, rideshare and fan fest shares. shares sum to less than 1.0 since a residual share arrives directly at gates by other means not represented by these four origins",
+    "mode_share_source": "invented_fallback_implausible_organizer_data",
+    "invented_approach_mode_share": {
+      "metrorail_stadium_park": 0.1,
+      "lot_c": 0.45,
+      "rideshare_kirby": 0.15,
+      "fan_fest": 0.1
+    },
+    "svi_note": "svi and canopy_pct populated from data/out/vulnerability_by_segment.json, produced by pipeline/s11_vulnerability.py, see data/out/equity.json for the CDC/ATSDR SVI vintage and field, the NLCD canopy source, and the per segment join method",
+    "canopy_pct_note": "svi and canopy_pct populated from data/out/vulnerability_by_segment.json, produced by pipeline/s11_vulnerability.py, see data/out/equity.json for the CDC/ATSDR SVI vintage and field, the NLCD canopy source, and the per segment join method"
+  },
+  "walk_speed_ms": 1.3,
+  "walk_segment_length_m": 20.0,
+  "globe_diameter_m": 0.15,
+  "venue": "NRG Stadium",
+  "origins": {
+    "metrorail_stadium_park": "METRORail Stadium Park / Astrodome platform",
+    "lot_c": "NRG Lot C",
+    "rideshare_kirby": "Kirby Drive rideshare zone",
+    "fan_fest": "Fan Fest site"
+  },
+  "derived_figures": {
+    "walk_graph_nodes": 12121,
+    "walk_graph_edges": 32397,
+    "sweep_at_fixture_hours_central": 352554.2,
+    "sweep_at_fixture_hours_low": 224056.8,
+    "sweep_at_fixture_hours_high": 493735.5,
+    "sweep_at_fixture_hours_note": "the hour sweep evaluated at the seven real kickoff hours, with its uncertainty band. this is a design condition figure and is larger than the measured tournament total in retrospective.json, which uses each match's own observed weather"
+  },
+  "n_segments": 172,
+  "wbgt_threshold_c": 28.0,
+  "wbgt_spatial_range_by_hour_c": {
+    "10": {
+      "min_c": 31.247058868408203,
+      "max_c": 32.92650604248047,
+      "range_c": 1.6794471740722656,
+      "tair_min_c": 31.130659103393555,
+      "tair_max_c": 34.917266845703125
+    },
+    "11": {
+      "min_c": 31.923213958740234,
+      "max_c": 33.592384338378906,
+      "range_c": 1.6691703796386719,
+      "tair_min_c": 32.17764663696289,
+      "tair_max_c": 35.966217041015625
+    },
+    "12": {
+      "min_c": 32.329307556152344,
+      "max_c": 34.01514434814453,
+      "range_c": 1.6858367919921875,
+      "tair_min_c": 32.544288635253906,
+      "tair_max_c": 36.29901123046875
+    },
+    "13": {
+      "min_c": 35.02386474609375,
+      "max_c": 36.645591735839844,
+      "range_c": 1.6217269897460938,
+      "tair_min_c": 34.21267318725586,
+      "tair_max_c": 38.01831817626953
+    },
+    "14": {
+      "min_c": 35.08100128173828,
+      "max_c": 36.70947265625,
+      "range_c": 1.6284713745117188,
+      "tair_min_c": 34.47655487060547,
+      "tair_max_c": 38.325157165527344
+    },
+    "15": {
+      "min_c": 33.91883850097656,
+      "max_c": 35.580909729003906,
+      "range_c": 1.6620712280273438,
+      "tair_min_c": 34.83683395385742,
+      "tair_max_c": 38.640480041503906
+    },
+    "16": {
+      "min_c": 32.70437240600586,
+      "max_c": 34.3843994140625,
+      "range_c": 1.6800270080566406,
+      "tair_min_c": 33.59763717651367,
+      "tair_max_c": 37.36543273925781
+    },
+    "17": {
+      "min_c": 31.106075286865234,
+      "max_c": 32.78449249267578,
+      "range_c": 1.6784172058105469,
+      "tair_min_c": 32.48012924194336,
+      "tair_max_c": 36.23685073852539
+    },
+    "18": {
+      "min_c": 29.90057945251465,
+      "max_c": 31.58742332458496,
+      "range_c": 1.6868438720703125,
+      "tair_min_c": 31.001462936401367,
+      "tair_max_c": 34.752220153808594
+    },
+    "19": {
+      "min_c": 27.91396713256836,
+      "max_c": 29.650005340576172,
+      "range_c": 1.7360382080078125,
+      "tair_min_c": 29.709793090820312,
+      "tair_max_c": 33.47732162475586
+    },
+    "20": {
+      "min_c": 25.824054718017578,
+      "max_c": 27.596145629882812,
+      "range_c": 1.7720909118652344,
+      "tair_min_c": 28.478981018066406,
+      "tair_max_c": 32.2615852355957
+    },
+    "21": {
+      "min_c": 25.303979873657227,
+      "max_c": 27.080698013305664,
+      "range_c": 1.7767181396484375,
+      "tair_min_c": 27.55065155029297,
+      "tair_max_c": 31.316484451293945
+    }
+  },
+  "wbgt_spatial_range_note": "before the land surface temperature urban heat island coupling was added, the WBGT raster varied by roughly 0.02 to 0.03 C across the entire study area at every kickoff hour, driven almost entirely by inverse distance weighted interpolation between three ASOS stations 10 to 40 km away rather than by any measured within site variation. the ranges reported here in wbgt_spatial_range_by_hour_c are the current per hour spatial spread after coupling the meteorological grid to a real Landsat land surface temperature field, see the land surface temperature source entry above for the overpass timing limitation of that field"
+}

@@ -1,0 +1,52 @@
+{
+  "organizer_data_limitation": "these datasets are hackathon organizer supplied sample data, transformed from the real underlying sources with multiplicative noise added to counts and visitation, additive noise added to temperatures and other bounded environmental values, and spatial jittering applied to coordinates. the organizers state that findings from this data should not be used to make valid, reliable, or actionable assessments of any city, district, venue, or geographic area. every number in this file is used only for corroboration, relative weighting, or workflow demonstration, never as a measurement of real Houston conditions",
+  "method": "core-poi-geometry shards filtered to MARKET Houston, then to points within 3219 m (2.0 miles) of the NRG Stadium site coordinate in pipeline/config.yml. each surviving POI was assigned to whichever of the four config.yml approach origins (metrorail_stadium_park, lot_c, rideshare_kirby, fan_fest) it sits closest to by straight line distance. the downloaded store-visits shards do not carry latitude, longitude, or city columns despite the organizers' data dictionary listing them, only MARKET, STATE, NAICS_CODE and DAILY_VISITS survive at usable population rates, so store-visits records could not be spatially assigned to an approach directly. instead, DAILY_VISITS was averaged per NAICS_CODE across store-visits rows with MARKET 'Dallas / Houston' and STATE TX, and that per category average visit rate was applied to every nearby core-poi-geometry POI sharing that NAICS_CODE, producing an estimated relative visit volume per approach. this is a category level evidence based weighting, not a location level one, since the two datasets could not be joined by a shared location key",
+  "search_radius_m": 3218.7,
+  "n_poi_houston_market": 32032,
+  "n_poi_in_nrg_area": 2163,
+  "n_store_visit_rows_used_for_category_rates": 28861008,
+  "n_naics_categories_with_visit_rate": 226,
+  "per_approach": {
+    "metrorail_stadium_park": {
+      "poi_count": 107,
+      "poi_count_with_matched_naics_visit_rate": 45,
+      "estimated_relative_visit_volume": 49845.10623772467
+    },
+    "lot_c": {
+      "poi_count": 239,
+      "poi_count_with_matched_naics_visit_rate": 96,
+      "estimated_relative_visit_volume": 111052.53785943678
+    },
+    "rideshare_kirby": {
+      "poi_count": 177,
+      "poi_count_with_matched_naics_visit_rate": 67,
+      "estimated_relative_visit_volume": 96678.307718492
+    },
+    "fan_fest": {
+      "poi_count": 1640,
+      "poi_count_with_matched_naics_visit_rate": 138,
+      "estimated_relative_visit_volume": 947240.1251341405
+    }
+  },
+  "weighting_basis": "estimated_relative_visit_volume",
+  "derived_relative_share": {
+    "metrorail_stadium_park": 0.0331,
+    "lot_c": 0.0737,
+    "rideshare_kirby": 0.0642,
+    "fan_fest": 0.629
+  },
+  "total_share_assumption": 0.8,
+  "total_share_assumption_note": "the four derived shares are scaled to sum to the same total as the existing invented APPROACH_MODE_SHARE constants in s5_routes.py. this organizer data speaks only to the relative split between the four approaches, not to what overall fraction of all fans arrive through these four points rather than by other unmodeled means, so that overall total is kept as is",
+  "old_invented_mode_share": {
+    "metrorail_stadium_park": 0.1,
+    "lot_c": 0.45,
+    "rideshare_kirby": 0.15,
+    "fan_fest": 0.1
+  },
+  "plausible": false,
+  "plausibility_notes": [
+    "the largest and smallest derived approach shares differ by more than 10x, a spread this pipeline treats as implausible rather than smoothing over",
+    "lot_c sits inside a stadium surface parking lot, which by definition contains almost no core-poi-geometry commercial establishments of its own, whatever the true gameday foot traffic through it. a nearby POI or category visit rate density proxy structurally undercounts a parking lot approach and can structurally overcount an approach that happens to border more ordinary retail unrelated to stadium arrivals. the derived share approach fan_fest disagrees with the prior by a factor of 6.29. this gate is symmetric and fires on disagreement in EITHER direction on ANY approach, not only where the evidence is unwelcome. the known structural limitation, declared before the derivation was run, is that POI density cannot measure approaches in ['lot_c'], so the derivation is not trusted here and the pipeline falls back to the invented constants"
+  ],
+  "fetched_utc": "2026-09-09T02:33:58Z"
+}

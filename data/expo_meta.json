@@ -1,0 +1,139 @@
+{
+  "generated_utc": "2026-09-11T14:18:32Z",
+  "provisional": false,
+  "quantity": "wet bulb globe temperature",
+  "unit": "degrees celsius",
+  "domain_c": [
+    24.0,
+    38.0
+  ],
+  "encoding": "single channel 8 bit in RGB, alpha marks valid cells, value maps linearly across domain_c",
+  "bounds": [
+    -95.41824749440336,
+    29.67645955286925,
+    -95.40338997008062,
+    29.693122911337934
+  ],
+  "grid": [
+    640,
+    640
+  ],
+  "hours": [
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21"
+  ],
+  "threshold_c": 28.0,
+  "method": "resampled directly from the pipeline exposure rasters written by stage 4, which combine the Liljegren wet bulb globe temperature grid with the raymarched shade mask and the Landsat coupled urban heat island field",
+  "sun_position_source": "pvlib solar position solved in the shadow bake stage, the same geometry that produced the shade masks",
+  "source_rasters": [
+    "data/interim/expo_10.tif",
+    "data/interim/expo_11.tif",
+    "data/interim/expo_12.tif",
+    "data/interim/expo_13.tif",
+    "data/interim/expo_14.tif",
+    "data/interim/expo_15.tif",
+    "data/interim/expo_16.tif",
+    "data/interim/expo_17.tif",
+    "data/interim/expo_18.tif",
+    "data/interim/expo_19.tif",
+    "data/interim/expo_20.tif",
+    "data/interim/expo_21.tif"
+  ],
+  "native_resolution_m": 1.0,
+  "hour_stats": {
+    "10": {
+      "min_c": 28.64,
+      "max_c": 32.8,
+      "mean_c": 31.32,
+      "sun_elevation_deg": 44.0,
+      "sun_azimuth_deg": 85.41
+    },
+    "11": {
+      "min_c": 29.11,
+      "max_c": 33.47,
+      "mean_c": 31.98,
+      "sun_elevation_deg": 57.01,
+      "sun_azimuth_deg": 92.59
+    },
+    "12": {
+      "min_c": 29.44,
+      "max_c": 33.89,
+      "mean_c": 32.4,
+      "sun_elevation_deg": 69.9,
+      "sun_azimuth_deg": 103.78
+    },
+    "13": {
+      "min_c": 30.47,
+      "max_c": 36.52,
+      "mean_c": 35.19,
+      "sun_elevation_deg": 80.98,
+      "sun_azimuth_deg": 138.01
+    },
+    "14": {
+      "min_c": 30.47,
+      "max_c": 36.59,
+      "mean_c": 35.24,
+      "sun_elevation_deg": 79.77,
+      "sun_azimuth_deg": 229.83
+    },
+    "15": {
+      "min_c": 30.05,
+      "max_c": 35.46,
+      "mean_c": 33.8,
+      "sun_elevation_deg": 67.92,
+      "sun_azimuth_deg": 257.43
+    },
+    "16": {
+      "min_c": 29.68,
+      "max_c": 34.26,
+      "mean_c": 32.73,
+      "sun_elevation_deg": 55.0,
+      "sun_azimuth_deg": 267.94
+    },
+    "17": {
+      "min_c": 28.75,
+      "max_c": 32.66,
+      "mean_c": 31.23,
+      "sun_elevation_deg": 41.99,
+      "sun_azimuth_deg": 275.02
+    },
+    "18": {
+      "min_c": 27.9,
+      "max_c": 31.46,
+      "mean_c": 30.06,
+      "sun_elevation_deg": 29.11,
+      "sun_azimuth_deg": 281.16
+    },
+    "19": {
+      "min_c": 26.82,
+      "max_c": 29.52,
+      "mean_c": 28.25,
+      "sun_elevation_deg": 16.5,
+      "sun_azimuth_deg": 287.27
+    },
+    "20": {
+      "min_c": 25.77,
+      "max_c": 27.52,
+      "mean_c": 26.44,
+      "sun_elevation_deg": 4.43,
+      "sun_azimuth_deg": 293.88
+    },
+    "21": {
+      "min_c": 25.3,
+      "max_c": 27.06,
+      "mean_c": 25.94,
+      "sun_elevation_deg": -7.29,
+      "sun_azimuth_deg": 301.5
+    }
+  }
+}
