@@ -1,6 +1,6 @@
 import { useMemo, useRef } from 'react'
 import { fansClearOfExtreme, pathFor } from '../lib/data.js'
-import { n0, usd } from '../lib/format.js'
+import { n0, usd, usdExact } from '../lib/format.js'
 
 const W = 300
 const H = 104
@@ -25,12 +25,19 @@ export function curvePoints (solutions, levels, horizon) {
   })
 }
 
-export function marginals (points) {
+export function incrementFor (points) {
+  if (points.length < 2) return 10000
+  const step = points[1].level - points[0].level
+  return step > 0 ? step * 4 : 10000
+}
+
+export function marginals (points, increment) {
+  const unit = Number.isFinite(increment) && increment > 0 ? increment : incrementFor(points)
   const out = []
   for (let i = 1; i < points.length; i++) {
     const dCost = points[i].level - points[i - 1].level
     const dAv = points[i].averted - points[i - 1].averted
-    out.push(dCost > 0 ? (dAv / dCost) * 100000 : 0)
+    out.push(dCost > 0 ? (dAv / dCost) * unit : 0)
   }
   return out
 }
@@ -45,8 +52,10 @@ export default function TradeoffCurve ({ points, index, onPick }) {
     const y = averted => H - PAD_B - (averted / maxAverted) * (H - PAD_T - PAD_B)
     const line = points.map((p, i) => `${i ? 'L' : 'M'} ${x(p.level).toFixed(1)} ${y(p.averted).toFixed(1)}`).join(' ')
     const area = `${line} L ${x(maxLevel).toFixed(1)} ${H - PAD_B} L ${PAD_L} ${H - PAD_B} Z`
-    const m = marginals(points)
+    const increment = incrementFor(points)
+    const m = marginals(points, increment)
     const peak = Math.max(...m) || 1
+    const stride = Math.max(1, Math.round(increment / (points[1].level - points[0].level)))
     let knee = -1
     for (let i = 0; i < m.length; i++) {
       if (m[i] < peak * 0.3) {
@@ -54,14 +63,19 @@ export default function TradeoffCurve ({ points, index, onPick }) {
         break
       }
     }
-    return { x, y, line, area, maxAverted, maxLevel, marginal: m, knee, peak }
+    return { x, y, line, area, maxAverted, maxLevel, marginal: m, knee, peak, increment, stride, step: points[1].level - points[0].level }
   }, [points])
 
   if (!geometry) return <p className="label">Solution path has too few levels to draw a curve.</p>
 
   const current = points[index] || points[0]
-  const nextMarginal = geometry.marginal[Math.min(geometry.marginal.length - 1, index)] || 0
   const kneePoint = geometry.knee > 0 ? points[geometry.knee] : null
+  const ahead = points[Math.min(points.length - 1, index + geometry.stride)] || current
+  const opening = points[Math.min(points.length - 1, geometry.stride)] || current
+  const nextGain = ahead.averted - current.averted
+  const nextSpend = ahead.level - current.level
+  const openingGain = opening.averted - points[0].averted
+  const openingSpend = opening.level - points[0].level
 
   const pick = event => {
     if (!onPick || !ref.current) return
@@ -132,14 +146,19 @@ export default function TradeoffCurve ({ points, index, onPick }) {
       </svg>
       <div className="stat-grid">
         <div className="stat">
-          <div className="k">Next {usd(100000)} averts</div>
-          <div className="v">{n0(nextMarginal)} degmin</div>
+          <div className="k">{nextSpend > 0 ? `Next ${usd(nextSpend)} averts` : 'Already at the ceiling'}</div>
+          <div className="v">{nextSpend > 0 ? `${n0(nextGain)} degmin` : 'nothing further modelled'}</div>
         </div>
         <div className="stat">
-          <div className="k">Opening {usd(100000)} averted</div>
-          <div className="v">{n0(geometry.peak)} degmin</div>
+          <div className="k">Opening {usd(openingSpend)} averted</div>
+          <div className="v">{n0(openingGain)} degmin</div>
         </div>
       </div>
+      <p className="label">
+        Both figures are differences between precomputed levels on this path, not rates extrapolated past them. The path was solved
+        in {usdExact(geometry.step)} steps up to a {usd(geometry.maxLevel)} ceiling, where the whole corridor is worth{' '}
+        {n0(geometry.maxAverted)} averted degree-minutes.
+      </p>
       <p className="label">
         {kneePoint
           ? `Marginal return drops below a third of the opening rate at ${usd(kneePoint.level)}. Every level shown is precomputed, drag the curve or the slider.`
