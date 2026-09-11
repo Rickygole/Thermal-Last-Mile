@@ -56,7 +56,7 @@ const LIGHT = {
     buildingAssumed: [190, 196, 204, 188],
     buildingLine: [110, 118, 130, 180],
     buildingSpecular: [226, 230, 236],
-    casing: [255, 255, 255, 224],
+    casing: [20, 24, 29, 216],
     highlight: [22, 26, 32, 96],
     fundedAlpha: 170,
     shadeTint: [28, 33, 41],

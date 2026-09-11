@@ -56,7 +56,7 @@ export class HeatSurfaceLayer extends BitmapLayer {
     ? mix(${glsl(stops.low)}, ${glsl(stops.moderate)}, t * 2.0)
     : mix(${glsl(stops.moderate)}, ${glsl(stops.severe)}, (t - 0.5) * 2.0);
   float body = ${field.alphaFloor.toFixed(4)} + ${field.alphaGain.toFixed(4)} * pow(t, ${field.alphaGamma.toFixed(4)});
-  float fade = ${field.vignette.toFixed(4)};
+  float fade = ${Math.max(field.vignette, 0.32).toFixed(4)};
   vec2 uv = geometry.uv;
   float edge = smoothstep(0.0, fade, uv.x) * smoothstep(0.0, fade, 1.0 - uv.x)
     * smoothstep(0.0, fade, uv.y) * smoothstep(0.0, fade, 1.0 - uv.y);
