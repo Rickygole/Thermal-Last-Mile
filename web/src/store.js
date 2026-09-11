@@ -1,12 +1,15 @@
 import { create } from 'zustand'
 import { applyTheme, resolveInitialTheme, writeStoredTheme } from './lib/theme.js'
+import { RASTER_HOURS } from './lib/hours.js'
 
 export const SCREENS = ['walk', 'clock', 'map', 'ledger', 'transfer']
 
 const fromHash = () => {
   if (typeof window === 'undefined') return 'walk'
   const id = window.location.hash.replace('#', '')
-  return SCREENS.includes(id) ? id : 'walk'
+  if (SCREENS.includes(id)) return id
+  if (id) window.location.replace(`${window.location.pathname}${window.location.search}#walk`)
+  return 'walk'
 }
 
 const bootTheme = applyTheme(resolveInitialTheme())
@@ -48,7 +51,7 @@ export const useThemeName = () => useStore(s => s.theme)
 
 export const useThemeRepaint = () => useStore(s => s.theme)
 
-export const HOURS = ['12', '13', '14', '15', '16', '17', '18', '19', '20', '21']
+export const HOURS = RASTER_HOURS
 export const BASELINE_HOUR = '15'
 export const HORIZONS = ['near', 'mature']
 export const PITCH_PLAN = 0

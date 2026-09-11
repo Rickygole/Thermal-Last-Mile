@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { HOURS } from '../store.js'
+import { buildTripModel } from './trip.js'
 import { HEAT_DOMAIN, prefetchImages } from './heat.js'
 import { anchorsFor } from './color.js'
 import { APPROACH_LABEL } from './venues.js'
@@ -39,14 +40,6 @@ function toSegments (geojson) {
   }
   for (const s of segments) s.of = counts.get(s.approach || 'unknown')
   return segments
-}
-
-function isTrusted (geojson) {
-  if (!geojson) return false
-  const p = geojson.properties || {}
-  if (p.provisional === true) return false
-  if (typeof p.source === 'string' && /placeholder|synthetic|invented|generator/i.test(p.source)) return false
-  return Array.isArray(geojson.features) && geojson.features.length > 0
 }
 
 function toBuildings (geojson) {
@@ -265,7 +258,6 @@ export function useData () {
       getJson('solutions.json', true),
       getJson('cities.json', true),
       getJson('meta.json', true),
-      getJson('la_segments.geojson', false),
       getJson('buildings.geojson', false),
       getJson('expo_meta.json', false),
       getJson('cities_method.json', false),
@@ -274,6 +266,7 @@ export function useData () {
       getJson('uhi_validation.json', false),
       getJson('fan_volumes.json', false),
       getJson('retrospective.json', false),
+      getJson('trip_exposure.json', false),
       surfacePresent()
     ]).then(results => {
       if (!live) return
@@ -281,10 +274,6 @@ export function useData () {
       const byName = Object.fromEntries(results.slice(0, -1).map(r => [r.name, r]))
       const errors = results.filter(r => r.required && r.error).map(r => `${r.name} (${r.error})`)
       const segments = toSegments(byName['segments.geojson'].value)
-      const laRaw = byName['la_segments.geojson'].value
-      const laTrusted = isTrusted(laRaw)
-      const laSegments = laTrusted ? toSegments(laRaw) : []
-      const laSource = laRaw?.properties?.source || null
       const solutions = byName['solutions.json'].value
       const cities = byName['cities.json'].value
       const meta = byName['meta.json'].value
@@ -293,15 +282,16 @@ export function useData () {
       const rawThreshold = meta?.wbgt_threshold_c ?? meta?.threshold_wbgt_c
       const threshold = Number.isFinite(rawThreshold) ? rawThreshold : null
       const approaches = approachSummary(segments)
+      const max = maxima(segments)
       prefetchImages([...HOURS.map(expoUrl), ...HOURS.map(shadeUrl)])
       setState({
         status: 'ready',
         errors,
         data: {
           segments,
-          laSegments,
-          laSource,
-          laTrusted,
+          laSegments: [],
+          laSource: null,
+          laTrusted: false,
           buildings,
           solutions,
           cities: Array.isArray(cities) ? cities : [],
@@ -311,18 +301,20 @@ export function useData () {
           uhi: byName['uhi_validation.json'].value || null,
           fanVolumes: byName['fan_volumes.json'].value || null,
           retrospective: byName['retrospective.json'].value || null,
+          trip: buildTripModel(byName['trip_exposure.json'].value),
           meta: meta || null,
           threshold,
           heat: heatMeta(byName['expo_meta.json'].value, meta?.raster_bounds || segBounds, threshold, rasterPresent),
-          max: maxima(segments),
+          max,
+          maxAll: max.all,
           totals: totals(segments),
           stats: hourStats(segments),
           approaches,
           walk: fanWeighted(approaches),
           bounds: segBounds,
-          laBounds: bounds(laSegments),
+          laBounds: null,
           trips: buildTrips(segments),
-          laMax: maxima(laSegments)
+          laMax: { all: 1 }
         }
       })
     })

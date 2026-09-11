@@ -1,7 +1,7 @@
 import { n0, n1, n2, pct1 } from '../lib/format.js'
 import { shortDate } from '../lib/retro.js'
 
-export default function EveningControl ({ model, rmse, thresholdNote }) {
+export default function EveningControl ({ model, rmse, thresholdNote, trip, instantSix }) {
   const control = model.control
   const cf = model.counterfactual
   const margin = control && Number.isFinite(model.threshold) ? model.threshold - control.peak : null
@@ -93,6 +93,24 @@ export default function EveningControl ({ model, rmse, thresholdNote }) {
           )}
         </div>
       </div>
+      {trip?.counterfactual?.totals ? (
+        <div className="notice ev-basis">
+          <strong>
+            That {pct1((totals?.removed_fraction ?? 0) * 100)} is a kickoff instant figure. On the whole trip it is{' '}
+            {pct1((trip.counterfactual.totals.removed_fraction ?? 0) * 100)}.
+          </strong>{' '}
+          The table above stops the clock at kickoff across all {n0(cf?.rows.length)} dates. Recomputed across the full inbound and
+          outbound trip, on the {n0(trip.counterfactual.totals.n_matches_included)} dates with a complete trip computation, moving
+          to {n0(trip.alternateHour)}:00 removes {n0(trip.counterfactual.totals.removed_trip_fan_degree_hours)} of{' '}
+          {n0(trip.counterfactual.totals.actual_total_trip_fan_degree_hours_above_threshold)} fan degree-hours,{' '}
+          {pct1((trip.counterfactual.totals.removed_fraction ?? 0) * 100)}.
+          {instantSix
+            ? ` On those same ${n0(instantSix.dates)} dates the kickoff instant basis gives ${pct1((instantSix.fraction ?? 0) * 100)}, so the gap is the two legs and not the change of denominator.`
+            : ''}{' '}
+          An evening kickoff still has an arrival window, and at {n0(trip.alternateHour)}:00 that window runs through the hot late
+          afternoon.
+        </div>
+      ) : null}
       {thresholdNote ? (
         <div className="notice ev-threshold">
           <strong>The share removed is conditional on where the threshold is drawn.</strong> {thresholdNote}

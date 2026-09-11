@@ -79,12 +79,18 @@ function clockState (data) {
   const retro = data.retrospective
   const measured = Array.isArray(retro?.matches) ? retro.matches.filter(m => m.weather_status === 'observed').length : 0
   if (measured) {
+    const trip = data.trip
+    const tripNote = trip
+      ? ` Trip totals cover ${plural(trip.playable.length, 'date', 'dates')} of ${trip.matches.length}${
+          trip.excluded.length ? `, with ${trip.excluded.map(m => m.date).join(' and ')} excluded for a missing observation` : ''
+        }, and their arrival window, egress pulse and uniform densities are stated modelling assumptions rather than counts.`
+      : ''
     return {
-      tone: 'observed',
-      label: 'MEASURED ON PLAYED FIXTURES',
+      tone: trip ? 'proxy' : 'observed',
+      label: trip ? 'MEASURED EXPOSURE, ASSUMED TRIP SHAPE' : 'MEASURED ON PLAYED FIXTURES',
       detail: `${plural(measured, 'match', 'matches')} measured on their own observed weather and own date sun geometry. Fixtures: ${
         retro.fixtures_source || 'source unstated'
-      }${retro.fixtures_verified_utc ? `, verified ${retro.fixtures_verified_utc}` : ''}. The hour sweep lower down the screen is a separate forward looking tool.`
+      }${retro.fixtures_verified_utc ? `, verified ${retro.fixtures_verified_utc}` : ''}.${tripNote} The hour sweep lower down the screen is a separate forward looking tool.`
     }
   }
   if (!data.clock) {

@@ -7,6 +7,7 @@ import Disclaimer from './components/Disclaimer.jsx'
 import { ProvenanceChip, ProvisionalChip } from './components/Chips.jsx'
 import EmptyState from './components/EmptyState.jsx'
 import Skeleton from './components/Skeleton.jsx'
+import ScreenBoundary from './components/ScreenBoundary.jsx'
 import Walk from './screens/Walk.jsx'
 import Clock from './screens/Clock.jsx'
 import MapScreen from './screens/MapScreen.jsx'
@@ -70,7 +71,7 @@ export default function App () {
             {ctx.played > 0 ? `${n0(ctx.played)} of ${n0(ctx.total)} matches at this hour` : 'no match kicked off at this hour'}
           </span>
           <span className="sep" aria-hidden="true" />
-          <span>WBGT {tempC(data.threshold)} threshold</span>
+          <span>WBGT threshold {tempC(data.threshold)}</span>
           <span className="sep" aria-hidden="true" />
           <span>{n0(data.segments.length)} Houston segments</span>
         </div>
@@ -85,10 +86,12 @@ export default function App () {
             <span>{n0(retro.measured.length)} matches measured</span>
             <span className="sep" aria-hidden="true" />
             <span>
-              {longDate(retro.range.from)} to {longDate(retro.range.to)}
+              {data.trip
+                ? `${n0(data.trip.playable.length)} of ${n0(data.trip.matches.length)} with a trip total`
+                : `${longDate(retro.range.from)} to ${longDate(retro.range.to)}`}
             </span>
             <span className="sep" aria-hidden="true" />
-            <span>WBGT {tempC(retro.threshold)} threshold</span>
+            <span>WBGT threshold {tempC(retro.threshold)}</span>
           </div>
         )
       }
@@ -137,7 +140,9 @@ export default function App () {
         <ScreenNav />
         <ThemeToggle />
       </header>
-      <main className="screen">{body()}</main>
+      <main className="screen">
+        <ScreenBoundary resetKey={`${screen}:${hour}`}>{body()}</ScreenBoundary>
+      </main>
       <Disclaimer />
     </div>
   )

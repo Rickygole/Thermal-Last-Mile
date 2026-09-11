@@ -2,12 +2,7 @@ import { useMemo, useRef } from 'react'
 import { HOURS, setSelected, useStore, useThemeRepaint } from '../store.js'
 import CorridorUniformity from './CorridorUniformity.jsx'
 import { exposureCss } from '../lib/color.js'
-import { n0, n1, n2, usd } from '../lib/format.js'
-
-function centsPerDegmin (v) {
-  if (!Number.isFinite(v) || v <= 0) return null
-  return v >= 1 ? `$${n2(v)}` : `${n1(v * 100)} cents`
-}
+import { n0, n1, n2, perDegmin, usd } from '../lib/format.js'
 
 function MicroHours ({ segment, max }) {
   return (
@@ -53,7 +48,7 @@ export default function RankedList ({ segments, hour, max, treated, solution, sh
 
   const activeIdx = Math.max(0, ranked.findIndex(s => s.id === selected))
   const worstThree = ranked.slice(0, 3)
-  const price = centsPerDegmin(solution?.cost_per_degmin)
+  const price = perDegmin(solution?.cost_per_degmin)
 
   const onKeyDown = e => {
     if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return
@@ -70,20 +65,6 @@ export default function RankedList ({ segments, hour, max, treated, solution, sh
       <div className="pane-head">
         <h3>Worst segments at {hour}:00</h3>
         <span className="label">{exceeded ? 'degmin per fan' : 'WBGT C'}</span>
-      </div>
-      <div className="ask">
-        <p>
-          <strong>Kickoff hour belongs to the tournament. These {n0(ranked.length)} segments belong to the city.</strong>{' '}
-          {price
-            ? `At ${usd(solution?.spent ?? 0)} on the budget slider, shade costs ${price} per degree-minute averted, ${n0(
-                solution?.averted_degmin ?? 0
-              )} degree-minutes in total.`
-            : 'Nothing is funded at the current budget, so there is no price per degree-minute averted to quote yet. Move the budget slider under the map.'}
-        </p>
-        <p className="label">
-          Worst three at {hour}:00: {worstThree.map(s => `${s.name}${s.of > 1 ? ` ${s.seq} of ${s.of}` : ''}`).join(', ')}.
-        </p>
-        <CorridorUniformity segments={segments} hour={hour} shade={shade} />
       </div>
       {exceeded ? null : (
         <p className="notice">
@@ -127,9 +108,23 @@ export default function RankedList ({ segments, hour, max, treated, solution, sh
           )
         })}
       </ul>
+      <div className="ask">
+        <p>
+          <strong>Kickoff hour belongs to the tournament. These {n0(ranked.length)} segments belong to the city.</strong>{' '}
+          {price
+            ? `At ${usd(solution?.spent ?? 0)} on the budget slider, shade costs ${price} per degree-minute averted, ${n0(
+                solution?.averted_degmin ?? 0
+              )} degree-minutes in total.`
+            : 'Nothing is funded at the current budget, so there is no price per degree-minute averted to quote yet. Move the budget slider under the map.'}
+        </p>
+        <p className="label">
+          Worst three at {hour}:00: {worstThree.map(s => `${s.name}${s.of > 1 ? ` ${s.seq} of ${s.of}` : ''}`).join(', ')}.
+        </p>
+        <CorridorUniformity segments={segments} hour={hour} shade={shade} />
+      </div>
       <p className="label">
         {ranked.length} segments, {exceeded ? 'ranked by degree-minutes' : 'ranked by WBGT'}. One tick per row for each of the {HOURS.length} modelled kickoff
-        hours, noon to {HOURS[HOURS.length - 1]}:00. Up and down arrows move through the list.
+        hours, {HOURS[0]}:00 to {HOURS[HOURS.length - 1]}:00. Up and down arrows move through the list.
       </p>
     </section>
   )

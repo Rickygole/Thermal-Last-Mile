@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import TradeoffCurve from './TradeoffCurve.jsx'
 import { setBudget, setHorizon, useStore } from '../store.js'
-import { n0, n1, n2, usd } from '../lib/format.js'
+import { n0, n1, n2, perDegmin, usd } from '../lib/format.js'
 
 function clampIndex (levels, budget) {
   if (!levels.length) return -1
@@ -57,13 +57,13 @@ export default function BudgetBar ({ solution, other, levels, points, horizons, 
         </div>
         <input
           type="range"
-          min="0"
-          max={levels.length - 1}
+          min="1"
+          max={levels.length}
           step="1"
-          value={index}
+          value={index + 1}
           aria-label="Shade budget level"
           aria-valuetext={`${usd(level)}, level ${index + 1} of ${levels.length}`}
-          onChange={e => applyIndex(Number(e.target.value))}
+          onChange={e => applyIndex(Number(e.target.value) - 1)}
           onKeyDown={e => {
             if (e.key === 'PageUp') {
               e.preventDefault()
@@ -103,8 +103,10 @@ export default function BudgetBar ({ solution, other, levels, points, horizons, 
         </div>
         <div className="stat">
           <div className="k">Cost per degmin averted</div>
-          <div className="v">${n2(solution?.cost_per_degmin ?? 0)}</div>
-          {other ? <div className="label">${n2(other.cost_per_degmin ?? 0)} on the {otherWords} horizon</div> : null}
+          <div className="v">{perDegmin(solution?.cost_per_degmin) || 'nothing funded yet'}</div>
+          {other ? (
+            <div className="label">{perDegmin(other.cost_per_degmin) || 'nothing funded'} on the {otherWords} horizon</div>
+          ) : null}
         </div>
         <div className="stat">
           <div className="k">Segments treated</div>

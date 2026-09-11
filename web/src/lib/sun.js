@@ -1,8 +1,16 @@
 export const SUN_FALLBACK = {
-  15: { elev: 55, az: 245 },
-  17: { elev: 33, az: 264 },
-  19: { elev: 10, az: 283 },
-  21: { elev: -6, az: 300 }
+  10: { elev: 44.0, az: 85.41 },
+  11: { elev: 57.01, az: 92.59 },
+  12: { elev: 69.9, az: 103.78 },
+  13: { elev: 80.98, az: 138.01 },
+  14: { elev: 79.77, az: 229.83 },
+  15: { elev: 67.92, az: 257.43 },
+  16: { elev: 55.0, az: 267.94 },
+  17: { elev: 41.99, az: 275.02 },
+  18: { elev: 29.11, az: 281.16 },
+  19: { elev: 16.5, az: 287.27 },
+  20: { elev: 4.43, az: 293.88 },
+  21: { elev: -7.29, az: 301.5 }
 }
 
 export function sunFor (hour, heat) {
