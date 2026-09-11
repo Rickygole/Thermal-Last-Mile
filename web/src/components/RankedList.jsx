@@ -1,6 +1,7 @@
-import { useMemo, useRef } from 'react'
+import { useMemo } from 'react'
 import { HOURS, setSelected, useStore, useThemeRepaint } from '../store.js'
-import CorridorUniformity from './CorridorUniformity.jsx'
+import ScrollHint from './ScrollHint.jsx'
+import { useOverflow } from '../lib/overflow.js'
 import { exposureCss } from '../lib/color.js'
 import { n0, n1, n2, perDegmin, usd } from '../lib/format.js'
 
@@ -20,10 +21,10 @@ function MicroHours ({ segment, max }) {
   )
 }
 
-export default function RankedList ({ segments, hour, max, treated, solution, shade }) {
+export default function RankedList ({ segments, hour, max, treated, solution }) {
   useThemeRepaint()
   const selected = useStore(s => s.selected)
-  const listRef = useRef(null)
+  const [listRef, more] = useOverflow()
   const exceeded = useMemo(() => segments.some(s => (s.degmin[hour] ?? 0) > 0), [segments, hour])
   const ranked = useMemo(() => {
     const copy = segments.slice()
@@ -107,10 +108,10 @@ export default function RankedList ({ segments, hour, max, treated, solution, sh
             </li>
           )
         })}
+        <ScrollHint tag="li" tone="panel" show={more} />
       </ul>
       <div className="ask">
         <p>
-          <strong>Kickoff hour belongs to the tournament. These {n0(ranked.length)} segments belong to the city.</strong>{' '}
           {price
             ? `At ${usd(solution?.spent ?? 0)} on the budget slider, shade costs ${price} per degree-minute averted, ${n0(
                 solution?.averted_degmin ?? 0
@@ -120,7 +121,6 @@ export default function RankedList ({ segments, hour, max, treated, solution, sh
         <p className="label">
           Worst three at {hour}:00: {worstThree.map(s => `${s.name}${s.of > 1 ? ` ${s.seq} of ${s.of}` : ''}`).join(', ')}.
         </p>
-        <CorridorUniformity segments={segments} hour={hour} shade={shade} />
       </div>
       <p className="label">
         {ranked.length} segments, {exceeded ? 'ranked by degree-minutes' : 'ranked by WBGT'}. One tick per row for each of the {HOURS.length} modelled kickoff

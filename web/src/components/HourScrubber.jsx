@@ -2,7 +2,7 @@ import { useRef } from 'react'
 import { HOURS, setHour, setScreen, useStore, useThemeRepaint } from '../store.js'
 import { arrowSelect } from '../lib/keys.js'
 import { exposureCss } from '../lib/color.js'
-import { n0, n1, n2, pct, tempC } from '../lib/format.js'
+import { n0, n1, pct, tempC } from '../lib/format.js'
 
 export default function HourScrubber ({ totals, stats, walk, threshold, clock, shade }) {
   useThemeRepaint()
@@ -48,11 +48,11 @@ export default function HourScrubber ({ totals, stats, walk, threshold, clock, s
       <div className="stat">
         <div className="k">Average fan trip at {hour}:00, weighted by approach volume</div>
         <div className="v big">
-          {n2(walk?.[hour] ?? 0)} <span className="label">degree-minutes above WBGT {tempC(threshold)}</span>
+          {n0(walk?.[hour] ?? 0)} <span className="label">degree-minutes above WBGT {tempC(threshold)}</span>
         </div>
         <div className="label">
           {stat
-            ? `All ${n0(stat.metres)} m of modelled segment sums to ${n2(totals?.[hour] ?? 0)} degmin, 90 percent interval ${n2(stat.lo)} to ${n2(stat.hi)}`
+            ? `All ${n0(stat.metres)} m of modelled segment sums to ${n0(totals?.[hour] ?? 0)} degmin, 90 percent interval ${n0(stat.lo)} to ${n0(stat.hi)}`
             : 'interval unavailable'}
         </div>
       </div>

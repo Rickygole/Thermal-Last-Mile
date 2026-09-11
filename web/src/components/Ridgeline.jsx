@@ -70,7 +70,8 @@ export default function Ridgeline ({ segments, threshold }) {
           {APPROACH_LABEL[picked.key] || picked.key}, platform on the left, gate on the right
         </span>
       </div>
-      <svg viewBox={`0 0 ${W} ${height}`} role="img" aria-label="Temperature profile along the walk for each kickoff hour">
+      <div className="rl-body">
+        <svg viewBox={`0 0 ${W} ${height}`} role="img" aria-label="Temperature profile along the walk for each kickoff hour">
         {rows.map((s, i) => {
           const baseline = PAD_T + (i + 1) * ROW - 14
           const active = s.hour === hour
@@ -113,15 +114,16 @@ export default function Ridgeline ({ segments, threshold }) {
         <text x={W} y={height - 4} fontSize="10" fill="var(--muted)" fontFamily="inherit" textAnchor="end">
           gate, {n0(picked.segs.reduce((a, s) => a + (s.len_m || 0), 0))} m
         </text>
-      </svg>
-      <p className="label">
+        </svg>
+        <p className="label">
         {inRange
           ? `Dashed line is WBGT ${tempC(THRESHOLD)}, the exposure threshold. Filled area above it is what the degree-minute metric counts. `
           : `No hour on this approach reaches WBGT ${tempC(THRESHOLD)}, so the threshold line sits outside the plotted range. `}
-        Vertical range is {n1(LO_C)} to {n1(HI_C)} C, shared by all ten rows, so the gap between rows is what the kickoff hour does
-        and the wobble inside a row is what position along the walk does. The gap between rows is much the larger of the two. Click a
-        row to move every view to that kickoff hour.
-      </p>
+        Vertical range is {n1(LO_C)} to {n1(HI_C)} C, shared by every row. The gap between rows is what the kickoff hour does, the
+        wobble inside a row is what position along the walk does, and the gap is much the larger. Click a row to move every view to
+          that hour.
+        </p>
+      </div>
     </div>
   )
 }
