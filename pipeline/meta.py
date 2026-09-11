@@ -70,6 +70,37 @@ def gather_hour_sources():
     return sources
 
 
+
+def network_and_band_figures():
+    out = {}
+    graph_path = c.INTERIM_DIR / "walk_graph.graphml"
+    if graph_path.exists():
+        import networkx as nx
+
+        g = nx.read_graphml(graph_path)
+        out["walk_graph_nodes"] = int(g.number_of_nodes())
+        out["walk_graph_edges"] = int(g.number_of_edges())
+    seg_path = c.OUT_DIR / "segments.geojson"
+    if seg_path.exists() and c.CFG.get("fixtures"):
+        seg = c.read_json(seg_path)["features"]
+        lo = hi = cen = 0.0
+        for m in c.CFG["fixtures"]["matches"]:
+            h = str(m["kickoff_local_hour"])
+            for f in seg:
+                pr = f["properties"]
+                lo += pr["degmin_lo"][h] * pr["fans"] / 60.0
+                hi += pr["degmin_hi"][h] * pr["fans"] / 60.0
+                cen += pr["degmin"][h] * pr["fans"] / 60.0
+        out["sweep_at_fixture_hours_central"] = round(cen, 1)
+        out["sweep_at_fixture_hours_low"] = round(lo, 1)
+        out["sweep_at_fixture_hours_high"] = round(hi, 1)
+        out["sweep_at_fixture_hours_note"] = (
+            "the hour sweep evaluated at the seven real kickoff hours, with its uncertainty band. "
+            "this is a design condition figure and is larger than the measured tournament total in "
+            "retrospective.json, which uses each match's own observed weather"
+        )
+    return out
+
 def main():
     c.ensure_dirs()
     bounds = c.get_raster_bounds()
@@ -141,13 +172,13 @@ def main():
         sources.append(
             {
                 "layer": "urban heat island corroboration using the organizers' sample data",
-                "product": "hackathon organiser urban-heat-index sample dataset, Houston market",
+                "product": "hackathon organizer supplied urban-heat-index sample dataset, Houston market",
                 "n_points_inside_study_bbox": uhi_validation["n_points_inside_study_bbox"],
                 "spearman_r": uhi_validation["spearman_r"],
                 "pearson_r": uhi_validation["pearson_r"],
                 "verdict": uhi_validation["verdict"],
                 "organizer_data_limitation": uhi_validation["organizer_data_limitation"],
-                "provider": "hackathon organiser organizers via Box",
+                "provider": "hackathon organizers via Box",
                 "licence": "hackathon sample data, confidential, see data/out/uhi_validation.json",
             }
         )
@@ -158,12 +189,12 @@ def main():
         sources.append(
             {
                 "layer": "organizer weather sample data cross check",
-                "product": "hackathon organiser daily-weather sample dataset, station "
+                "product": "hackathon organizer supplied daily-weather sample dataset, station "
                 + organizer_weather["weather_station_used"],
                 "weather_station_note": organizer_weather["weather_station_note"],
                 "method": organizer_weather["method"],
                 "organizer_data_limitation": organizer_weather["organizer_data_limitation"],
-                "provider": "hackathon organiser organizers via Box",
+                "provider": "hackathon organizers via Box",
                 "licence": "hackathon sample data, confidential, see data/out/organizer_weather.json",
             }
         )
@@ -206,6 +237,7 @@ def main():
         "globe_diameter_m": c.GLOBE_DIAMETER_M,
         "venue": c.CFG["site"]["name"],
         "origins": {k: v.get("label", k) for k, v in c.CFG["origins"].items()},
+        "derived_figures": network_and_band_figures(),
         "n_segments": segments_meta["n_segments"],
         "wbgt_threshold_c": segments_meta["wbgt_threshold_c"],
         "wbgt_spatial_range_by_hour_c": {
