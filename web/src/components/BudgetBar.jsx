@@ -1,11 +1,28 @@
+import { useEffect } from 'react'
 import TradeoffCurve from './TradeoffCurve.jsx'
 import { setBudget, setHorizon, useStore } from '../store.js'
-import { fansClearOfExtreme } from '../lib/data.js'
 import { n0, n1, n2, usd } from '../lib/format.js'
+
+function clampIndex (levels, budget) {
+  if (!levels.length) return -1
+  if (!Number.isFinite(budget)) return 0
+  if (budget <= levels[0]) return 0
+  if (budget >= levels[levels.length - 1]) return levels.length - 1
+  let index = 0
+  for (let i = 0; i < levels.length; i++) {
+    if (levels[i] <= budget) index = i
+  }
+  return index
+}
 
 export default function BudgetBar ({ solution, other, levels, points, horizons, maturityYears, extreme, threshold, note }) {
   const budget = useStore(s => s.budget)
   const horizon = useStore(s => s.horizon)
+  const index = clampIndex(levels, budget)
+  const level = index < 0 ? null : levels[index]
+  useEffect(() => {
+    if (level !== null && level !== budget) setBudget(level)
+  }, [level, budget])
   if (!levels.length) {
     return (
       <section className="panel pane" aria-label="Shade budget">
@@ -16,9 +33,6 @@ export default function BudgetBar ({ solution, other, levels, points, horizons, 
       </section>
     )
   }
-  let index = levels.findIndex(l => l >= budget)
-  if (index < 0) index = levels.length - 1
-  const level = levels[index]
   const applyIndex = i => setBudget(levels[Math.max(0, Math.min(levels.length - 1, i))])
   const treated = solution && Array.isArray(solution.set) ? solution.set.length : 0
   const mature = horizon === 'mature'
@@ -91,11 +105,6 @@ export default function BudgetBar ({ solution, other, levels, points, horizons, 
           <div className="k">Cost per degmin averted</div>
           <div className="v">${n2(solution?.cost_per_degmin ?? 0)}</div>
           {other ? <div className="label">${n2(other.cost_per_degmin ?? 0)} on the {otherWords} horizon</div> : null}
-        </div>
-        <div className="stat">
-          <div className="k">Fans clear of the extreme tier</div>
-          <div className="v">{n0(fansClearOfExtreme(solution))}</div>
-          <div className="label">measured at WBGT {n1(extreme)} C, not at the {n1(threshold)} C exposure threshold</div>
         </div>
         <div className="stat">
           <div className="k">Segments treated</div>
