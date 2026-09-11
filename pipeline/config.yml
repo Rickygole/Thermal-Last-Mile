@@ -17,6 +17,8 @@ walk:
   globe_diameter_m: 0.15
 
 hours:
+  - "10"
+  - "11"
   - "12"
   - "13"
   - "14"
@@ -105,3 +107,11 @@ shade:
 
 uhi:
   beta_lst_to_tair: 0.2
+
+trip:
+  arrival_window_minutes: 120
+  arrival_window_sensitivity_minutes: [90, 150]
+  arrival_density_shape: uniform
+  egress_delay_minutes: 120
+  egress_pulse_minutes: 45
+  egress_density_shape: uniform
