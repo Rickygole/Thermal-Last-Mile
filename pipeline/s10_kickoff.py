@@ -15,7 +15,7 @@ CAP = c.CFG["optimizer"]["cap"]
 FIXTURE_BINDING_NOTE = (
     "fixture kickoff times for the seven NRG Stadium matches of the 2026 FIFA World Cup are "
     "bound to the verified schedule in config.yml under fixtures, and those matches were played "
-    "between 14 June and 4 July 2026, so as_scheduled below is a retrospective look back at a "
+    "between 14 June and 4 July 2026, so the fixture hour block below is a retrospective look back at a "
     "decision already executed, not advice about a decision still open. the hour table itself "
     "remains the generalized sweep across the plausible kickoff window, built from each hour's "
     "hottest available match date rather than each match's own observed date, which keeps it "
@@ -212,7 +212,7 @@ def scheduled_block(hour_rows):
         ),
         "volatility_note": fixtures.get("note"),
         "matches": matches,
-        "tournament_total_fan_hours_above_threshold": round(total, 1),
+        "sweep_sum_at_fixture_hours_not_a_tournament_total": round(total, 1),
         "n_matches": len(matches),
         "n_matches_at_worst_scheduled_hour": sum(
             1 for m in matches if str(m["kickoff_local_hour"]) == max(
@@ -221,7 +221,7 @@ def scheduled_block(hour_rows):
             )
         ),
         "counterfactual_all_at_hour": int(best_hour),
-        "counterfactual_total_fan_hours_above_threshold": round(alt_total, 1),
+        "sweep_counterfactual_sum": round(alt_total, 1),
         "removed_by_rescheduling_fan_hours": round(removed, 1),
         "removed_by_rescheduling_fraction": round(removed / total, 4) if total else None,
         "statement": (
