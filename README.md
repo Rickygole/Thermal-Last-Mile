@@ -8,7 +8,7 @@ measures it. This project measures it, ranks every sidewalk segment by how much
 dangerous heat a fan actually absorbs crossing it, and reports where a fixed shade
 budget removes the most exposure per dollar.
 
-The measured result: **463,703 fan-degree-hours above the heat stress limit accumulated on the last mile across the six NRG matches with a fully observed trip, counting the walk in and the walk back out, measured against each match's own observed weather. Six of the seven matches kicked off at noon, and 69.2 percent of that total would not have occurred had they kicked off in the evening instead.**
+The measured result: **Six of Houston's seven World Cup matches kicked off at noon. That cost fans 320,908 degree-hours of heat stress on the walk in and back out, about 69 percent of the measured total, and no amount of shade the corridor could physically hold would have bought a comparable share of it back.**
 
 The unit is degree-hours, not hours. It is the accumulated excess of wet bulb globe
 temperature above the threshold, integrated over the time each person spends walking.

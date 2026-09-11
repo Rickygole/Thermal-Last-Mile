@@ -274,7 +274,7 @@ one.
 
 Of the seven Houston matches, six kicked off at 12:00 local time and one, on 26 June 2026,
 kicked off at 19:00 (`pipeline/config.yml`, `fixtures.matches`). Measured from each
-match's own observed weather, the seven matches accumulated **297,665 fan-degree-hours**
+match's own observed weather, the seven matches accumulated **297,665 fan-degree-hours** at the kickoff instant, and **463,703** once the arrival window and the egress pulse are counted as well
 above the 28 C WBGT threshold on the last mile to NRG Stadium across the tournament
 (`data/out/retrospective.json`, `tournament_total.tournament_total_fan_degree_hours_above_threshold`),
 ranging match to match from 23,136 fan-degree-hours (20 June) to 87,061 (4 July), with the
