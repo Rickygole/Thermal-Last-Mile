@@ -4,13 +4,16 @@ import ClockTable from '../components/ClockTable.jsx'
 import MatchTable from '../components/MatchTable.jsx'
 import EveningControl from '../components/EveningControl.jsx'
 import FreeVersusCapital from '../components/FreeVersusCapital.jsx'
+import ZeroMatch from '../components/ZeroMatch.jsx'
+import ScrollHint from '../components/ScrollHint.jsx'
+import { useOverflow } from '../lib/overflow.js'
 import TripPanel from '../components/TripPanel.jsx'
 import { APPROACH_LABEL } from '../lib/venues.js'
 import { buildRetro, longDate, shortDate } from '../lib/retro.js'
-import { hourDates, shadeFinding } from '../lib/context.js'
+import { hourDates, kickoffHours, shadeFinding } from '../lib/context.js'
 import { setScreen, useStore } from '../store.js'
 import { sameSixInstant } from '../lib/trip.js'
-import { n0, n1, n2, pct1 } from '../lib/format.js'
+import { n0, n1, n2, pct1, usdExact } from '../lib/format.js'
 
 function buildRows (clock) {
   const baselineHour = String(clock.summary?.baseline_hour ?? '15')
@@ -45,6 +48,65 @@ function buildRows (clock) {
     smallest: improving[0] || null,
     max: rows.reduce((m, r) => Math.max(m, r.value), 0)
   }
+}
+
+function busiestKickoff (retrospective) {
+  const counts = kickoffHours(retrospective)
+  const top = Object.entries(counts).sort((a, b) => b[1] - a[1])[0]
+  return top ? { hour: top[0], played: top[1] } : null
+}
+
+function SweepCompare ({ baseline, best, smallest, selected, ceiling, note }) {
+  const treeRemoved = ceiling?.max_fan_hours_removable_at_15_00 ?? 0
+  const treeSpend = ceiling?.max_tree_only_spend_usd ?? 0
+  const showSelected = selected && selected.removed > 0 && selected.hour !== best?.hour && selected.hour !== smallest?.hour
+
+  return (
+    <section className="panel pane" aria-label="The same comparison under design conditions">
+      <div className="pane-head">
+        <h3>The same comparison, design conditions</h3>
+        <span className="label">fan degree-hours, kickoff instant</span>
+      </div>
+      <div className="detail">
+        <div className="row">
+          <span>Carried at the {baseline.hour}:00 baseline</span>
+          <span>{n0(baseline.value)}</span>
+        </div>
+        {smallest ? (
+          <div className="row">
+            <span>Removed by moving one hour to {smallest.hour}:00</span>
+            <span>{n0(smallest.removed)}</span>
+          </div>
+        ) : null}
+        {best ? (
+          <div className="row">
+            <span>Removed by moving to {best.hour}:00</span>
+            <span>{n0(best.removed)}</span>
+          </div>
+        ) : null}
+        {showSelected ? (
+          <div className="row">
+            <span>Removed at {selected.hour}:00, the hour now selected</span>
+            <span>{n0(selected.removed)}</span>
+          </div>
+        ) : null}
+        <div className="row">
+          <span>Ceiling of the tree only curve, {usdExact(treeSpend)}</span>
+          <span>{n0(treeRemoved)}</span>
+        </div>
+      </div>
+      <p className="label finding">
+        The ordering is the same one the measured tournament gives. This table is a design condition sweep and none of it is a
+        measurement of a played match, so it is here as corroboration and not as the finding.
+      </p>
+      {note ? (
+        <div className="notice">
+          <strong>The null is the result.</strong> equivalent_tree_spend_usd is null for every hour that improves on{' '}
+          {baseline.hour}:00. The pipeline reports it that way rather than inventing a number past the modelled cap: {note}
+        </div>
+      ) : null}
+    </section>
+  )
 }
 
 function MatchDetail ({ match, model, shade }) {
@@ -113,6 +175,8 @@ export default function Clock ({ data }) {
   const shade = useMemo(() => shadeFinding(data.retrospective), [data.retrospective])
   const trip = data.trip
   const instantSix = useMemo(() => sameSixInstant(data.retrospective, trip), [data.retrospective, trip])
+  const busiest = useMemo(() => busiestKickoff(data.retrospective), [data.retrospective])
+  const [clockRef, clockMore] = useOverflow()
   const thresholdNote = clock?.summary?.threshold_sensitivity_note || null
 
   if ((!clock || !model || !model.rows.length) && !retro) {
@@ -132,16 +196,31 @@ export default function Clock ({ data }) {
   const total = retro?.total || null
   const removedShare = retro?.counterfactual?.totals?.removed_fraction ?? null
   const tripTotal = trip?.tournament || null
+  const tripCf = trip?.counterfactual?.totals || null
+  const ceiling = clock?.summary?.tree_only_ceiling_at_1500 || null
+  const equivalenceNote =
+    model
+      ? [model.smallest, model.rows.find(r => r.hour === hour), model.best].find(
+          r => r && r.equivalence && r.equivalence.usd === null
+        )?.equivalence?.note || null
+      : null
 
   return (
-    <div className="clock">
+    <div className="clock" ref={clockRef}>
       {retro ? (
         <>
           <div className="clock-head">
-            {tripTotal ? (
+            {tripCf ? (
+              <div className="display-block">
+                <span className="display">{pct1((tripCf.removed_fraction ?? 0) * 100)}</span>
+                <span className="label">of everything fans carried on the last mile was bought by the kickoff hour alone</span>
+              </div>
+            ) : null}
+            {tripCf && busiest ? (
               <h2>
-                Fans absorbed {n0(tripTotal.trip_total_fan_degree_hours_above_threshold)} fan degree-hours walking to and from this
-                stadium, {n2(tripTotal.ratio_trip_to_kickoff_instant_tournament)} times what the kickoff instant records.
+                {n0(busiest.played)} of the {n0(retro.measured.length)} matches at this stadium kicked off at {busiest.hour}:00.
+                That cost fans {n0(tripCf.removed_trip_fan_degree_hours)} fan degree-hours on the walk in and back out,{' '}
+                {pct1((tripCf.removed_fraction ?? 0) * 100)} of everything measured.
               </h2>
             ) : (
               <h2>
@@ -149,36 +228,31 @@ export default function Clock ({ data }) {
                 degree-minutes above WBGT {n1(retro.threshold)} C, measured end to end.
               </h2>
             )}
-            {tripTotal ? (
-              <p className="clock-instant">
-                The kickoff instant figure for the same {n0(tripTotal.n_matches_included)} matches is{' '}
-                {n0(tripTotal.kickoff_instant_total_for_same_matches)}. That is the comparison line, not the answer: it stops the
-                clock at kickoff, and fans are on the corridor for two hours before it and again after the final whistle. Both
-                figures are on this screen and the trip figure is the larger one because the trip is longer, not because the method
-                changed.
+            {tripCf ? (
+              <p className="clock-lede">
+                That is the measured tournament, not a design condition. Each of the {n0(tripCf.n_matches_included)} matches with a
+                complete inbound and outbound computation was recomputed on its own observed weather with nothing changed but the
+                clock, moved to {n0(trip.alternateHour)}:00. No amount of shade this corridor could hold buys back a comparable
+                share, and the reason is a cap rather than a budget: a segment cannot be planted twice.
               </p>
             ) : null}
+          </div>
+
+          <div className="clock-argument">
+            <FreeVersusCapital trip={trip} ceiling={ceiling} noonHour={busiest ? busiest.hour : '12'} />
+            <ZeroMatch trip={trip} threshold={trip?.threshold ?? retro.threshold} />
+          </div>
+
+          <div className="clock-head">
             <p>
-              The per fan measurement underneath both is this: walking to the {longDate(head.date)} kickoff cost one fan on the{' '}
-              {perFanApproach} {n2(head.perFan.value)} degree-minutes above WBGT {n1(retro.threshold)} C. That is this match's own
-              observed weather at three airport stations, this date's own sun geometry, a shade mask rebaked for this date and
+              The per fan measurement underneath all of it is this: walking to the {longDate(head.date)} kickoff cost one fan on
+              the {perFanApproach} {n2(head.perFan.value)} degree-minutes above WBGT {n1(retro.threshold)} C. That is this match's
+              own observed weather at three airport stations, this date's own sun geometry, a shade mask rebaked for this date and
               hour, walked along the same last mile route used everywhere else in this application. {n0(retro.measured.length)}{' '}
               matches were played at this stadium between {longDate(retro.range.from)} and {longDate(retro.range.to)},{' '}
               {n0(retro.noon.length)} of them at noon and {n0(retro.measured.length - retro.noon.length)} in the evening. All{' '}
               {n0(retro.measured.length)} returned usable observed weather at kickoff.
             </p>
-            {total ? (
-              <div className="notice clock-conditional">
-                <strong>Conditional on the arrival split.</strong> Multiplying those per fan measurements by the assumed split of
-                fans across the four approaches gives {n0(total.tournament_total_fan_degree_hours_above_threshold)} fan
-                degree-hours at the kickoff instant across all {n0(total.n_matches_measured)} matches, of which{' '}
-                {pct1((removedShare ?? 0) * 100)} would be removed by moving every kickoff to the evening. Both of those are
-                kickoff instant figures. The trip figures, which include the walk in and the walk out, are in the next section and
-                they are larger and they answer the schedule question differently. The per fan degree-minutes are measured. The
-                arrival split is an assumption this project states rather than a count, so every total inherits it and the per fan
-                figure does not.
-              </div>
-            ) : null}
           </div>
 
           <div className="clock-top">
@@ -197,6 +271,29 @@ export default function Clock ({ data }) {
           </div>
 
           {trip ? <TripPanel model={trip} data={data} instantSix={instantSix} /> : null}
+
+          <div className="clock-head">
+            {tripTotal ? (
+              <p className="clock-instant">
+                <strong>Kickoff instant basis, for comparison only.</strong> Stopping the clock at kickoff, the same{' '}
+                {n0(tripTotal.n_matches_included)} matches record {n0(tripTotal.kickoff_instant_total_for_same_matches)} fan
+                degree-hours against {n0(tripTotal.trip_total_fan_degree_hours_above_threshold)} across the whole trip, a factor of{' '}
+                {n2(tripTotal.ratio_trip_to_kickoff_instant_tournament)}. The trip figure is the larger one because the trip is
+                longer, not because the method changed.
+              </p>
+            ) : null}
+            {total ? (
+              <div className="notice clock-conditional">
+                <strong>Conditional on the arrival split, and still a kickoff instant figure.</strong> Multiplying the per fan
+                measurements by the assumed split of fans across the four approaches gives{' '}
+                {n0(total.tournament_total_fan_degree_hours_above_threshold)} fan degree-hours at the kickoff instant across all{' '}
+                {n0(total.n_matches_measured)} matches, of which {pct1((removedShare ?? 0) * 100)} would be removed by moving every
+                kickoff to the evening. That share is on the kickoff instant basis and it is not the headline. The per fan
+                degree-minutes are measured. The arrival split is an assumption this project states rather than a count, so every
+                total inherits it and the per fan figure does not.
+              </div>
+            ) : null}
+          </div>
 
           <EveningControl model={retro} rmse={rmse} thresholdNote={thresholdNote} trip={trip} instantSix={instantSix} />
 
@@ -262,15 +359,13 @@ export default function Clock ({ data }) {
               note={thresholdNote}
             />
             <div className="clock-side">
-              <FreeVersusCapital
+              <SweepCompare
                 baseline={model.baseline}
                 best={model.best}
                 smallest={model.smallest}
                 selected={model.rows.find(r => r.hour === hour) || null}
-                ceiling={clock.summary?.tree_only_ceiling_at_1500 || null}
-                note={[model.smallest, model.rows.find(r => r.hour === hour), model.best].find(
-                  r => r && r.equivalence && r.equivalence.usd === null
-                )?.equivalence?.note || null}
+                ceiling={ceiling}
+                note={equivalenceNote}
               />
             </div>
           </div>
@@ -297,6 +392,7 @@ export default function Clock ({ data }) {
           <span aria-hidden="true">&rarr;</span>
         </button>
       </div>
+      <ScrollHint show={clockMore} />
     </div>
   )
 }
