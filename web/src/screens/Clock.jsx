@@ -4,10 +4,12 @@ import ClockTable from '../components/ClockTable.jsx'
 import MatchTable from '../components/MatchTable.jsx'
 import EveningControl from '../components/EveningControl.jsx'
 import FreeVersusCapital from '../components/FreeVersusCapital.jsx'
+import TripPanel from '../components/TripPanel.jsx'
 import { APPROACH_LABEL } from '../lib/venues.js'
 import { buildRetro, longDate, shortDate } from '../lib/retro.js'
 import { hourDates, shadeFinding } from '../lib/context.js'
 import { setScreen, useStore } from '../store.js'
+import { sameSixInstant } from '../lib/trip.js'
 import { n0, n1, n2, pct1 } from '../lib/format.js'
 
 function buildRows (clock) {
@@ -109,6 +111,8 @@ export default function Clock ({ data }) {
   const [match, setMatch] = useState(null)
   const dates = useMemo(() => hourDates(data.meta), [data.meta])
   const shade = useMemo(() => shadeFinding(data.retrospective), [data.retrospective])
+  const trip = data.trip
+  const instantSix = useMemo(() => sameSixInstant(data.retrospective, trip), [data.retrospective, trip])
   const thresholdNote = clock?.summary?.threshold_sensitivity_note || null
 
   if ((!clock || !model || !model.rows.length) && !retro) {
@@ -127,31 +131,52 @@ export default function Clock ({ data }) {
   const perFanApproach = head ? APPROACH_LABEL[head.perFan.key] || head.perFan.key : ''
   const total = retro?.total || null
   const removedShare = retro?.counterfactual?.totals?.removed_fraction ?? null
+  const tripTotal = trip?.tournament || null
 
   return (
     <div className="clock">
       {retro ? (
         <>
           <div className="clock-head">
-            <h2>
-              Walking to the {longDate(head.date)} kickoff cost one fan on the {perFanApproach} {n2(head.perFan.value)}{' '}
-              degree-minutes above WBGT {n1(retro.threshold)} C, measured end to end.
-            </h2>
+            {tripTotal ? (
+              <h2>
+                Fans absorbed {n0(tripTotal.trip_total_fan_degree_hours_above_threshold)} fan degree-hours walking to and from this
+                stadium, {n2(tripTotal.ratio_trip_to_kickoff_instant_tournament)} times what the kickoff instant records.
+              </h2>
+            ) : (
+              <h2>
+                Walking to the {longDate(head.date)} kickoff cost one fan on the {perFanApproach} {n2(head.perFan.value)}{' '}
+                degree-minutes above WBGT {n1(retro.threshold)} C, measured end to end.
+              </h2>
+            )}
+            {tripTotal ? (
+              <p className="clock-instant">
+                The kickoff instant figure for the same {n0(tripTotal.n_matches_included)} matches is{' '}
+                {n0(tripTotal.kickoff_instant_total_for_same_matches)}. That is the comparison line, not the answer: it stops the
+                clock at kickoff, and fans are on the corridor for two hours before it and again after the final whistle. Both
+                figures are on this screen and the trip figure is the larger one because the trip is longer, not because the method
+                changed.
+              </p>
+            ) : null}
             <p>
-              That is a measured quantity: this match's own observed weather at three airport stations, this date's own sun
-              geometry, a shade mask rebaked for this date and hour, walked along the same last mile route used everywhere else in
-              this application. {n0(retro.measured.length)} matches were played at this stadium between{' '}
-              {longDate(retro.range.from)} and {longDate(retro.range.to)}, {n0(retro.noon.length)} of them at noon and{' '}
-              {n0(retro.measured.length - retro.noon.length)} in the evening. All {n0(retro.measured.length)} returned usable
-              observed weather.
+              The per fan measurement underneath both is this: walking to the {longDate(head.date)} kickoff cost one fan on the{' '}
+              {perFanApproach} {n2(head.perFan.value)} degree-minutes above WBGT {n1(retro.threshold)} C. That is this match's own
+              observed weather at three airport stations, this date's own sun geometry, a shade mask rebaked for this date and
+              hour, walked along the same last mile route used everywhere else in this application. {n0(retro.measured.length)}{' '}
+              matches were played at this stadium between {longDate(retro.range.from)} and {longDate(retro.range.to)},{' '}
+              {n0(retro.noon.length)} of them at noon and {n0(retro.measured.length - retro.noon.length)} in the evening. All{' '}
+              {n0(retro.measured.length)} returned usable observed weather at kickoff.
             </p>
             {total ? (
               <div className="notice clock-conditional">
                 <strong>Conditional on the arrival split.</strong> Multiplying those per fan measurements by the assumed split of
                 fans across the four approaches gives {n0(total.tournament_total_fan_degree_hours_above_threshold)} fan
-                degree-hours for the tournament, of which {pct1((removedShare ?? 0) * 100)} traces to the noon kickoffs. The per
-                fan degree-minutes are measured. The arrival split is an assumption this project states rather than a count, so the
-                tournament total inherits it and the per fan figure does not.
+                degree-hours at the kickoff instant across all {n0(total.n_matches_measured)} matches, of which{' '}
+                {pct1((removedShare ?? 0) * 100)} would be removed by moving every kickoff to the evening. Both of those are
+                kickoff instant figures. The trip figures, which include the walk in and the walk out, are in the next section and
+                they are larger and they answer the schedule question differently. The per fan degree-minutes are measured. The
+                arrival split is an assumption this project states rather than a count, so every total inherits it and the per fan
+                figure does not.
               </div>
             ) : null}
           </div>
@@ -171,7 +196,9 @@ export default function Clock ({ data }) {
             </div>
           </div>
 
-          <EveningControl model={retro} rmse={rmse} thresholdNote={thresholdNote} />
+          {trip ? <TripPanel model={trip} data={data} instantSix={instantSix} /> : null}
+
+          <EveningControl model={retro} rmse={rmse} thresholdNote={thresholdNote} trip={trip} instantSix={instantSix} />
 
           <section className="panel method-note" aria-label="How the seven matches were measured">
             <h3>What the measurement is, and what it approximates.</h3>
