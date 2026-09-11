@@ -3,6 +3,7 @@ import { shortDate } from '../lib/retro.js'
 
 export default function EveningControl ({ model, rmse, thresholdNote, trip, instantSix }) {
   const control = model.control
+  const controlTrip = control ? (trip?.playable || []).find(m => m.date === control.date) || null : null
   const cf = model.counterfactual
   const margin = control && Number.isFinite(model.threshold) ? model.threshold - control.peak : null
   const totals = cf?.totals || null
@@ -10,15 +11,15 @@ export default function EveningControl ({ model, rmse, thresholdNote, trip, inst
   return (
     <section className="panel evening" aria-label="What the zero at the evening kickoff does and does not mean">
       <div className="pane-head">
-        <h3>The evening match measured zero. Zero is a near miss, not a null.</h3>
-        <span className="label">read straight from the same run as the table above</span>
+        <h3>The evening match measured zero at the kickoff instant. Zero is a near miss, not a null, and not the trip.</h3>
+        <span className="label">kickoff instant basis throughout this panel</span>
       </div>
       <div className="ev-grid">
         <div className="ev-col">
           {control ? (
             <div className="detail">
               <div className="row">
-                <span>Match measured at zero</span>
+                <span>Match measured at zero, kickoff instant</span>
                 <span>
                   {shortDate(control.date)}, {n0(control.hour)}:00
                 </span>
@@ -39,6 +40,12 @@ export default function EveningControl ({ model, rmse, thresholdNote, trip, inst
                 <span>Interpolation error of the input field</span>
                 <span>{n2(rmse)} C RMSE</span>
               </div>
+              {controlTrip && Number.isFinite(controlTrip.total) ? (
+                <div className="row">
+                  <span>Same match, whole trip basis</span>
+                  <span>{n0(controlTrip.total)} fan degree-hours</span>
+                </div>
+              ) : null}
             </div>
           ) : null}
           <p className="ev-body">
@@ -46,7 +53,9 @@ export default function EveningControl ({ model, rmse, thresholdNote, trip, inst
             {n2(margin)} C under the line reports zero. That margin sits inside this project's own{' '}
             {n2(rmse)} C interpolation error, published on the map screen. Read the zero as this walk did not cross the
             counting threshold on this evening, not as this walk was comfortable, and not as an evening kickoff being safe by
-            construction.
+            construction.{controlTrip && Number.isFinite(controlTrip.total)
+              ? ` The zero is a property of the instant, not of the evening: counting the walk in and the walk back out, the same match carried ${n0(controlTrip.total)} fan degree-hours.`
+              : ''}
           </p>
         </div>
         <div className="ev-col">
@@ -54,13 +63,14 @@ export default function EveningControl ({ model, rmse, thresholdNote, trip, inst
             <>
               <table className="coverage ev-table">
                 <caption className="label">
-                  The six noon dates recomputed at {n0(cf.alternate_hour)}:00, each holding its own observed weather fixed
+                  The six noon dates recomputed at {n0(cf.alternate_hour)}:00, each holding its own observed weather fixed. Both
+                  value columns are kickoff instant figures, not trip totals
                 </caption>
                 <thead>
                   <tr>
                     <th scope="col">Date</th>
-                    <th scope="col" className="mt-num">As played, noon</th>
-                    <th scope="col" className="mt-num">At {n0(cf.alternate_hour)}:00</th>
+                    <th scope="col" className="mt-num">As played at noon, instant</th>
+                    <th scope="col" className="mt-num">At {n0(cf.alternate_hour)}:00, instant</th>
                     <th scope="col">Still above the line</th>
                   </tr>
                 </thead>
@@ -82,7 +92,7 @@ export default function EveningControl ({ model, rmse, thresholdNote, trip, inst
                 {n0(cf.nonZero.length)} of the {n0(cf.rows.length)} noon dates still carry exposure when they are moved to{' '}
                 {n0(cf.alternate_hour)}:00 on their own weather. The evening hour is not magic. It removed{' '}
                 {n0(totals?.removed_fan_degree_hours)} of {n0(totals?.actual_total_fan_degree_hours_above_threshold)} fan
-                degree-hours, {pct1((totals?.removed_fraction ?? 0) * 100)} of the measured total, and left{' '}
+                degree-hours, {pct1((totals?.removed_fraction ?? 0) * 100)} of the measured kickoff instant total, and left{' '}
                 {n0(totals?.counterfactual_total_fan_degree_hours_above_threshold)} behind that no schedule change reaches.
               </p>
             </>
