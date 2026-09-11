@@ -43,7 +43,7 @@ For the seven Houston World Cup matches that already took place, this project ap
 
 **Tagline**
 
-Nobody measures the walk from the platform to the gate. We did, for the World Cup matches that already happened in Houston.
+We measured the heat a fan absorbed walking to NRG Stadium across seven Houston World Cup matches, in and out. Six kicked off at noon. That choice carried 69 percent.
 
 **What it does**
 

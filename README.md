@@ -28,6 +28,33 @@ Meteorology comes from the routine observation within the kickoff hour, while so
 geometry and the shade bake are evaluated at the top of that hour. The two are up to
 about fifty minutes apart.
 
+## The trip, not the instant
+
+The figures above are evaluated at the kickoff hour on the inbound walk. Fans also arrive
+across a window before kickoff and walk back out after the final whistle, so
+`data/out/trip_exposure.json` recomputes exposure across both legs, on each match's own
+observed weather.
+
+Two effects run against each other and both are real. Egress lands in the hottest part of
+the afternoon, so every noon match's trip total is between 1.5 and 2.6 times its kickoff
+instant figure. And the evening alternative is not free, because a 19:00 kickoff draws its
+crowd across a 17:00 to 19:00 arrival window: the single match actually played at 19:00
+measured zero at the instant and 21,726 fan-degree-hours across the trip.
+
+Across the 6 of 7 matches with a fully observed trip computation, the tournament total is
+**463,703 fan-degree-hours** against 245,894 at the instant, a ratio of 1.89. Recomputing the evening
+kickoff counterfactual on trip totals gives **69.2 percent** removed, against 91.9 percent
+at the instant. Arrival window lengths of 90 and 150 minutes give 71.5 and 64.7 percent, so
+the direction is stable and the magnitude is not an artifact of the window.
+
+The 23 June match is excluded from every trip aggregate because the 11:00 wind observation
+at one station is missing from the ASOS record. It is named as excluded rather than filled
+from a neighbouring hour.
+
+The arrival and egress densities are stated assumptions, not observations. No gate arrival
+survey exists for this venue, and the constants are named in `pipeline/config.yml` under
+`trip` so they can be changed.
+
 ## Two findings that shape everything else
 
 **The corridor is uniformly dangerous, not hotspot driven.** Across all 172 segments the

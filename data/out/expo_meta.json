@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-09-11T01:58:37Z",
+  "generated_utc": "2026-09-11T14:18:32Z",
   "provisional": false,
   "quantity": "wet bulb globe temperature",
   "unit": "degrees celsius",
@@ -19,6 +19,8 @@
     640
   ],
   "hours": [
+    "10",
+    "11",
     "12",
     "13",
     "14",
@@ -34,6 +36,8 @@
   "method": "resampled directly from the pipeline exposure rasters written by stage 4, which combine the Liljegren wet bulb globe temperature grid with the raymarched shade mask and the Landsat coupled urban heat island field",
   "sun_position_source": "pvlib solar position solved in the shadow bake stage, the same geometry that produced the shade masks",
   "source_rasters": [
+    "data/interim/expo_10.tif",
+    "data/interim/expo_11.tif",
     "data/interim/expo_12.tif",
     "data/interim/expo_13.tif",
     "data/interim/expo_14.tif",
@@ -47,6 +51,20 @@
   ],
   "native_resolution_m": 1.0,
   "hour_stats": {
+    "10": {
+      "min_c": 28.64,
+      "max_c": 32.8,
+      "mean_c": 31.32,
+      "sun_elevation_deg": 44.0,
+      "sun_azimuth_deg": 85.41
+    },
+    "11": {
+      "min_c": 29.11,
+      "max_c": 33.47,
+      "mean_c": 31.98,
+      "sun_elevation_deg": 57.01,
+      "sun_azimuth_deg": 92.59
+    },
     "12": {
       "min_c": 29.44,
       "max_c": 33.89,

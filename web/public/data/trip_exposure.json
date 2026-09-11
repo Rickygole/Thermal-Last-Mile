@@ -1,0 +1,678 @@
+{
+  "generated_utc": "2026-09-11T14:22:27Z",
+  "wbgt_threshold_c": 28.0,
+  "arrival_window_minutes": 120,
+  "arrival_window_sensitivity_minutes": [
+    90,
+    150
+  ],
+  "arrival_density_shape": "uniform",
+  "egress_delay_minutes": 120,
+  "egress_pulse_minutes": 45,
+  "egress_density_shape": "uniform",
+  "assumption_note": "arrival_window_minutes, arrival_window_sensitivity_minutes, arrival_density_shape, egress_delay_minutes, egress_pulse_minutes and egress_density_shape are read from pipeline/config.yml under trip and are modeled assumptions, not observations. no gate arrival survey or turnstile egress record for NRG Stadium or any other 2026 FIFA World Cup venue exists anywhere in this repository, so a defensible simple shape was chosen over an invented one. arrival_density_shape uniform means fans are assumed to arrive at a constant rate across the arrival_window_minutes immediately before kickoff. a density rising toward the final 45 minutes before kickoff is plausibly more realistic for a ticketed single admission event, but no citation for a stadium specific or FIFA specific gate arrival curve was found, so that shape was left unused rather than fabricated. egress_density_shape uniform models egress as a flat pulse over egress_pulse_minutes starting egress_delay_minutes after kickoff, standing in for roughly 90 minutes of play plus a roughly 15 minute half time plus roughly 15 minutes of stoppage before the final whistle. changing any of these five values in config.yml and rerunning this stage changes every number below, which is the reason they are named constants there and not inline",
+  "method_note": "this stage estimates a trip total for each of the seven NRG Stadium matches, in addition to and never in place of the kickoff instant figure already measured in data/out/retrospective.json. the inbound leg distributes fans uniformly across arrival_window_minutes ending at kickoff, and the outbound leg distributes fans uniformly across egress_pulse_minutes starting egress_delay_minutes after kickoff. each leg is split across whichever modelled clock hours it overlaps, weighted by the share of that leg's own duration falling in each hour, and each hour's fan degree hours above threshold is computed exactly as pipeline/s12_retrospective.py computes the kickoff hour: refetching that match's own observed ASOS weather for that date and hour, coupling it to the same land surface temperature field, rebaking the shade mask for that match's own date and that hour with true solar geometry, and walking the same four last mile approaches. no hour from the generalized sweep in pipeline/s10_kickoff.py is reused here, and no match's exposure is estimated from another match's date. the kickoff hour itself is never recomputed by this stage, it is read from data/out/retrospective.json, since by construction neither leg overlaps the kickoff hour. data/out/retrospective.json is not modified by this stage and its tournament_total and counterfactual_evening_kickoff blocks remain frozen",
+  "weather_unavailable_note": "if the Iowa Environmental Mesonet ASOS archive cannot return a usable observation at all three stations for any hour a leg needs, that leg and therefore that match's trip total is reported unavailable, naming the exact hour and the missing station, and is excluded from every total and every counterfactual below rather than estimated from a substitute date or hour or a neighbouring hour's value",
+  "matches": [
+    {
+      "date": "2026-06-14",
+      "kickoff_local_hour": 12,
+      "stage": "group",
+      "label": "Group E",
+      "kickoff_instant_fan_degree_hours_above_threshold": 45052.34,
+      "inbound": {
+        "status": "observed",
+        "fan_degree_hours": 38368.39,
+        "hours_weights": {
+          "10": 0.5,
+          "11": 0.5
+        }
+      },
+      "outbound": {
+        "status": "observed",
+        "fan_degree_hours": 49106.91,
+        "hours_weights": {
+          "14": 1.0
+        }
+      },
+      "trip_status": "observed",
+      "trip_total_fan_degree_hours_above_threshold": 87475.3,
+      "ratio_trip_to_kickoff_instant": 1.942,
+      "arrival_window_sensitivity_minutes": {
+        "90": {
+          "arrival_window_minutes": 90,
+          "inbound": {
+            "status": "observed",
+            "fan_degree_hours": 35694.45,
+            "hours_weights": {
+              "10": 0.3333,
+              "11": 0.6667
+            }
+          },
+          "trip_status": "observed",
+          "trip_total_fan_degree_hours_above_threshold": 84801.36,
+          "ratio_trip_to_kickoff_instant": 1.882
+        },
+        "150": {
+          "arrival_window_minutes": 150,
+          "inbound": {
+            "status": "observed",
+            "fan_degree_hours": 35374.44,
+            "hours_weights": {
+              "9": 0.2,
+              "10": 0.4,
+              "11": 0.4
+            }
+          },
+          "trip_status": "observed",
+          "trip_total_fan_degree_hours_above_threshold": 84481.35,
+          "ratio_trip_to_kickoff_instant": 1.875
+        }
+      }
+    },
+    {
+      "date": "2026-06-17",
+      "kickoff_local_hour": 12,
+      "stage": "group",
+      "label": "Group K",
+      "kickoff_instant_fan_degree_hours_above_threshold": 32875.74,
+      "inbound": {
+        "status": "observed",
+        "fan_degree_hours": 13020.22,
+        "hours_weights": {
+          "10": 0.5,
+          "11": 0.5
+        }
+      },
+      "outbound": {
+        "status": "observed",
+        "fan_degree_hours": 36928.21,
+        "hours_weights": {
+          "14": 1.0
+        }
+      },
+      "trip_status": "observed",
+      "trip_total_fan_degree_hours_above_threshold": 49948.43,
+      "ratio_trip_to_kickoff_instant": 1.519,
+      "arrival_window_sensitivity_minutes": {
+        "90": {
+          "arrival_window_minutes": 90,
+          "inbound": {
+            "status": "observed",
+            "fan_degree_hours": 14865.44,
+            "hours_weights": {
+              "10": 0.3333,
+              "11": 0.6667
+            }
+          },
+          "trip_status": "observed",
+          "trip_total_fan_degree_hours_above_threshold": 51793.65,
+          "ratio_trip_to_kickoff_instant": 1.575
+        },
+        "150": {
+          "arrival_window_minutes": 150,
+          "inbound": {
+            "status": "observed",
+            "fan_degree_hours": 10416.18,
+            "hours_weights": {
+              "9": 0.2,
+              "10": 0.4,
+              "11": 0.4
+            }
+          },
+          "trip_status": "observed",
+          "trip_total_fan_degree_hours_above_threshold": 47344.39,
+          "ratio_trip_to_kickoff_instant": 1.44
+        }
+      }
+    },
+    {
+      "date": "2026-06-20",
+      "kickoff_local_hour": 12,
+      "stage": "group",
+      "label": "Group F",
+      "kickoff_instant_fan_degree_hours_above_threshold": 23135.99,
+      "inbound": {
+        "status": "observed",
+        "fan_degree_hours": 39751.72,
+        "hours_weights": {
+          "10": 0.5,
+          "11": 0.5
+        }
+      },
+      "outbound": {
+        "status": "observed",
+        "fan_degree_hours": 19937.56,
+        "hours_weights": {
+          "14": 1.0
+        }
+      },
+      "trip_status": "observed",
+      "trip_total_fan_degree_hours_above_threshold": 59689.28,
+      "ratio_trip_to_kickoff_instant": 2.58,
+      "arrival_window_sensitivity_minutes": {
+        "90": {
+          "arrival_window_minutes": 90,
+          "inbound": {
+            "status": "observed",
+            "fan_degree_hours": 35691.04,
+            "hours_weights": {
+              "10": 0.3333,
+              "11": 0.6667
+            }
+          },
+          "trip_status": "observed",
+          "trip_total_fan_degree_hours_above_threshold": 55628.6,
+          "ratio_trip_to_kickoff_instant": 2.404
+        },
+        "150": {
+          "arrival_window_minutes": 150,
+          "inbound": {
+            "status": "observed",
+            "fan_degree_hours": 40885.01,
+            "hours_weights": {
+              "9": 0.2,
+              "10": 0.4,
+              "11": 0.4
+            }
+          },
+          "trip_status": "observed",
+          "trip_total_fan_degree_hours_above_threshold": 60822.57,
+          "ratio_trip_to_kickoff_instant": 2.629
+        }
+      }
+    },
+    {
+      "date": "2026-06-23",
+      "kickoff_local_hour": 12,
+      "stage": "group",
+      "label": "Group K",
+      "kickoff_instant_fan_degree_hours_above_threshold": 51770.98,
+      "inbound": {
+        "status": "unavailable",
+        "hours_weights": {
+          "10": 0.5,
+          "11": 0.5
+        },
+        "missing_hours": {
+          "11": [
+            "KSGR"
+          ]
+        }
+      },
+      "outbound": {
+        "status": "observed",
+        "fan_degree_hours": 60622.58,
+        "hours_weights": {
+          "14": 1.0
+        }
+      },
+      "trip_status": "unavailable",
+      "trip_total_fan_degree_hours_above_threshold": null,
+      "ratio_trip_to_kickoff_instant": null,
+      "unavailable_reason": "one or more hours needed for this match's inbound or outbound leg could not be evaluated, see missing_hours under inbound or outbound above, weather was not substituted from another hour or date",
+      "arrival_window_sensitivity_minutes": {
+        "90": {
+          "arrival_window_minutes": 90,
+          "inbound": {
+            "status": "unavailable",
+            "hours_weights": {
+              "10": 0.3333,
+              "11": 0.6667
+            },
+            "missing_hours": {
+              "11": [
+                "KSGR"
+              ]
+            }
+          },
+          "trip_status": "unavailable",
+          "trip_total_fan_degree_hours_above_threshold": null,
+          "ratio_trip_to_kickoff_instant": null
+        },
+        "150": {
+          "arrival_window_minutes": 150,
+          "inbound": {
+            "status": "unavailable",
+            "hours_weights": {
+              "9": 0.2,
+              "10": 0.4,
+              "11": 0.4
+            },
+            "missing_hours": {
+              "11": [
+                "KSGR"
+              ]
+            }
+          },
+          "trip_status": "unavailable",
+          "trip_total_fan_degree_hours_above_threshold": null,
+          "ratio_trip_to_kickoff_instant": null
+        }
+      }
+    },
+    {
+      "date": "2026-06-26",
+      "kickoff_local_hour": 19,
+      "stage": "group",
+      "label": "Group H",
+      "kickoff_instant_fan_degree_hours_above_threshold": 0.0,
+      "inbound": {
+        "status": "observed",
+        "fan_degree_hours": 21725.63,
+        "hours_weights": {
+          "17": 0.5,
+          "18": 0.5
+        }
+      },
+      "outbound": {
+        "status": "observed",
+        "fan_degree_hours": 0.0,
+        "hours_weights": {
+          "21": 1.0
+        }
+      },
+      "trip_status": "observed",
+      "trip_total_fan_degree_hours_above_threshold": 21725.63,
+      "ratio_trip_to_kickoff_instant": null,
+      "ratio_note": "the kickoff instant figure for this match is exactly 0.0, so the ratio is undefined and reported as null, the trip total above should be read directly instead of as a multiple of zero",
+      "arrival_window_sensitivity_minutes": {
+        "90": {
+          "arrival_window_minutes": 90,
+          "inbound": {
+            "status": "observed",
+            "fan_degree_hours": 19520.66,
+            "hours_weights": {
+              "17": 0.3333,
+              "18": 0.6667
+            }
+          },
+          "trip_status": "observed",
+          "trip_total_fan_degree_hours_above_threshold": 19520.66,
+          "ratio_trip_to_kickoff_instant": null
+        },
+        "150": {
+          "arrival_window_minutes": 150,
+          "inbound": {
+            "status": "observed",
+            "fan_degree_hours": 25737.72,
+            "hours_weights": {
+              "16": 0.2,
+              "17": 0.4,
+              "18": 0.4
+            }
+          },
+          "trip_status": "observed",
+          "trip_total_fan_degree_hours_above_threshold": 25737.72,
+          "ratio_trip_to_kickoff_instant": null
+        }
+      }
+    },
+    {
+      "date": "2026-06-29",
+      "kickoff_local_hour": 12,
+      "stage": "round_of_32",
+      "label": "Round of 32",
+      "kickoff_instant_fan_degree_hours_above_threshold": 57768.02,
+      "inbound": {
+        "status": "observed",
+        "fan_degree_hours": 47700.97,
+        "hours_weights": {
+          "10": 0.5,
+          "11": 0.5
+        }
+      },
+      "outbound": {
+        "status": "observed",
+        "fan_degree_hours": 56057.1,
+        "hours_weights": {
+          "14": 1.0
+        }
+      },
+      "trip_status": "observed",
+      "trip_total_fan_degree_hours_above_threshold": 103758.07,
+      "ratio_trip_to_kickoff_instant": 1.796,
+      "arrival_window_sensitivity_minutes": {
+        "90": {
+          "arrival_window_minutes": 90,
+          "inbound": {
+            "status": "observed",
+            "fan_degree_hours": 49302.92,
+            "hours_weights": {
+              "10": 0.3333,
+              "11": 0.6667
+            }
+          },
+          "trip_status": "observed",
+          "trip_total_fan_degree_hours_above_threshold": 105360.02,
+          "ratio_trip_to_kickoff_instant": 1.824
+        },
+        "150": {
+          "arrival_window_minutes": 150,
+          "inbound": {
+            "status": "observed",
+            "fan_degree_hours": 43558.6,
+            "hours_weights": {
+              "9": 0.2,
+              "10": 0.4,
+              "11": 0.4
+            }
+          },
+          "trip_status": "observed",
+          "trip_total_fan_degree_hours_above_threshold": 99615.7,
+          "ratio_trip_to_kickoff_instant": 1.724
+        }
+      }
+    },
+    {
+      "date": "2026-07-04",
+      "kickoff_local_hour": 12,
+      "stage": "round_of_16",
+      "label": "Round of 16",
+      "kickoff_instant_fan_degree_hours_above_threshold": 87061.46,
+      "inbound": {
+        "status": "observed",
+        "fan_degree_hours": 51498.64,
+        "hours_weights": {
+          "10": 0.5,
+          "11": 0.5
+        }
+      },
+      "outbound": {
+        "status": "observed",
+        "fan_degree_hours": 89607.74,
+        "hours_weights": {
+          "14": 1.0
+        }
+      },
+      "trip_status": "observed",
+      "trip_total_fan_degree_hours_above_threshold": 141106.38,
+      "ratio_trip_to_kickoff_instant": 1.621,
+      "arrival_window_sensitivity_minutes": {
+        "90": {
+          "arrival_window_minutes": 90,
+          "inbound": {
+            "status": "observed",
+            "fan_degree_hours": 54785.6,
+            "hours_weights": {
+              "10": 0.3333,
+              "11": 0.6667
+            }
+          },
+          "trip_status": "observed",
+          "trip_total_fan_degree_hours_above_threshold": 144393.34,
+          "ratio_trip_to_kickoff_instant": 1.659
+        },
+        "150": {
+          "arrival_window_minutes": 150,
+          "inbound": {
+            "status": "observed",
+            "fan_degree_hours": 47455.42,
+            "hours_weights": {
+              "9": 0.2,
+              "10": 0.4,
+              "11": 0.4
+            }
+          },
+          "trip_status": "observed",
+          "trip_total_fan_degree_hours_above_threshold": 137063.16,
+          "ratio_trip_to_kickoff_instant": 1.574
+        }
+      }
+    }
+  ],
+  "tournament_trip_total": {
+    "n_matches_total": 7,
+    "n_matches_included": 6,
+    "n_matches_excluded": 1,
+    "excluded_dates": [
+      "2026-06-23"
+    ],
+    "trip_total_fan_degree_hours_above_threshold": 463703.1,
+    "kickoff_instant_total_for_same_matches": 245893.5,
+    "ratio_trip_to_kickoff_instant_tournament": 1.886,
+    "statement": "across the 6 of 7 matches with a fully observed trip computation, fans accumulated 463,703 fan degree hours above threshold across the full inbound plus outbound trip, against 245,894 for the same matches' kickoff instant figure, a ratio of 1.89x."
+  },
+  "counterfactual_evening_kickoff_trip": {
+    "note": "this recomputes the same evening kickoff counterfactual as data/out/retrospective.json's counterfactual_evening_kickoff block, but on trip totals instead of kickoff instant totals, holding each date's own observed weather fixed exactly as that block does. it asks how much of the measured trip exposure at the six noon matches would not have occurred had each kicked off at 19:00 local instead, recomputing both the noon trip and the alternate 19:00 trip from that match's own date, and comparing the two. the one match actually played at 19:00 is left unchanged in both totals, as in the original counterfactual. arrival egress asymmetry can move this share in either direction relative to the kickoff instant counterfactual: a noon kickoff's egress leg lands in the hottest part of the afternoon, which can push the noon side of the comparison up, while the evening counterfactual's own arrival leg is not free either, since it falls in the still hot late afternoon hours before a 19:00 kickoff, which can push the alternate side of the comparison up too. which effect dominates is reported below as computed, not assumed",
+    "primary": {
+      "arrival_window_minutes": 120,
+      "alternate_hour": 19,
+      "per_match": [
+        {
+          "date": "2026-06-14",
+          "kickoff_local_hour": 12,
+          "actual_trip_total_fan_degree_hours_above_threshold": 87475.3,
+          "counterfactual_evening_trip_total_fan_degree_hours_above_threshold": 31754.62,
+          "difference": 55720.68,
+          "status": "included"
+        },
+        {
+          "date": "2026-06-17",
+          "kickoff_local_hour": 12,
+          "actual_trip_total_fan_degree_hours_above_threshold": 49948.43,
+          "counterfactual_evening_trip_total_fan_degree_hours_above_threshold": 19068.31,
+          "difference": 30880.12,
+          "status": "included"
+        },
+        {
+          "date": "2026-06-20",
+          "kickoff_local_hour": 12,
+          "actual_trip_total_fan_degree_hours_above_threshold": 59689.28,
+          "counterfactual_evening_trip_total_fan_degree_hours_above_threshold": 288.27,
+          "difference": 59401.01,
+          "status": "included"
+        },
+        {
+          "date": "2026-06-23",
+          "kickoff_local_hour": 12,
+          "status": "excluded_actual_trip_unavailable"
+        },
+        {
+          "date": "2026-06-29",
+          "kickoff_local_hour": 12,
+          "actual_trip_total_fan_degree_hours_above_threshold": 103758.07,
+          "counterfactual_evening_trip_total_fan_degree_hours_above_threshold": 34491.05,
+          "difference": 69267.02,
+          "status": "included"
+        },
+        {
+          "date": "2026-07-04",
+          "kickoff_local_hour": 12,
+          "actual_trip_total_fan_degree_hours_above_threshold": 141106.38,
+          "counterfactual_evening_trip_total_fan_degree_hours_above_threshold": 35467.55,
+          "difference": 105638.83,
+          "status": "included"
+        }
+      ],
+      "totals": {
+        "n_matches_included": 6,
+        "actual_total_trip_fan_degree_hours_above_threshold": 463703.1,
+        "counterfactual_total_trip_fan_degree_hours_above_threshold": 142795.4,
+        "removed_trip_fan_degree_hours": 320907.7,
+        "removed_fraction": 0.6921
+      }
+    },
+    "sensitivity_by_arrival_window_minutes": {
+      "90": {
+        "arrival_window_minutes": 90,
+        "alternate_hour": 19,
+        "per_match": [
+          {
+            "date": "2026-06-14",
+            "kickoff_local_hour": 12,
+            "actual_trip_total_fan_degree_hours_above_threshold": 84801.36,
+            "counterfactual_evening_trip_total_fan_degree_hours_above_threshold": 29052.68,
+            "difference": 55748.68,
+            "status": "included"
+          },
+          {
+            "date": "2026-06-17",
+            "kickoff_local_hour": 12,
+            "actual_trip_total_fan_degree_hours_above_threshold": 51793.65,
+            "counterfactual_evening_trip_total_fan_degree_hours_above_threshold": 17140.1,
+            "difference": 34653.55,
+            "status": "included"
+          },
+          {
+            "date": "2026-06-20",
+            "kickoff_local_hour": 12,
+            "actual_trip_total_fan_degree_hours_above_threshold": 55628.6,
+            "counterfactual_evening_trip_total_fan_degree_hours_above_threshold": 192.18,
+            "difference": 55436.42,
+            "status": "included"
+          },
+          {
+            "date": "2026-06-23",
+            "kickoff_local_hour": 12,
+            "status": "excluded_actual_trip_unavailable"
+          },
+          {
+            "date": "2026-06-29",
+            "kickoff_local_hour": 12,
+            "actual_trip_total_fan_degree_hours_above_threshold": 105360.02,
+            "counterfactual_evening_trip_total_fan_degree_hours_above_threshold": 32636.1,
+            "difference": 72723.92,
+            "status": "included"
+          },
+          {
+            "date": "2026-07-04",
+            "kickoff_local_hour": 12,
+            "actual_trip_total_fan_degree_hours_above_threshold": 144393.34,
+            "counterfactual_evening_trip_total_fan_degree_hours_above_threshold": 33080.9,
+            "difference": 111312.44,
+            "status": "included"
+          }
+        ],
+        "totals": {
+          "n_matches_included": 6,
+          "actual_total_trip_fan_degree_hours_above_threshold": 461497.6,
+          "counterfactual_total_trip_fan_degree_hours_above_threshold": 131622.6,
+          "removed_trip_fan_degree_hours": 329875.0,
+          "removed_fraction": 0.7148
+        }
+      },
+      "120": {
+        "arrival_window_minutes": 120,
+        "alternate_hour": 19,
+        "per_match": [
+          {
+            "date": "2026-06-14",
+            "kickoff_local_hour": 12,
+            "actual_trip_total_fan_degree_hours_above_threshold": 87475.3,
+            "counterfactual_evening_trip_total_fan_degree_hours_above_threshold": 31754.62,
+            "difference": 55720.68,
+            "status": "included"
+          },
+          {
+            "date": "2026-06-17",
+            "kickoff_local_hour": 12,
+            "actual_trip_total_fan_degree_hours_above_threshold": 49948.43,
+            "counterfactual_evening_trip_total_fan_degree_hours_above_threshold": 19068.31,
+            "difference": 30880.12,
+            "status": "included"
+          },
+          {
+            "date": "2026-06-20",
+            "kickoff_local_hour": 12,
+            "actual_trip_total_fan_degree_hours_above_threshold": 59689.28,
+            "counterfactual_evening_trip_total_fan_degree_hours_above_threshold": 288.27,
+            "difference": 59401.01,
+            "status": "included"
+          },
+          {
+            "date": "2026-06-23",
+            "kickoff_local_hour": 12,
+            "status": "excluded_actual_trip_unavailable"
+          },
+          {
+            "date": "2026-06-29",
+            "kickoff_local_hour": 12,
+            "actual_trip_total_fan_degree_hours_above_threshold": 103758.07,
+            "counterfactual_evening_trip_total_fan_degree_hours_above_threshold": 34491.05,
+            "difference": 69267.02,
+            "status": "included"
+          },
+          {
+            "date": "2026-07-04",
+            "kickoff_local_hour": 12,
+            "actual_trip_total_fan_degree_hours_above_threshold": 141106.38,
+            "counterfactual_evening_trip_total_fan_degree_hours_above_threshold": 35467.55,
+            "difference": 105638.83,
+            "status": "included"
+          }
+        ],
+        "totals": {
+          "n_matches_included": 6,
+          "actual_total_trip_fan_degree_hours_above_threshold": 463703.1,
+          "counterfactual_total_trip_fan_degree_hours_above_threshold": 142795.4,
+          "removed_trip_fan_degree_hours": 320907.7,
+          "removed_fraction": 0.6921
+        }
+      },
+      "150": {
+        "arrival_window_minutes": 150,
+        "alternate_hour": 19,
+        "per_match": [
+          {
+            "date": "2026-06-14",
+            "kickoff_local_hour": 12,
+            "actual_trip_total_fan_degree_hours_above_threshold": 84481.35,
+            "counterfactual_evening_trip_total_fan_degree_hours_above_threshold": 34309.09,
+            "difference": 50172.26,
+            "status": "included"
+          },
+          {
+            "date": "2026-06-17",
+            "kickoff_local_hour": 12,
+            "actual_trip_total_fan_degree_hours_above_threshold": 47344.39,
+            "counterfactual_evening_trip_total_fan_degree_hours_above_threshold": 21566.41,
+            "difference": 25777.98,
+            "status": "included"
+          },
+          {
+            "date": "2026-06-20",
+            "kickoff_local_hour": 12,
+            "actual_trip_total_fan_degree_hours_above_threshold": 60822.57,
+            "counterfactual_evening_trip_total_fan_degree_hours_above_threshold": 584.17,
+            "difference": 60238.4,
+            "status": "included"
+          },
+          {
+            "date": "2026-06-23",
+            "kickoff_local_hour": 12,
+            "status": "excluded_actual_trip_unavailable"
+          },
+          {
+            "date": "2026-06-29",
+            "kickoff_local_hour": 12,
+            "actual_trip_total_fan_degree_hours_above_threshold": 99615.7,
+            "counterfactual_evening_trip_total_fan_degree_hours_above_threshold": 37973.35,
+            "difference": 61642.35,
+            "status": "included"
+          },
+          {
+            "date": "2026-07-04",
+            "kickoff_local_hour": 12,
+            "actual_trip_total_fan_degree_hours_above_threshold": 137063.16,
+            "counterfactual_evening_trip_total_fan_degree_hours_above_threshold": 40636.54,
+            "difference": 96426.62,
+            "status": "included"
+          }
+        ],
+        "totals": {
+          "n_matches_included": 6,
+          "actual_total_trip_fan_degree_hours_above_threshold": 455064.9,
+          "counterfactual_total_trip_fan_degree_hours_above_threshold": 160807.3,
+          "removed_trip_fan_degree_hours": 294257.6,
+          "removed_fraction": 0.6466
+        }
+      }
+    },
+    "comparison_to_kickoff_instant_counterfactual": {
+      "old_removed_fraction_kickoff_instant": 0.9186,
+      "new_removed_fraction_trip_total": 0.6921,
+      "statement": "the kickoff instant counterfactual in data/out/retrospective.json reports 91.9 percent of measured exposure at the noon matches removed by an evening kickoff. recomputed on trip totals at the 120 minute arrival window, that figure is 69.2 percent, a move of -22.6 percentage points once the inbound arrival leg and the outbound egress leg of both the noon trip and its evening alternative are counted rather than only the kickoff instant."
+    }
+  }
+}
